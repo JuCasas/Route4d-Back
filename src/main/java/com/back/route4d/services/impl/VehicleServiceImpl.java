@@ -41,19 +41,7 @@ public class VehicleServiceImpl implements VehicleService {
         return vehicleRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("Vehicle","Id",id));
     }
-    private String tipo;
-
-    @Column(nullable = false)
-    private String placa;
-
-    @Column(nullable = false)
-    private double capacidad;
-
-    @Column(nullable = false)
-    private double velocidad;
-
-    @Column(nullable = false)
-    private double peso;
+    
     @Override
     public Vehicle updateVehicle(Vehicle vehicle, int id) {
         //Vehicle exists?
