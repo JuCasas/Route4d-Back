@@ -6,6 +6,7 @@ import com.back.route4d.repository.VehicleRepository;
 import com.back.route4d.services.VehicleService;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Column;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +40,34 @@ public class VehicleServiceImpl implements VehicleService {
 //        }
         return vehicleRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("Vehicle","Id",id));
+    }
+    private String tipo;
+
+    @Column(nullable = false)
+    private String placa;
+
+    @Column(nullable = false)
+    private double capacidad;
+
+    @Column(nullable = false)
+    private double velocidad;
+
+    @Column(nullable = false)
+    private double peso;
+    @Override
+    public Vehicle updateVehicle(Vehicle vehicle, int id) {
+        //Vehicle exists?
+        Vehicle existingVehicle = vehicleRepository.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException("Vehicle","Id",id));
+
+        existingVehicle.setPlaca(vehicle.getPlaca());
+        existingVehicle.setTipo(vehicle.getTipo());
+        existingVehicle.setVelocidad(vehicle.getVelocidad());
+        existingVehicle.setCapacidad(vehicle.getCapacidad());
+        existingVehicle.setPeso(vehicle.getPeso());
+        //Save vehicle to DB
+        vehicleRepository.save(existingVehicle);
+        return existingVehicle;
     }
 
 

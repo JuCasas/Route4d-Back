@@ -8,4 +8,5 @@ public interface VehicleService {
     Vehicle saveVehicle(Vehicle vehicle);
     List<Vehicle> getAllVehicles();
     Vehicle getVehicleById(int id);
+    Vehicle updateVehicle(Vehicle vehicle, int id);
 }

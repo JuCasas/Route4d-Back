@@ -37,4 +37,10 @@ public class VehicleController {
     public ResponseEntity<Vehicle> getVehicleById(@PathVariable("id") int vehicleId){
         return new ResponseEntity<Vehicle>(vehicleService.getVehicleById(vehicleId),HttpStatus.OK);
     }
+
+    //Build update vehicle by ID
+    @PutMapping("/{id}")
+    public ResponseEntity<Vehicle> updateVehicle(@PathVariable("id") int vehicleId, @RequestBody Vehicle vehicle){
+        return new ResponseEntity<Vehicle>(vehicleService.updateVehicle(vehicle,vehicleId),HttpStatus.OK);
+    }
 }
