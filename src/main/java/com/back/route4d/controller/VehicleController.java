@@ -43,4 +43,11 @@ public class VehicleController {
     public ResponseEntity<Vehicle> updateVehicle(@PathVariable("id") int vehicleId, @RequestBody Vehicle vehicle){
         return new ResponseEntity<Vehicle>(vehicleService.updateVehicle(vehicle,vehicleId),HttpStatus.OK);
     }
+
+    //Build delete vehicle by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteVehicle(@PathVariable("id") int vehicleId){
+        vehicleService.deleteVehicle(vehicleId);
+        return new ResponseEntity<String>("Vehiculo eliminado correctamente!",HttpStatus.OK);
+    }
 }

@@ -9,4 +9,5 @@ public interface VehicleService {
     List<Vehicle> getAllVehicles();
     Vehicle getVehicleById(int id);
     Vehicle updateVehicle(Vehicle vehicle, int id);
+    void deleteVehicle(int id);
 }

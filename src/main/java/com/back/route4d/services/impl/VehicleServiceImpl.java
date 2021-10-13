@@ -41,7 +41,7 @@ public class VehicleServiceImpl implements VehicleService {
         return vehicleRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("Vehicle","Id",id));
     }
-    
+
     @Override
     public Vehicle updateVehicle(Vehicle vehicle, int id) {
         //Vehicle exists?
@@ -56,6 +56,15 @@ public class VehicleServiceImpl implements VehicleService {
         //Save vehicle to DB
         vehicleRepository.save(existingVehicle);
         return existingVehicle;
+    }
+
+    @Override
+    public void deleteVehicle(int id) {
+        //Vehicle exists?
+        vehicleRepository.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException("Vehicle","Id",id));
+
+        vehicleRepository.deleteById(id);
     }
 
 
