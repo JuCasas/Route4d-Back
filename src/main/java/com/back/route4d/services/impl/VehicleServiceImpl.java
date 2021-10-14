@@ -6,9 +6,9 @@ import com.back.route4d.repository.VehicleRepository;
 import com.back.route4d.services.VehicleService;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.Column;
+import java.sql.Date;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class VehicleServiceImpl implements VehicleService {
@@ -32,12 +32,6 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public Vehicle getVehicleById(int id) {
-//        Optional<Vehicle> vehicle = vehicleRepository.findById(id);
-//        if(vehicle.isPresent()){
-//            return vehicle.get();
-//        }else {
-//            throw new ResourceNotFoundException("Vehicle","Id",id);
-//        }
         return vehicleRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("Vehicle","Id",id));
     }
