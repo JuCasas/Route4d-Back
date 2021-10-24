@@ -11,21 +11,19 @@ public class Vehicle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    @Column(nullable = false)
-    private String tipo;
+    private int idVehiculo;
 
     @Column(nullable = false)
     private String placa;
 
     @Column(nullable = false)
-    private double capacidad;
+    private double capacidadActual;
+
+    @ManyToOne
+    @JoinColumn(name="idTipo",nullable = false)
+    private TipoVehiculo tipo;
 
     @Column(nullable = false)
-    private double velocidad;
-
-    @Column(nullable = false)
-    private double peso;
+    private int estado;
 
 }
