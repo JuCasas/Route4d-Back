@@ -22,4 +22,7 @@ public class Incidente {
     //@JoinColumn(name="idRuta",nullable = false)
     //private Ruta ruta;
 
+    @ManyToOne
+    @JoinColumn(name="idVehiculo",nullable = false)
+    private  Vehicle vehicle;
 }
