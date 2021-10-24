@@ -6,7 +6,6 @@ import com.back.route4d.repository.VehicleRepository;
 import com.back.route4d.services.VehicleService;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.util.List;
 
 
@@ -44,9 +43,8 @@ public class VehicleServiceImpl implements VehicleService {
 
         existingVehicle.setPlaca(vehicle.getPlaca());
         existingVehicle.setTipo(vehicle.getTipo());
-        existingVehicle.setVelocidad(vehicle.getVelocidad());
-        existingVehicle.setCapacidad(vehicle.getCapacidad());
-        existingVehicle.setPeso(vehicle.getPeso());
+        existingVehicle.setCapacidadActual(vehicle.getCapacidadActual());
+        existingVehicle.setEstado(vehicle.getEstado());
         //Save vehicle to DB
         vehicleRepository.save(existingVehicle);
         return existingVehicle;
