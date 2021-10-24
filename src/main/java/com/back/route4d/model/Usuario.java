@@ -25,10 +25,10 @@ public class Usuario {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, columnDefinition = "integer default 1")
+    @Column(nullable = false)
     private int estado;
 
-    @Column(nullable = false, columnDefinition = "integer default 1")
+    @Column(nullable = false)
     private int tipoUsuario;
 
 }

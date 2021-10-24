@@ -36,6 +36,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public Usuario validateUsuario(String email, String password) {
+        return usuarioRepository.findByEmailAddressAndPassword(email,password).orElseThrow(() ->
+                new ResourceNotFoundException());
+    }
+
+    @Override
     public Usuario updateUsuario(Usuario usuario, int id) {
         //User exists?
         Usuario existingUsuario = usuarioRepository.findById(id).orElseThrow(

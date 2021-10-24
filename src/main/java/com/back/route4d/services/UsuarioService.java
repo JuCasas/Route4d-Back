@@ -8,6 +8,7 @@ public interface UsuarioService {
     Usuario saveUsuario(Usuario usuario);
     List<Usuario> getAllUsuarios();
     Usuario getUsuarioById(int id);
+    Usuario validateUsuario(String email, String password);
     Usuario updateUsuario(Usuario usuario, int id);
     void deleteUsuario(int id);
 }
