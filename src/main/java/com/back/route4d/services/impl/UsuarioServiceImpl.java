@@ -38,7 +38,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Usuario validateUsuario(String email, String password) {
         return usuarioRepository.findByEmailAddressAndPassword(email,password).orElseThrow(() ->
-                new ResourceNotFoundException());
+                new ResourceNotFoundException("Usuario y/o contraseña incorrecta"));
     }
 
     @Override

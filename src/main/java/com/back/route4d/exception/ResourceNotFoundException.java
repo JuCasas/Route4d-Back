@@ -18,8 +18,8 @@ public class ResourceNotFoundException extends RuntimeException{
         this.fieldValue = fieldValue;
     }
 
-    public ResourceNotFoundException(){
-        super(String.format("Usuario y/o contraseña incorrecta"));
+    public ResourceNotFoundException(String message){
+        super(message);
     }
 
     public String getFieldName() {
