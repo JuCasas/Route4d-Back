@@ -3,6 +3,7 @@ package com.back.route4d.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @Entity
@@ -22,6 +23,9 @@ public class Vehicle {
     @ManyToOne
     @JoinColumn(name="idTipo",nullable = false)
     private TipoVehiculo tipo;
+
+    @OneToMany(mappedBy = "vehicle")
+    private Set<Incidente> incidentes;
 
     @Column(nullable = false)
     private int estado;
