@@ -1,7 +1,6 @@
 package com.back.route4d.controller;
 
 import com.back.route4d.model.Pedido;
-import com.back.route4d.model.Vehicle;
 import com.back.route4d.services.PedidoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
