@@ -5,26 +5,22 @@ import com.back.route4d.algoritmo.kmeans.Kmeans;
 import com.back.route4d.model.*;
 // import com.back.route4d.repository.AlgoritmoRepository;
 // import com.back.route4d.repository.UsuarioRepository;
-import com.back.route4d.services.CallesBloqueadasService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired; // para servicios
-import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-import javax.transaction.Transactional;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import javax.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired; // para servicios
 
 @Service
 @Slf4j
 @Transactional
 public class Algoritmo {
-    public List<APedido> listaPedidos;
+    public List<Pedido> listaPedidos;
 
     public List<AVehiculo> listaVehiculoTipo1;
     public List<AVehiculo> listaVehiculoTipo2;
@@ -210,7 +206,7 @@ public class Algoritmo {
             String strYearMonth = getOrdersDateFromName(fileName); // datos del nombre del archivo
             String line; // línea del archivo
             int id = 1; // contador para identificador
-            listaPedidos = new ArrayList<APedido>(); // para almacenar pedidos
+            listaPedidos = new ArrayList<Pedido>(); // para almacenar pedidos
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
 
             // Leyendo datos del archivo
@@ -228,7 +224,7 @@ public class Algoritmo {
                 String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
                 LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
 
-                APedido pedido = new APedido(id++, x, y, demand, remaining, orderDate);
+                Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate);
                 listaPedidos.add(pedido);
             }
 
@@ -411,9 +407,9 @@ public class Algoritmo {
         for (AVehiculo vehiculo : vehiculos) {
             Cluster cluster = new Cluster();
             // TODO ENTENDER
-            cluster.pedidos = new PriorityQueue<APedido>(500, new Comparator<APedido>() {
+            cluster.pedidos = new PriorityQueue<Pedido>(500, new Comparator<Pedido>() {
                 // override compare method
-                public int compare(APedido i, APedido j) {
+                public int compare(Pedido i, Pedido j) {
                     // if(i.minFaltantes > j.minFaltantes) return 1;
                     // else if (i.minFaltantes < j.minFaltantes) return -1;
                     // else return 0;
@@ -477,7 +473,7 @@ public class Algoritmo {
 
             // para el firstPedido
             if (cluster.firstPedido != null) {
-                APedido pedido = cluster.firstPedido;
+                Pedido pedido = cluster.firstPedido;
                 ruta.addPedido(pedido);
 
                 System.out.println("x:  " + pedido.x + "   y: " + pedido.y + "   z: " + pedido.minFaltantes
@@ -521,7 +517,7 @@ public class Algoritmo {
             while (!cluster.pedidos.isEmpty()) {
 
                 // extraemos un pedido del cluster
-                APedido pedido = cluster.pedidos.poll();
+                Pedido pedido = cluster.pedidos.poll();
                 ruta.addPedido(pedido);
                 // imprimir información del pedido
                 System.out.println("x:  " + pedido.x + "   y: " + pedido.y + "   z: " + pedido.minFaltantes
