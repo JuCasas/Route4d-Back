@@ -480,8 +480,8 @@ public class Algoritmo {
                 Pedido pedido = cluster.firstPedido;
                 ruta.addPedido(pedido);
 
-                System.out.println("x:  " + pedido.x + "   y: " + pedido.y + "   z: " + pedido.minFaltantes
-                        + "   cant: " + pedido.cantidad + "   idNodo: " + pedido.getNodoId());
+                System.out.println("x:  " + pedido.getX() + "   y: " + pedido.getY() + "   z: " + pedido.getMinFaltantes()
+                        + "   cant: " + pedido.getCantidad() + "   idNodo: " + pedido.getNodoId());
 
                 boolean estaBloqueada = estaBloqueada(tiempoMinutos, origen);
 
@@ -490,7 +490,7 @@ public class Algoritmo {
                     origen = ultimoViable;
                 }
 
-                dijkstraAlgorithm.dijkstra(origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getVelocidad()));
+                dijkstraAlgorithm.dijkstra(origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
                 System.out.printf("Ruta: ");
 
                 int tamanoIni = ruta.recorrido.size();
@@ -504,7 +504,7 @@ public class Algoritmo {
                 }
 
                 int tiempoEnLlegar = (tamanoFin - tamanoIni - 1) * 60
-                        / ((int) Math.round(cluster.vehiculo.getVelocidad()));
+                        / ((int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
                 System.out.println("Nodos recorridos: " + (tamanoFin - tamanoIni - 1) + "   Tiempo llegada en minutos: "
                         + tiempoEnLlegar + " minutos");
 
@@ -524,8 +524,8 @@ public class Algoritmo {
                 Pedido pedido = cluster.pedidos.poll();
                 ruta.addPedido(pedido);
                 // imprimir información del pedido
-                System.out.println("x:  " + pedido.x + "   y: " + pedido.y + "   z: " + pedido.minFaltantes
-                        + "   cant: " + pedido.cantidad + "   idNodo: " + pedido.getNodoId());
+                System.out.println("x:  " + pedido.getX() + "   y: " + pedido.getY() + "   z: " + pedido.getMinFaltantes()
+                        + "   cant: " + pedido.getCantidad() + "   idNodo: " + pedido.getNodoId());
 
                 // verificamos si nos encontramos en un nodo bloqueado
                 // esto puede ocurrir ya que hemos entregado un pedido en un nodo bloqueado
@@ -539,7 +539,7 @@ public class Algoritmo {
                 }
 
                 // corremos el algoritmo de dijkstra
-                dijkstraAlgorithm.dijkstra(origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getVelocidad()));
+                dijkstraAlgorithm.dijkstra(origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
                 System.out.printf("Ruta: ");
 
                 // tamano antes de la nueva parte de la ruta
@@ -559,7 +559,7 @@ public class Algoritmo {
 
                 // calculamos el tiempo que tomó en llegar
                 int tiempoEnLlegar = (tamanoFin - tamanoIni - 1) * 60
-                        / ((int) Math.round(cluster.vehiculo.getVelocidad()));
+                        / ((int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
                 System.out.println("Nodos recorridos: " + (tamanoFin - tamanoIni - 1) + "   Tiempo llegada en minutos: "
                         + tiempoEnLlegar + " minutos");
 
@@ -596,7 +596,7 @@ public class Algoritmo {
                     ruta.addNodoRetorno(origen);
                 }
 
-                dijkstraAlgorithm.dijkstra(origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getVelocidad()));
+                dijkstraAlgorithm.dijkstra(origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
 
                 int tamanoIni = ruta.retorno.size(); // FALTA ENTENDER EL TAMANOINI AQUI
 
