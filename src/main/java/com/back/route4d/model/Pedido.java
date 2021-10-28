@@ -23,6 +23,8 @@ public class Pedido implements Comparable<Pedido> {
     private Date fechaLimite;
     private int tiempoEntrega;
 
+    public Pedido(){};
+
     public Pedido(int id, int x, int y, int cantidad, int minFaltantes) {
         this.id = id;
         this.x = x;
@@ -37,7 +39,7 @@ public class Pedido implements Comparable<Pedido> {
         this.y = y;
         this.cantidad = cantidad;
         this.minFaltantes = minFaltantes;
-        this.fechaPedido = fechaPedido;
+        //this.fechaPedido = fechaPedido;
     }
 
     public int getNodoId() {
