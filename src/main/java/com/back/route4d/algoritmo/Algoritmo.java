@@ -417,15 +417,15 @@ public class Algoritmo {
                     // if(i.minFaltantes > j.minFaltantes) return 1;
                     // else if (i.minFaltantes < j.minFaltantes) return -1;
                     // else return 0;
-                    if (Math.abs(i.x - Configuraciones.almacenX) + Math.abs(i.y - Configuraciones.almacenY) > Math
-                            .abs(j.x - Configuraciones.almacenX) + Math.abs(j.y - Configuraciones.almacenY))
+                    if (Math.abs(i.getX() - Configuraciones.almacenX) + Math.abs(i.getY() - Configuraciones.almacenY) > Math
+                            .abs(j.getX() - Configuraciones.almacenX) + Math.abs(j.getY() - Configuraciones.almacenY))
                         return 1;
-                    else if (Math.abs(i.x - Configuraciones.almacenX) + Math.abs(i.y - Configuraciones.almacenY) < Math
-                            .abs(j.x - Configuraciones.almacenX) + Math.abs(j.y - Configuraciones.almacenY))
+                    else if (Math.abs(i.getX() - Configuraciones.almacenX) + Math.abs(i.getY() - Configuraciones.almacenY) < Math
+                            .abs(j.getX() - Configuraciones.almacenX) + Math.abs(j.getY() - Configuraciones.almacenY))
                         return -1;
-                    else if (i.cantidad > j.cantidad)
+                    else if (i.getCantidad() > j.getCantidad())
                         return 1;
-                    else if (i.cantidad < j.cantidad)
+                    else if (i.getCantidad() < j.getCantidad())
                         return -1;
                     else
                         return 1;
@@ -461,8 +461,8 @@ public class Algoritmo {
                 continue;
             // imprimos en forma de reporte la información relacionada a la ruta
             System.out.println("------------------------------------------------------");
-            System.out.println("Cluster: " + cluster.vehiculo.getTipo());
-            System.out.println("Capacidad: " + cluster.capacidad + "/" + cluster.vehiculo.getCapacidad());
+            System.out.println("Cluster: " + cluster.vehiculo.getTipo().getIdTipo());
+            System.out.println("Capacidad: " + cluster.capacidad + "/" + cluster.vehiculo.getTipo().getCapacidad());
             // System.out.println("Tiempo inicial en minutos: " + tiempoMinutos);
             System.out.println("------------------------------------------------------");
 
