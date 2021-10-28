@@ -244,7 +244,7 @@ public class Algoritmo {
             String strYearMonth = getLockedNodesDateFromName(fileName);
             String line;
             int id = 1; // para el identificador de la calle bloqueada
-            listaCallesBloqueadas = new ArrayList<CallesBloqueadas>(); // para calles bloqueadas
+            listaCallesBloqueadas = new ArrayList<>(); // para calles bloqueadas
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
 
             while ((line = br.readLine()) != null) {
