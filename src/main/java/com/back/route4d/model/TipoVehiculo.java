@@ -27,7 +27,5 @@ public class TipoVehiculo {
     @Column(nullable = false)
     private double velocidad;
 
-    @OneToMany(mappedBy = "tipo")
-    private Set<Vehicle> vehicles;
 
 }
