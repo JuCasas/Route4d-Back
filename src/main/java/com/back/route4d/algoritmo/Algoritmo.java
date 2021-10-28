@@ -22,10 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired; // para servicios
 public class Algoritmo {
     public List<Pedido> listaPedidos;
 
-    public List<AVehiculo> listaVehiculoTipo1;
-    public List<AVehiculo> listaVehiculoTipo2;
-    public List<AVehiculo> listaVehiculoTipo3;
-    public List<AVehiculo> listaVehiculoTipo4;
+    public List<Vehicle> listaVehiculoTipo1;
+    public List<Vehicle> listaVehiculoTipo2;
+    public List<Vehicle> listaVehiculoTipo3;
+    public List<Vehicle> listaVehiculoTipo4;
 
     public List<Cluster> clusterResult;
     public List<CallesBloqueadas> listaCallesBloqueadas;
@@ -91,42 +91,42 @@ public class Algoritmo {
      * @param typeId identificador del tipo de vehículo
      * @return lista con vehículos agregados
      */
-    public List<AVehiculo> initializeVehicleList(int typeId) {
-        List<AVehiculo> list = new ArrayList<>();
+    public List<Vehicle> initializeVehicleList(int typeId) {
+        List<Vehicle> list = new ArrayList<>();
         int count;
         String type;
-        int capacity;
+        double capacity;
         double weight;
 
         if (typeId == 1) {
             count = 2;
-            type = "Tipo TA";
-            capacity = 25;
+            capacity = 25.0;
             weight = 2.5;
         } else if (typeId == 2) {
             count = 4;
-            type = "Tipo TB";
-            capacity = 20;
+            capacity = 20.0;
             weight = 2.0;
         } else if (typeId == 3) {
             count = 4;
-            type = "Tipo TC";
-            capacity = 15;
+            capacity = 15.0;
             weight = 1.5;
         } else {
             count = 10;
-            type = "Tipo TD";
-            capacity = 10;
+            capacity = 10.0;
             weight = 1.0;
         }
 
         for (int i = 0; i < count; i++) {
-            AVehiculo vehiculo = new AVehiculo();
-            vehiculo.setTipo(type);
-            vehiculo.setTipoId(typeId);
-            vehiculo.setCapacidad(capacity);
-            vehiculo.setPeso(weight);
-            vehiculo.setVelocidad(50.0);
+            Vehicle vehiculo = new Vehicle();
+
+            // agregando datos de tipo
+            TipoVehiculo tipo = new TipoVehiculo();
+            tipo.setIdTipo(typeId);
+            tipo.setCapacidad(capacity);
+            tipo.setPesoBruto(weight);
+            tipo.setVelocidad(50.0);
+
+            vehiculo.setTipo(tipo);
             list.add(vehiculo);
         }
 
@@ -340,7 +340,7 @@ public class Algoritmo {
     public void obtenerPedidosClusterizados() {
         int cantClusters = cantClusterVehiculoTipo1 + cantClusterVehiculoTipo2 + cantClusterVehiculoTipo3 + cantClusterVehiculoTipo4;
 
-        List<AVehiculo> vehiculos = inicializarVehiculos();
+        List<Vehicle> vehiculos = inicializarVehiculos();
 
         // inicializar clusters
         List<Cluster> clustersList = inicializarClusters(vehiculos);
@@ -356,43 +356,47 @@ public class Algoritmo {
         System.out.println();
     }
 
-    public List<AVehiculo> inicializarVehiculos() {
-        List<AVehiculo> lista = new ArrayList<>();
+    public List<Vehicle> inicializarVehiculos() {
+        List<Vehicle> lista = new ArrayList<>();
 
         for (int i = 0; i < cantClusterVehiculoTipo1; i++) {
-            AVehiculo vehiculo = new AVehiculo();
-            vehiculo.setTipo("Tipo TA");
-            vehiculo.setCapacidad(25);
-            vehiculo.setPeso(2.5);
-            vehiculo.setVelocidad(50.0);
-            vehiculo.setTipoId(1);
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            tipo.setIdTipo(1);
+            tipo.setCapacidad(25.0);
+            tipo.setPesoBruto(2.5);
+            tipo.setVelocidad(50.0);
+            vehiculo.setTipo(tipo);
             lista.add(vehiculo);
         }
         for (int i = 0; i < cantClusterVehiculoTipo2; i++) {
-            AVehiculo vehiculo = new AVehiculo();
-            vehiculo.setTipo("Tipo TB");
-            vehiculo.setCapacidad(20);
-            vehiculo.setPeso(2.0);
-            vehiculo.setVelocidad(50.0);
-            vehiculo.setTipoId(2);
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            tipo.setIdTipo(2);
+            tipo.setCapacidad(20.0);
+            tipo.setPesoBruto(2.0);
+            tipo.setVelocidad(50.0);
+            vehiculo.setTipo(tipo);
             lista.add(vehiculo);
         }
         for (int i = 0; i < cantClusterVehiculoTipo3; i++) {
-            AVehiculo vehiculo = new AVehiculo();
-            vehiculo.setTipo("Tipo TC");
-            vehiculo.setCapacidad(15);
-            vehiculo.setPeso(1.5);
-            vehiculo.setVelocidad(50.0);
-            vehiculo.setTipoId(3);
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            tipo.setIdTipo(3);
+            tipo.setCapacidad(15.0);
+            tipo.setPesoBruto(1.5);
+            tipo.setVelocidad(50.0);
+            vehiculo.setTipo(tipo);
             lista.add(vehiculo);
         }
         for (int i = 0; i < cantClusterVehiculoTipo4; i++) {
-            AVehiculo vehiculo = new AVehiculo();
-            vehiculo.setTipo("Tipo TD");
-            vehiculo.setCapacidad(10);
-            vehiculo.setPeso(1.0);
-            vehiculo.setVelocidad(50.0);
-            vehiculo.setTipoId(4);
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            tipo.setIdTipo(4);
+            tipo.setCapacidad(10.0);
+            tipo.setPesoBruto(1.0);
+            tipo.setVelocidad(50.0);
+            vehiculo.setTipo(tipo);
             lista.add(vehiculo);
         }
 
@@ -402,9 +406,9 @@ public class Algoritmo {
     /**
      * Inicializa los clusters
      */
-    public List<Cluster> inicializarClusters(List<AVehiculo> vehiculos) {
+    public List<Cluster> inicializarClusters(List<Vehicle> vehiculos) {
         List<Cluster> lista = new ArrayList<Cluster>();
-        for (AVehiculo vehiculo : vehiculos) {
+        for (Vehicle vehiculo : vehiculos) {
             Cluster cluster = new Cluster();
             // TODO ENTENDER
             cluster.pedidos = new PriorityQueue<Pedido>(500, new Comparator<Pedido>() {
