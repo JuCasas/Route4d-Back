@@ -139,8 +139,8 @@ public class Kmeans {
 
     private double SSE(Cluster cluster) {
 
-        double sumX = cluster.firstPedido.x;
-        double sumY = cluster.firstPedido.y;
+        double sumX = cluster.firstPedido.getX();
+        double sumY = cluster.firstPedido.getY();
         double sum = 0;
         double media = euclideanDistanceXCluster(cluster, cluster.firstPedido);
         int cant = 1;
