@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,16 +15,17 @@ public class Pedido implements Comparable<Pedido> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Transient
+    private int idCluster;
+
     private int cluster;
     private int x;
     private int y;
     private int cantidad;
     private int minFaltantes;
-    private Date fechaPedido;
-    private Date fechaLimite;
+    private LocalDateTime fechaPedido;
+    private LocalDateTime fechaLimite;
     private int tiempoEntrega;
-
-    public Pedido(){};
 
     public Pedido(int id, int x, int y, int cantidad, int minFaltantes) {
         this.id = id;
@@ -39,7 +41,7 @@ public class Pedido implements Comparable<Pedido> {
         this.y = y;
         this.cantidad = cantidad;
         this.minFaltantes = minFaltantes;
-        //this.fechaPedido = fechaPedido;
+        this.fechaPedido = fechaPedido;
     }
 
     public int getNodoId() {

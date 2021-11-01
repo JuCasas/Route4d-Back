@@ -206,7 +206,7 @@ public class Algoritmo {
             String strYearMonth = getOrdersDateFromName(fileName); // datos del nombre del archivo
             String line; // línea del archivo
             int id = 1; // contador para identificador
-            listaPedidos = new ArrayList<Pedido>(); // para almacenar pedidos
+            listaPedidos = new ArrayList<>(); // para almacenar pedidos
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
 
             // Leyendo datos del archivo
