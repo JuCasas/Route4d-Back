@@ -86,7 +86,7 @@ public class Kmeans {
                 cont++;
                 continue;
             }
-            cluster.firstPedido.idCluster = cont;
+            cluster.firstPedido.setCluster(cont);
 
             if (cluster.vehiculo.getTipo().getIdTipo() == 1) {
                 listaVehiculosTipo1.add(cluster.firstPedido);
@@ -111,25 +111,25 @@ public class Kmeans {
 
         for (Pedido pedido : listaVehiculosTipo1) {
             if (totalVehiculosTipo1 < cantVehiculosTipo1) {
-                totalsse = totalsse + SSE(clusters.get(pedido.idCluster));
+                totalsse = totalsse + SSE(clusters.get(pedido.getIdCluster()));
                 totalVehiculosTipo1++;
             }
         }
         for (Pedido pedido : listaVehiculosTipo2) {
             if (totalVehiculosTipo2 < cantVehiculosTipo2) {
-                totalsse = totalsse + SSE(clusters.get(pedido.idCluster));
+                totalsse = totalsse + SSE(clusters.get(pedido.getIdCluster()));
                 totalVehiculosTipo2++;
             }
         }
         for (Pedido pedido : listaVehiculosTipo3) {
             if (totalVehiculosTipo3 < cantVehiculosTipo3) {
-                totalsse = totalsse + SSE(clusters.get(pedido.idCluster));
+                totalsse = totalsse + SSE(clusters.get(pedido.getIdCluster()));
                 totalVehiculosTipo3++;
             }
         }
         for (Pedido pedido : listaVehiculosTipo4) {
             if (totalVehiculosTipo4 < cantVehiculosTipo4) {
-                totalsse = totalsse + SSE(clusters.get(pedido.idCluster));
+                totalsse = totalsse + SSE(clusters.get(pedido.getIdCluster()));
                 totalVehiculosTipo4++;
             }
         }
