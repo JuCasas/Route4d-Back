@@ -30,4 +30,6 @@ public class Vehicle {
     @Column(nullable = false)
     private int estado;
 
+    public Vehicle() {
+    }
 }

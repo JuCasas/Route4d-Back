@@ -28,4 +28,7 @@ public class TipoVehiculo {
     private double velocidad;
 
 
+    public TipoVehiculo() {
+        super();
+    }
 }

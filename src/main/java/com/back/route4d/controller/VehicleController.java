@@ -27,6 +27,13 @@ public class VehicleController {
         return new ResponseEntity<Vehicle>(vehicleService.saveVehicle(vehicle), HttpStatus.CREATED);
     }
 
+
+
+    @GetMapping("/tipo/{id}")
+    public List<Vehicle> getVehiclesType(@PathVariable("id") int tipoId){
+        return vehicleService.getAllType(tipoId);
+    }
+
     //Build get all vehicles REST API
     @GetMapping
     public List<Vehicle> getAllVehicles(){

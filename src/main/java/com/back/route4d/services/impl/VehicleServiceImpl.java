@@ -30,6 +30,11 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
+    public List<Vehicle> getAllType(int tipoId) {
+        return vehicleRepository.getAllByType(tipoId);
+    }
+
+    @Override
     public Vehicle getVehicleById(int id) {
         return vehicleRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("Vehicle","Id",id));
