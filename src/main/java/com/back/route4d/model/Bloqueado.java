@@ -1,4 +1,4 @@
-package com.paqhoy.algoritmoAlgorutas.model;
+package com.back.route4d.model;
 
 import lombok.Data;
 
