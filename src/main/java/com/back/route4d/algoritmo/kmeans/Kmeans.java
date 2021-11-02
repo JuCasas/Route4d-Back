@@ -86,7 +86,7 @@ public class Kmeans {
                 cont++;
                 continue;
             }
-            cluster.firstPedido.setCluster(cont);
+            cluster.firstPedido.setIdCluster(cont);
 
             if (cluster.vehiculo.getTipo().getIdTipo() == 1) {
                 listaVehiculosTipo1.add(cluster.firstPedido);
