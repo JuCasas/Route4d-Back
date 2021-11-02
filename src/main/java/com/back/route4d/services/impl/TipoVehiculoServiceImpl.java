@@ -45,6 +45,7 @@ public class TipoVehiculoServiceImpl implements TipoVehiculoService {
         existingTipo.setCapacidad(tipo.getCapacidad());
         existingTipo.setPesoCarga(tipo.getPesoCarga());
         existingTipo.setVelocidad(tipo.getVelocidad());
+        existingTipo.setCantidad(tipo.getCantidad());
         existingTipo.setEstado(tipo.getEstado());
         //Save vehicle to DB
         tipoVehiculoRepository.save(existingTipo);

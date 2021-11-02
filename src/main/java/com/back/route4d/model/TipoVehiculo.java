@@ -27,6 +27,9 @@ public class TipoVehiculo {
     @Column(nullable = false)
     private double velocidad;
 
+    @Column(nullable = false)
+    private double cantidad;
+
 
     public TipoVehiculo() {
         super();
