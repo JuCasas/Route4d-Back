@@ -46,9 +46,29 @@ public class Algoritmo {
 
     /**
      * Inicializa las variables necesarias para ejecutar el algoritmo
-     * 
+     *
      * @return una cadena que indica el resultado del intento de inicialización
      */
+
+    public ArrayList resolver(){
+        inicializar();
+        generarRutas();
+        ArrayList list = new ArrayList();
+        for (Ruta ruta:listaRutas){
+            List<Map<String,Integer>> recorridoEnviar = new ArrayList<>();
+            for (int nodo:ruta.recorrido){
+                int x = (nodo - 1) % 71;
+                int y = (nodo - 1) / 71;
+                Map<String ,Integer> map=new HashMap<String,Integer>();
+                map.put("x",x);
+                map.put("y",y);
+                recorridoEnviar.add(map);
+            }
+            list.add(recorridoEnviar);
+        }
+        return list;
+    }
+
     public String inicializar() {
         // Inicializando listas de vehículos
         listaVehiculoTipo1 = initializeVehicleList(1);
@@ -87,7 +107,7 @@ public class Algoritmo {
 
     /**
      * Inicializa una lista de vehículos
-     * 
+     *
      * @param typeId identificador del tipo de vehículo
      * @return lista con vehículos agregados
      */
@@ -135,7 +155,7 @@ public class Algoritmo {
 
     /**
      * Genera las rutas a partir de los datos obtenidos
-     * 
+     *
      * @return cadena que indica que la generación de rutas fue exitosa
      */
     public String generarRutas() {
@@ -157,7 +177,7 @@ public class Algoritmo {
 
     /**
      * Obtiene mes y año a partir del nombre del archivo de nodos bloqueados
-     * 
+     *
      * @param fileName cadena con la ruta completa del archivo
      * @return cadena con el mes y el año correspondientes
      */
@@ -171,7 +191,7 @@ public class Algoritmo {
 
     /**
      * Obtiene mes y año a partir del nombre del archivo de pedidos
-     * 
+     *
      * @param fileName cadena con la ruta completa del archivo
      * @return cadena con el mes y el año correspondientes
      */
@@ -185,7 +205,7 @@ public class Algoritmo {
 
     /**
      * Convierte una fecha del tipo LocalDateTime a minutos del tipo int
-     * 
+     *
      * @param ldt fecha del tipo LocalDateTime
      * @return la fecha convertida a los minutos que pasaron desde el inicio del año
      */
@@ -612,10 +632,10 @@ public class Algoritmo {
 
     /**
      * Verifica si un nodo está bloqueado
-     * 
+     *
      * @param tiempoMinutos el tiempo que lleva ejecutándose el algoritmo
      * @param nodoId        identificador del nodo a verificar
-     * 
+     *
      * @return true o false dependiendo de si el nodo está bloqueado o no
      */
     private boolean estaBloqueada(int tiempoMinutos, int nodoId) {

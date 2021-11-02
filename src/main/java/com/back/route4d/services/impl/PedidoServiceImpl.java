@@ -2,7 +2,6 @@ package com.back.route4d.services.impl;
 
 import com.back.route4d.exception.ResourceNotFoundException;
 import com.back.route4d.model.Pedido;
-import com.back.route4d.model.Vehicle;
 import com.back.route4d.repository.PedidoRepository;
 import com.back.route4d.services.PedidoService;
 import org.springframework.stereotype.Service;
@@ -43,7 +42,7 @@ public class PedidoServiceImpl implements PedidoService {
 
         existingPedido.setX(pedido.getX());
         existingPedido.setY(pedido.getY());
-        existingPedido.setCluster(pedido.getCluster());
+        existingPedido.setIdCluster(pedido.getIdCluster());
         existingPedido.setCantidad(pedido.getCantidad());
         existingPedido.setMinFaltantes(pedido.getMinFaltantes());
         existingPedido.setFechaPedido(pedido.getFechaPedido());

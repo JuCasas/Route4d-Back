@@ -29,6 +29,7 @@ public class Ruta {
         this.tiempoMin = Integer.MAX_VALUE;
         this.chofer = null;
         this.capacidad = capacidad;
+        this.vehiculo = new Vehicle();
         this.vehiculo = vehiculo;
     }
 
