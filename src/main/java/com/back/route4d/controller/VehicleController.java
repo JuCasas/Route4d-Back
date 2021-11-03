@@ -22,6 +22,7 @@ public class VehicleController {
     }
 
     //Build create vehicle REST API
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/")
     public ResponseEntity<Vehicle> saveVehicle(@RequestBody Vehicle vehicle){
         return new ResponseEntity<Vehicle>(vehicleService.saveVehicle(vehicle), HttpStatus.CREATED);
