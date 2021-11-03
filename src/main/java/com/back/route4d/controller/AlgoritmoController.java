@@ -26,4 +26,6 @@ public class AlgoritmoController {
     public ArrayList getRoutes(){
         return algoritmoService.enviarRutas();
     }
+
+
 }
