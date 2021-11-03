@@ -15,6 +15,9 @@ public class TipoVehiculo {
     @Column(nullable = false)
     private double pesoBruto;
 
+    @Column(nullable = true)
+    private String nombre;
+
     @Column(nullable = false)
     private int estado;
 
