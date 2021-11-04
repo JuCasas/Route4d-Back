@@ -30,6 +30,7 @@ public class Algoritmo {
     public List<Cluster> clusterResult;
     public List<CallesBloqueadas> listaCallesBloqueadas;
     public List<Ruta> listaRutas;
+    public List<RutaFront> listaRutasFront;
     public Dijkstra dijkstraAlgorithm;
     public Kmeans kmeans;
 
@@ -53,7 +54,8 @@ public class Algoritmo {
     public ArrayList resolver(){
         inicializar();
         generarRutas();
-        ArrayList listaRecorrido = new ArrayList();
+
+        listaRutasFront = new ArrayList<RutaFront>();
 
         for (Ruta ruta:listaRutas){
             List<Map<String,Integer>> recorridoEnviar = new ArrayList<>();
@@ -76,12 +78,15 @@ public class Algoritmo {
                 retornoEnviar.add(map);
             }
 
+            RutaFront rutaFront = new RutaFront(ruta.vehiculo,ruta.capacidad);
+            rutaFront.setTiempoMin(ruta.getTiempoMin());
+            rutaFront.pedidos.addAll(ruta.pedidos);
+            rutaFront.recorrido.addAll(recorridoEnviar);
+            rutaFront.retorno.addAll(retornoEnviar);
 
-
-
-            listaRecorrido.add(recorridoEnviar);
+            listaRutasFront.add(rutaFront);
         }
-        return listaRecorrido;
+        return (ArrayList) listaRutasFront;
     }
 
     public String inicializar() {
