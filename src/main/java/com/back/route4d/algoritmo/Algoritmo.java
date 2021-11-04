@@ -53,20 +53,35 @@ public class Algoritmo {
     public ArrayList resolver(){
         inicializar();
         generarRutas();
-        ArrayList list = new ArrayList();
+        ArrayList listaRecorrido = new ArrayList();
+
         for (Ruta ruta:listaRutas){
             List<Map<String,Integer>> recorridoEnviar = new ArrayList<>();
-            for (int nodo:ruta.recorrido){
-                int x = (nodo - 1) % 71;
-                int y = (nodo - 1) / 71;
+            List<Map<String,Integer>> retornoEnviar = new ArrayList<>();
+            for (int nodoRecorrido:ruta.recorrido){
+                int x = (nodoRecorrido - 1) % 71;
+                int y = (nodoRecorrido - 1) / 71;
                 Map<String ,Integer> map=new HashMap<String,Integer>();
                 map.put("x",x);
                 map.put("y",y);
                 recorridoEnviar.add(map);
             }
-            list.add(recorridoEnviar);
+
+            for (int nodoRetorno: ruta.retorno){
+                int x = (nodoRetorno - 1) % 71;
+                int y = (nodoRetorno - 1) / 71;
+                Map<String ,Integer> map=new HashMap<String,Integer>();
+                map.put("x",x);
+                map.put("y",y);
+                retornoEnviar.add(map);
+            }
+
+
+
+
+            listaRecorrido.add(recorridoEnviar);
         }
-        return list;
+        return listaRecorrido;
     }
 
     public String inicializar() {
@@ -138,6 +153,7 @@ public class Algoritmo {
 
         for (int i = 0; i < count; i++) {
             Vehicle vehiculo = new Vehicle();
+            vehiculo.setIdVehiculo(typeId*10+i);
 
             // agregando datos de tipo
             TipoVehiculo tipo = new TipoVehiculo();
@@ -170,7 +186,7 @@ public class Algoritmo {
         tiempo2 = LocalDateTime.now();
 
         System.out.print("Tiempo de ejecución del algoritmo: ");
-        System.out.println((tiempo2.getSecond() - tiempo1.getSecond()) + " segundos");
+        System.out.println(((tiempo2.getMinute()*60 + tiempo2.getSecond()) - (tiempo1.getMinute()*60+tiempo1.getSecond())) + " segundos");
 
         return "Rutas generadas exitosamente";
     }
@@ -230,11 +246,18 @@ public class Algoritmo {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
 
             // Leyendo datos del archivo
-
+            int flag = 0;
             while ((line = br.readLine()) != null) {
                 final String[] tokens = line.trim().split(",");
                 final String[] date = tokens[0].trim().split(":");
                 final int day = Integer.parseInt(date[0]);
+                //TODO Revisar Y cambiar para funcionar con variables de front
+                if(day>=1 && day<=3){
+                    flag = 1;
+                }
+                if(day>3){
+                    break;
+                }
                 final int hour = Integer.parseInt(date[1]);
                 final int min = Integer.parseInt(date[2]);
                 final int x = Integer.parseInt(tokens[1]);
@@ -244,8 +267,11 @@ public class Algoritmo {
                 String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
                 LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
 
-                Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate);
-                listaPedidos.add(pedido);
+                if (flag==1) {
+                    Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate);
+                    listaPedidos.add(pedido);
+                    flag = 0;
+                }
             }
 
             br.close();
@@ -266,7 +292,7 @@ public class Algoritmo {
             int id = 1; // para el identificador de la calle bloqueada
             listaCallesBloqueadas = new ArrayList<>(); // para calles bloqueadas
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
-
+            //TODO hacer lo mismo que con pedidos para el filtrado de rutas BLOQUEADAS
             while ((line = br.readLine()) != null) {
                 final String[] tokens = line.trim().split(",");
                 final String[] plazo = tokens[0].trim().split("-");
@@ -330,10 +356,10 @@ public class Algoritmo {
         if (k < 3)
             k = 3;
 
-        cantClusterVehiculoTipo1 = cantVehiculoTipo1 * k;
-        cantClusterVehiculoTipo2 = cantVehiculoTipo2 * k;
-        cantClusterVehiculoTipo3 = cantVehiculoTipo3 * k;
-        cantClusterVehiculoTipo4 = cantVehiculoTipo4 * k;
+        cantClusterVehiculoTipo1 = cantVehiculoTipo1 * 1;
+        cantClusterVehiculoTipo2 = cantVehiculoTipo2 * 1;
+        cantClusterVehiculoTipo3 = cantVehiculoTipo3 * 1;
+        cantClusterVehiculoTipo4 = cantVehiculoTipo4 * 1;
     }
 
     /**
@@ -360,7 +386,12 @@ public class Algoritmo {
     public void obtenerPedidosClusterizados() {
         int cantClusters = cantClusterVehiculoTipo1 + cantClusterVehiculoTipo2 + cantClusterVehiculoTipo3 + cantClusterVehiculoTipo4;
 
-        List<Vehicle> vehiculos = inicializarVehiculos();
+        //List<Vehicle> vehiculos = inicializarVehiculos();
+        List<Vehicle> vehiculos = new ArrayList<>();
+        vehiculos.addAll(listaVehiculoTipo1);
+        vehiculos.addAll(listaVehiculoTipo2);
+        vehiculos.addAll(listaVehiculoTipo3);
+        vehiculos.addAll(listaVehiculoTipo4);
 
         // inicializar clusters
         List<Cluster> clustersList = inicializarClusters(vehiculos);
