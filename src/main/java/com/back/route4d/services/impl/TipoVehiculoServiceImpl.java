@@ -26,6 +26,16 @@ public class TipoVehiculoServiceImpl implements TipoVehiculoService {
         this.tipoVehiculoRepository = tipoVehiculoRepository;
     }
 
+    public Double convertirDouble(Object value){
+        Double valor = null;
+        if(value.getClass().getName() == "java.lang.String"){
+            valor = Double.parseDouble((String) value);
+        }else if(value.getClass().getName() == "java.lang.Integer"){
+            Integer aux = new Integer((Integer) value);
+            valor = new Double(aux);
+        }
+        return valor;
+    }
     @Override
     public TipoVehiculo saveTipoVehiculo(TipoVehiculo tipo) {
         return tipoVehiculoRepository.save(tipo);
@@ -91,28 +101,31 @@ public class TipoVehiculoServiceImpl implements TipoVehiculoService {
                     if("idTipo".equals(campo)){
                         tipoM.setIdTipo((int) value);
                     }else if ("cantidad".equals(campo)) {
-                        tipoM.setCantidad((int) value);
+                        if(value.getClass().getName() == "java.lang.Integer"){
+                            Integer aux = (Integer) value;
+                            tipoM.setCantidad(aux);
+                        }else{
+                            tipoM.setCantidad(Integer.parseInt((String) value) );
+                        }
                     } else if ("velocidad".equals(campo)) {
                         if(value.getClass().getName() == "java.lang.Integer"){
                             Integer aux = (Integer) value;
                             Double aux2 = aux.doubleValue();
                             tipoM.setVelocidad(aux2);
                         }else{
-                            tipoM.setVelocidad((Double) value);
+                            tipoM.setVelocidad(Double.parseDouble((String) value) );
                         }
                     } else if ("pesoCarga".equals(campo)) {
-                        if(value.getClass().getName() == "java.lang.Integer"){
-                            Integer aux = (Integer) value;
-                            Double aux2 = aux.doubleValue();
-                            tipoM.setPesoCarga(aux2);
+                        if(value.getClass().getName()!="java.lang.Double"){
+                            Double nuevo = convertirDouble(value);
+                            tipoM.setPesoCarga(nuevo);
                         }else{
                             tipoM.setPesoCarga((Double) value);
                         }
                     } else if ("capacidad".equals(campo)) {
-                        if(value.getClass().getName() == "java.lang.Integer"){
-                            Integer aux = (Integer) value;
-                            Double aux2 = aux.doubleValue();
-                            tipoM.setCapacidad(aux2);
+                        if(value.getClass().getName()!="java.lang.Double"){
+                            Double nuevo = convertirDouble(value);
+                            tipoM.setCapacidad(nuevo);
                         }else{
                             tipoM.setCapacidad((Double) value);
                         }
@@ -122,10 +135,9 @@ public class TipoVehiculoServiceImpl implements TipoVehiculoService {
                     } else if ("estado".equals(campo)) {
                         tipoM.setEstado((int) value);
                     } else if ("pesoBruto".equals(campo)) {
-                        if(value.getClass().getName() == "java.lang.Integer"){
-                            Integer aux = (Integer) value;
-                            Double aux2 = aux.doubleValue();
-                            tipoM.setPesoBruto(aux2);
+                        if(value.getClass().getName()!="java.lang.Double"){
+                            Double nuevo = convertirDouble(value);
+                            tipoM.setPesoBruto(nuevo);
                         }else{
                             tipoM.setPesoBruto((Double) value);
                         }
