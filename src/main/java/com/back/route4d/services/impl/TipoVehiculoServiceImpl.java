@@ -88,20 +88,47 @@ public class TipoVehiculoServiceImpl implements TipoVehiculoService {
 
         campos.forEach(
                 (campo, value) -> {
-                    if ("cantidad".equals(campo)) {
-                        tipoM.setCantidad((double) value);
+                    if("idTipo".equals(campo)){
+                        tipoM.setIdTipo((int) value);
+                    }else if ("cantidad".equals(campo)) {
+                        tipoM.setCantidad((int) value);
                     } else if ("velocidad".equals(campo)) {
-                        tipoM.setVelocidad((double) value);
+                        if(value.getClass().getName() == "java.lang.Integer"){
+                            Integer aux = (Integer) value;
+                            Double aux2 = aux.doubleValue();
+                            tipoM.setVelocidad(aux2);
+                        }else{
+                            tipoM.setVelocidad((Double) value);
+                        }
                     } else if ("pesoCarga".equals(campo)) {
-                        tipoM.setPesoCarga((double) value);
+                        if(value.getClass().getName() == "java.lang.Integer"){
+                            Integer aux = (Integer) value;
+                            Double aux2 = aux.doubleValue();
+                            tipoM.setPesoCarga(aux2);
+                        }else{
+                            tipoM.setPesoCarga((Double) value);
+                        }
                     } else if ("capacidad".equals(campo)) {
-                        tipoM.setCapacidad((double) value);
+                        if(value.getClass().getName() == "java.lang.Integer"){
+                            Integer aux = (Integer) value;
+                            Double aux2 = aux.doubleValue();
+                            tipoM.setCapacidad(aux2);
+                        }else{
+                            tipoM.setCapacidad((Double) value);
+                        }
+
                     } else if ("nombre".equals(campo)) {
                         tipoM.setNombre((String) value);
                     } else if ("estado".equals(campo)) {
                         tipoM.setEstado((int) value);
                     } else if ("pesoBruto".equals(campo)) {
-                        tipoM.setPesoBruto((double) value);
+                        if(value.getClass().getName() == "java.lang.Integer"){
+                            Integer aux = (Integer) value;
+                            Double aux2 = aux.doubleValue();
+                            tipoM.setPesoBruto(aux2);
+                        }else{
+                            tipoM.setPesoBruto((Double) value);
+                        }
                     }
                 }
         );

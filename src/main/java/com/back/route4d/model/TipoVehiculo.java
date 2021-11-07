@@ -31,7 +31,7 @@ public class TipoVehiculo {
     private double velocidad;
 
     @Column(nullable = false)
-    private double cantidad;
+    private int cantidad;
 
 
     public TipoVehiculo() {
