@@ -45,6 +45,7 @@ public class TipoVehiculoController {
         return new ResponseEntity<TipoVehiculo>(tipoVehiculoService.updateTipoVehiculo(tipo,tipoId),HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PatchMapping("/{id}")
     public ResponseEntity<TipoVehiculo> patch(@PathVariable("id") int tipoId, @RequestBody Map<Object, Object> campos) {
         return new ResponseEntity<TipoVehiculo>(tipoVehiculoService.patch(tipoId,campos),HttpStatus.OK);
