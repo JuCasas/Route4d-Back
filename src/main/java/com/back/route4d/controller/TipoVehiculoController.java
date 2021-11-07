@@ -3,10 +3,12 @@ import com.back.route4d.model.TipoVehiculo;
 import com.back.route4d.services.TipoVehiculoService;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -41,6 +43,11 @@ public class TipoVehiculoController {
     @PutMapping("/{id}")
     public ResponseEntity<TipoVehiculo> updateTipoVehiculo(@PathVariable("id") int tipoId, @RequestBody TipoVehiculo tipo){
         return new ResponseEntity<TipoVehiculo>(tipoVehiculoService.updateTipoVehiculo(tipo,tipoId),HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<TipoVehiculo> patch(@PathVariable("id") int tipoId, @RequestBody Map<Object, Object> campos) {
+        return new ResponseEntity<TipoVehiculo>(tipoVehiculoService.patch(tipoId,campos),HttpStatus.OK);
     }
 
     //Build delete vehicle by ID
