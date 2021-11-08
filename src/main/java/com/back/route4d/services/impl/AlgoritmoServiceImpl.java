@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @Service
 public class AlgoritmoServiceImpl implements AlgoritmoService {
@@ -17,9 +18,9 @@ public class AlgoritmoServiceImpl implements AlgoritmoService {
     }
 
     @Override
-    public ArrayList enviarRutas() {
+    public HashMap enviarRutas() {
         Algoritmo algoritmo = new Algoritmo();
-        ArrayList list = algoritmo.resolver();
+        HashMap list = algoritmo.resolver();
         return list;
     }
 }

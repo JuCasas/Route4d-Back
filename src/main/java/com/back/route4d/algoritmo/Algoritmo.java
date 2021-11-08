@@ -29,6 +29,7 @@ public class Algoritmo {
 
     public List<Cluster> clusterResult;
     public List<CallesBloqueadas> listaCallesBloqueadas;
+    public List<CallesBloqueadasFront> listaCallesBloqueadasFront;
     public List<Ruta> listaRutas;
     public List<RutaFront> listaRutasFront;
     public Dijkstra dijkstraAlgorithm;
@@ -55,7 +56,7 @@ public class Algoritmo {
      * @return una cadena que indica el resultado del intento de inicialización
      */
 
-    public ArrayList resolver(){
+    public HashMap resolver(){
         inicializar();
         generarRutas();
 
@@ -90,7 +91,29 @@ public class Algoritmo {
 
             listaRutasFront.add(rutaFront);
         }
-        return (ArrayList) listaRutasFront;
+
+
+        listaCallesBloqueadasFront = new ArrayList<CallesBloqueadasFront>();
+        for (CallesBloqueadas callesBloqueadas:listaCallesBloqueadas){
+            CallesBloqueadasFront calleFront = new CallesBloqueadasFront(callesBloqueadas.getMinutosInicio(),callesBloqueadas.getMinutosFin());
+            for (Integer nodo:callesBloqueadas.getNodos()){
+                int x = (nodo - 1) % 71;
+                int y = (nodo - 1) / 71;
+                Map<String ,Integer> map=new HashMap<String,Integer>();
+                map.put("x",x);
+                map.put("y",y);
+                calleFront.nodos.add(map);
+            }
+            listaCallesBloqueadasFront.add(calleFront);
+        }
+        HashMap<String,Object> enviar;
+
+        enviar = new HashMap<>();
+
+        enviar.put("Rutas",listaRutasFront);
+        enviar.put("Bloqueos",listaCallesBloqueadasFront);
+
+        return (HashMap) enviar;
     }
 
     public String inicializar() {

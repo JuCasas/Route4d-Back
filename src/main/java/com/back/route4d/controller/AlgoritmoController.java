@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -23,7 +24,7 @@ public class AlgoritmoController {
 
     //Build get vehicle by ID
     @GetMapping("/")
-    public ArrayList getRoutes(){
+    public HashMap getRoutes(){
         return algoritmoService.enviarRutas();
     }
 
