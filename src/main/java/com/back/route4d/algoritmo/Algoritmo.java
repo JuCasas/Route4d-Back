@@ -319,7 +319,7 @@ public class Algoritmo {
             int id = 1; // para el identificador de la calle bloqueada
             listaCallesBloqueadas = new ArrayList<>(); // para calles bloqueadas
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
-            //TODO hacer lo mismo que con pedidos para el filtrado de rutas BLOQUEADAS
+
             while ((line = br.readLine()) != null) {
                 final String[] tokens = line.trim().split(",");
                 final String[] plazo = tokens[0].trim().split("-");
@@ -327,34 +327,41 @@ public class Algoritmo {
                 final String[] fin = plazo[1].trim().split(":");
                 final int diaIni = Integer.parseInt(inicio[0]);
                 final int diaFin = Integer.parseInt(fin[0]);
-                final int horaIni = Integer.parseInt(inicio[1]);
-                final int horaFin = Integer.parseInt(fin[1]);
-                final int minIni = Integer.parseInt(inicio[2]);
-                final int minFin = Integer.parseInt(fin[2]);
-                String strDateIni = strYearMonth + "-" + diaIni + " " + horaIni + ":" + minIni + ":0";
-                String strDateFin = strYearMonth + "-" + diaFin + " " + horaFin + ":" + minFin + ":0";
-                LocalDateTime dateIni = LocalDateTime.parse(strDateIni, formatter);
-                LocalDateTime dateFin = LocalDateTime.parse(strDateFin, formatter);
 
-                final int len = tokens.length - 1;
-                final String[] strCoords = Arrays.copyOfRange(tokens, 1, len + 1);
-                final int[] coords = new int[len];
+                boolean diaIniEnRango = diaIni >= diaInfSimulacion && diaIni <= diaSupSimulacion;
+                boolean diaFinEnRango = diaFin >= diaInfSimulacion && diaFin <= diaSupSimulacion;
+                boolean bloqueoEnRango = diaIni <= diaInfSimulacion && diaFin >= diaSupSimulacion;
 
-                for (int i = 0; i < len; i++) {
-                    coords[i] = Integer.parseInt(strCoords[i]); // pasando a enteros
+                if (diaIniEnRango || diaFinEnRango || bloqueoEnRango) {
+                    final int horaIni = Integer.parseInt(inicio[1]);
+                    final int horaFin = Integer.parseInt(fin[1]);
+                    final int minIni = Integer.parseInt(inicio[2]);
+                    final int minFin = Integer.parseInt(fin[2]);
+                    String strDateIni = strYearMonth + "-" + diaIni + " " + horaIni + ":" + minIni + ":0";
+                    String strDateFin = strYearMonth + "-" + diaFin + " " + horaFin + ":" + minFin + ":0";
+                    LocalDateTime dateIni = LocalDateTime.parse(strDateIni, formatter);
+                    LocalDateTime dateFin = LocalDateTime.parse(strDateFin, formatter);
+
+                    final int len = tokens.length - 1;
+                    final String[] strCoords = Arrays.copyOfRange(tokens, 1, len + 1);
+                    final int[] coords = new int[len];
+
+                    for (int i = 0; i < len; i++) {
+                        coords[i] = Integer.parseInt(strCoords[i]); // pasando a enteros
+                    }
+
+                    CallesBloqueadas calleBloqueada = new CallesBloqueadas(id++, convertLocalDateTimeToMinutes(dateIni),
+                            convertLocalDateTimeToMinutes(dateFin));
+
+                    // Agregando el identificador del nodo a la calle bloqueada
+                    for (int i = 0; i < len; i += 2) {
+                        int x = coords[i];
+                        int y = coords[i + 1];
+                        calleBloqueada.addNode(x + 71 * y + 1);
+                    }
+
+                    listaCallesBloqueadas.add(calleBloqueada);
                 }
-
-                CallesBloqueadas calleBloqueada = new CallesBloqueadas(id++, convertLocalDateTimeToMinutes(dateIni),
-                        convertLocalDateTimeToMinutes(dateFin));
-
-                // Agregando el identificador del nodo a la calle bloqueada
-                for (int i = 0; i < len; i += 2) {
-                    int x = coords[i];
-                    int y = coords[i + 1];
-                    calleBloqueada.addNode(x + 71 * y + 1);
-                }
-
-                listaCallesBloqueadas.add(calleBloqueada);
             }
 
             br.close();
