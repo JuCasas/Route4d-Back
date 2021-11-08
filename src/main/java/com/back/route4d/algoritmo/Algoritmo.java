@@ -278,33 +278,26 @@ public class Algoritmo {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
 
             // Leyendo datos del archivo
-            boolean pedidoEnRango = false;
             while ((line = br.readLine()) != null) {
                 final String[] tokens = line.trim().split(",");
                 final String[] date = tokens[0].trim().split(":");
                 final int day = Integer.parseInt(date[0]);
 
                 // Para simulación de 3 días
-                if (day >= diaInfSimulacion && day <= diaSupSimulacion){
-                    pedidoEnRango = true;
-                }
-                if (day > diaSupSimulacion){
-                    break;
-                }
-
-                final int hour = Integer.parseInt(date[1]);
-                final int min = Integer.parseInt(date[2]);
-                final int x = Integer.parseInt(tokens[1]);
-                final int y = Integer.parseInt(tokens[2]);
-                final int demand = Integer.parseInt(tokens[3]);
-                final int remaining = Integer.parseInt(tokens[4]);
-                String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
-                LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
-
-                if (pedidoEnRango) {
+                if (day >= diaInfSimulacion && day <= diaSupSimulacion) {
+                    final int hour = Integer.parseInt(date[1]);
+                    final int min = Integer.parseInt(date[2]);
+                    final int x = Integer.parseInt(tokens[1]);
+                    final int y = Integer.parseInt(tokens[2]);
+                    final int demand = Integer.parseInt(tokens[3]);
+                    final int remaining = Integer.parseInt(tokens[4]);
+                    String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
+                    LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
                     Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate);
                     listaPedidos.add(pedido);
-                    pedidoEnRango = false;
+                }
+                else if (day > diaSupSimulacion) {
+                    break;
                 }
             }
 
@@ -333,10 +326,10 @@ public class Algoritmo {
                 final String[] inicio = plazo[0].trim().split(":");
                 final String[] fin = plazo[1].trim().split(":");
                 final int diaIni = Integer.parseInt(inicio[0]);
-                final int horaIni = Integer.parseInt(inicio[1]);
-                final int minIni = Integer.parseInt(inicio[2]);
                 final int diaFin = Integer.parseInt(fin[0]);
+                final int horaIni = Integer.parseInt(inicio[1]);
                 final int horaFin = Integer.parseInt(fin[1]);
+                final int minIni = Integer.parseInt(inicio[2]);
                 final int minFin = Integer.parseInt(fin[2]);
                 String strDateIni = strYearMonth + "-" + diaIni + " " + horaIni + ":" + minIni + ":0";
                 String strDateFin = strYearMonth + "-" + diaFin + " " + horaFin + ":" + minFin + ":0";
