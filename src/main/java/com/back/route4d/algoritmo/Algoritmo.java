@@ -45,6 +45,10 @@ public class Algoritmo {
     public Integer cantVehiculoTipo3 = 0;
     public Integer cantVehiculoTipo4 = 0;
 
+    // TODO: cambiar esto por valores de front
+    public Integer diaInfSimulacion = 1;
+    public Integer diaSupSimulacion = 3;
+
     /**
      * Inicializa las variables necesarias para ejecutar el algoritmo
      *
@@ -251,18 +255,20 @@ public class Algoritmo {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
 
             // Leyendo datos del archivo
-            int flag = 0;
+            boolean pedidoEnRango = false;
             while ((line = br.readLine()) != null) {
                 final String[] tokens = line.trim().split(",");
                 final String[] date = tokens[0].trim().split(":");
                 final int day = Integer.parseInt(date[0]);
-                //TODO Revisar Y cambiar para funcionar con variables de front
-                if(day>=1 && day<=3){
-                    flag = 1;
+
+                // Para simulación de 3 días
+                if (day >= diaInfSimulacion && day <= diaSupSimulacion){
+                    pedidoEnRango = true;
                 }
-                if(day>3){
+                if (day > diaSupSimulacion){
                     break;
                 }
+
                 final int hour = Integer.parseInt(date[1]);
                 final int min = Integer.parseInt(date[2]);
                 final int x = Integer.parseInt(tokens[1]);
@@ -272,10 +278,10 @@ public class Algoritmo {
                 String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
                 LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
 
-                if (flag==1) {
+                if (pedidoEnRango) {
                     Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate);
                     listaPedidos.add(pedido);
-                    flag = 0;
+                    pedidoEnRango = false;
                 }
             }
 
