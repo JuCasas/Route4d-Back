@@ -6,6 +6,7 @@ import com.back.route4d.model.*;
 // import com.back.route4d.repository.AlgoritmoRepository;
 // import com.back.route4d.repository.UsuarioRepository;
 import java.io.*;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -95,7 +96,10 @@ public class Algoritmo {
 
         listaCallesBloqueadasFront = new ArrayList<CallesBloqueadasFront>();
         for (CallesBloqueadas callesBloqueadas:listaCallesBloqueadas){
-            CallesBloqueadasFront calleFront = new CallesBloqueadasFront(callesBloqueadas.getMinutosInicio(),callesBloqueadas.getMinutosFin());
+            LocalDateTime fechaInicio = convertMinutesToLocalDateTime(callesBloqueadas.getMinutosInicio());
+            LocalDateTime fechaFin = convertMinutesToLocalDateTime(callesBloqueadas.getMinutosFin());
+
+            CallesBloqueadasFront calleFront = new CallesBloqueadasFront(fechaInicio, fechaFin);
             for (Integer nodo:callesBloqueadas.getNodos()){
                 int x = (nodo - 1) % 71;
                 int y = (nodo - 1) / 71;
@@ -261,6 +265,18 @@ public class Algoritmo {
         LocalDateTime d1 = LocalDateTime.of(2021, Month.JANUARY, 1, 0, 0);
 
         return (int) ChronoUnit.MINUTES.between(d1, ldt);
+    }
+
+    /**
+     * Convierte minutos del tipo int a una fecha del tipo LocalDateTime
+     *
+     * @param mins cantidad de minutos que pasaron desde el inicio del año
+     * @return los minutos convertidos a la fecha correspondiente
+     */
+    private LocalDateTime convertMinutesToLocalDateTime(int mins) {
+        LocalDateTime d1 = LocalDateTime.of(2021, Month.JANUARY, 1, 0, 0);
+
+        return d1.plus(Duration.of(mins, ChronoUnit.MINUTES));
     }
 
     /**
