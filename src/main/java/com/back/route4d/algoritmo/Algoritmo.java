@@ -96,10 +96,14 @@ public class Algoritmo {
 
         listaCallesBloqueadasFront = new ArrayList<CallesBloqueadasFront>();
         for (CallesBloqueadas callesBloqueadas:listaCallesBloqueadas){
-            LocalDateTime fechaInicio = convertMinutesToLocalDateTime(callesBloqueadas.getMinutosInicio());
-            LocalDateTime fechaFin = convertMinutesToLocalDateTime(callesBloqueadas.getMinutosFin());
 
-            CallesBloqueadasFront calleFront = new CallesBloqueadasFront(fechaInicio, fechaFin);
+            Integer minutosInicio = callesBloqueadas.getMinutosInicio();
+            Integer minutosFin = callesBloqueadas.getMinutosFin();
+            LocalDateTime fechaInicio = convertMinutesToLocalDateTime(minutosInicio);
+            LocalDateTime fechaFin = convertMinutesToLocalDateTime(minutosFin);
+            Integer duracionMinutos = minutosFin - minutosInicio;
+
+            CallesBloqueadasFront calleFront = new CallesBloqueadasFront(fechaInicio, fechaFin, duracionMinutos);
             for (Integer nodo:callesBloqueadas.getNodos()){
                 int x = (nodo - 1) % 71;
                 int y = (nodo - 1) / 71;
