@@ -715,28 +715,34 @@ public class Algoritmo {
         System.out.println("Máximo tiempo de entrega: " + maximoTiempo + " minutos");
     }
 
-    public void asignarRutas(){
+    /**
+     * Asigna las rutas
+     */
+    public void asignarRutas() {
         log.info("Asignar rutas: ");
-        log.info("cantAutos: " + cantAutos);
-        log.info("cantMotos: " + cantMotos);
-        for(int i=0; i<cantAutos; i++){
+        log.info("cantVehiculoTipo1: " + cantVehiculoTipo1);
+        log.info("cantVehiculoTipo2: " + cantVehiculoTipo2);
+        log.info("cantVehiculoTipo3: " + cantVehiculoTipo3);
+        log.info("cantVehiculoTipo4: " + cantVehiculoTipo4);
+
+        for (int i = 0; i < cantVehiculoTipo1; i++) {
             int minimo = Integer.MAX_VALUE;
             int contador = 0;
             int minCont = -1;
             for(Ruta ruta: listaRutas){
-                if(ruta.vehiculo.getTipo_id() == 1 && ruta.chofer == null && minimo > ruta.tiempoMin){
+                if(ruta.vehiculo.getIdVehiculo() == 1 && ruta.chofer == null && minimo > ruta.tiempoMin){
                     minimo = ruta.tiempoMin;
                     minCont = contador;
                 }
                 contador++;
             }
             if(minCont == -1) break;
-            for(APedido pedido: listaRutas.get(minCont).pedidos){
+            for(Pedido pedido: listaRutas.get(minCont).pedidos){
                 SPedido sPedido = new SPedido();
-                sPedido.id = pedido.id;
-                sPedido.tiempoMinutosEntrega = pedido.tiempoEntregaRealizada;
-                sPedido.tiempoMinutosLimite = getMinutesFromLocalDateTime(pedido.fechaLimite);
-                sPedido.cantidad = pedido.cantidad;
+                sPedido.id = pedido.getId();
+                sPedido.tiempoMinutosEntrega = pedido.getTiempoEntrega();
+                sPedido.tiempoMinutosLimite = convertLocalDateTimeToMinutes(pedido.getFechaLimite());
+                sPedido.cantidad = pedido.getCantidad();
                 listaPedidosEnRuta.add(sPedido);
                 listaPedidosEnCola.remove(pedido);
             }
@@ -745,29 +751,30 @@ public class Algoritmo {
             SRuta sRuta = new SRuta();
             sRuta.tipoVehiculo = 1;
             sRuta.recorridoEnKm = ruta.recorrido.size() + ruta.retorno.size();
-            sRuta.tiempoMinutosFin = tiempoEnMinutosActual + sRuta.recorridoEnKm*2;
+            // TODO entender el x 2
+            sRuta.tiempoMinutosFin = tiempoEnMinutosActual + sRuta.recorridoEnKm * 2;
             listaRutasEnRecorrido.add(sRuta);
-            autosDisponibles--;
+            disponiblesTipo1--;
         }
 
-        for(int i=0; i<cantMotos; i++){
+        for (int i = 0; i < cantVehiculoTipo2; i++) {
             int minimo = Integer.MAX_VALUE;
             int contador = 0;
             int minCont = -1;
             for(Ruta ruta: listaRutas){
-                if(ruta.vehiculo.getTipo_id() == 2 && ruta.chofer == null && minimo > ruta.tiempoMin){
+                if(ruta.vehiculo.getIdVehiculo() == 2 && ruta.chofer == null && minimo > ruta.tiempoMin){
                     minimo = ruta.tiempoMin;
                     minCont = contador;
                 }
                 contador++;
             }
             if(minCont == -1) break;
-            for(APedido pedido: listaRutas.get(minCont).pedidos){
+            for(Pedido pedido: listaRutas.get(minCont).pedidos){
                 SPedido sPedido = new SPedido();
-                sPedido.id = pedido.id;
-                sPedido.tiempoMinutosEntrega = pedido.tiempoEntregaRealizada;
-                sPedido.tiempoMinutosLimite = getMinutesFromLocalDateTime(pedido.fechaLimite);
-                sPedido.cantidad = pedido.cantidad;
+                sPedido.id = pedido.getId();
+                sPedido.tiempoMinutosEntrega = pedido.getTiempoEntrega();
+                sPedido.tiempoMinutosLimite = convertLocalDateTimeToMinutes(pedido.getFechaLimite());
+                sPedido.cantidad = pedido.getCantidad();
                 listaPedidosEnRuta.add(sPedido);
                 listaPedidosEnCola.remove(pedido);
             }
@@ -776,10 +783,74 @@ public class Algoritmo {
             SRuta sRuta = new SRuta();
             sRuta.tipoVehiculo = 2;
             sRuta.recorridoEnKm = ruta.recorrido.size() + ruta.retorno.size();
+            // TODO ausencia de x 2
             sRuta.tiempoMinutosFin = tiempoEnMinutosActual + sRuta.recorridoEnKm;
             listaRutasEnRecorrido.add(sRuta);
-            motosDisponibles--;
+            disponiblesTipo2--;
         }
+
+        for (int i = 0; i < cantVehiculoTipo3; i++) {
+            int minimo = Integer.MAX_VALUE;
+            int contador = 0;
+            int minCont = -1;
+            for(Ruta ruta: listaRutas){
+                if(ruta.vehiculo.getIdVehiculo() == 3 && ruta.chofer == null && minimo > ruta.tiempoMin){
+                    minimo = ruta.tiempoMin;
+                    minCont = contador;
+                }
+                contador++;
+            }
+            if(minCont == -1) break;
+            for(Pedido pedido: listaRutas.get(minCont).pedidos){
+                SPedido sPedido = new SPedido();
+                sPedido.id = pedido.getId();
+                sPedido.tiempoMinutosEntrega = pedido.getTiempoEntrega();
+                sPedido.tiempoMinutosLimite = convertLocalDateTimeToMinutes(pedido.getFechaLimite());
+                sPedido.cantidad = pedido.getCantidad();
+                listaPedidosEnRuta.add(sPedido);
+                listaPedidosEnCola.remove(pedido);
+            }
+            Ruta ruta = listaRutas.get(minCont);
+            ruta.chofer = new Usuario();
+            SRuta sRuta = new SRuta();
+            sRuta.tipoVehiculo = 3;
+            sRuta.recorridoEnKm = ruta.recorrido.size() + ruta.retorno.size();
+            sRuta.tiempoMinutosFin = tiempoEnMinutosActual + sRuta.recorridoEnKm;
+            listaRutasEnRecorrido.add(sRuta);
+            disponiblesTipo3--;
+        }
+
+        for (int i = 0; i < cantVehiculoTipo4; i++) {
+            int minimo = Integer.MAX_VALUE;
+            int contador = 0;
+            int minCont = -1;
+            for(Ruta ruta: listaRutas){
+                if(ruta.vehiculo.getIdVehiculo() == 4 && ruta.chofer == null && minimo > ruta.tiempoMin){
+                    minimo = ruta.tiempoMin;
+                    minCont = contador;
+                }
+                contador++;
+            }
+            if(minCont == -1) break;
+            for(Pedido pedido: listaRutas.get(minCont).pedidos){
+                SPedido sPedido = new SPedido();
+                sPedido.id = pedido.getId();
+                sPedido.tiempoMinutosEntrega = pedido.getTiempoEntrega();
+                sPedido.tiempoMinutosLimite = convertLocalDateTimeToMinutes(pedido.getFechaLimite());
+                sPedido.cantidad = pedido.getCantidad();
+                listaPedidosEnRuta.add(sPedido);
+                listaPedidosEnCola.remove(pedido);
+            }
+            Ruta ruta = listaRutas.get(minCont);
+            ruta.chofer = new Usuario();
+            SRuta sRuta = new SRuta();
+            sRuta.tipoVehiculo = 4;
+            sRuta.recorridoEnKm = ruta.recorrido.size() + ruta.retorno.size();
+            sRuta.tiempoMinutosFin = tiempoEnMinutosActual + sRuta.recorridoEnKm;
+            listaRutasEnRecorrido.add(sRuta);
+            disponiblesTipo4--;
+        }
+
         Collections.sort(listaPedidosEnCola);
         Collections.sort(listaRutasEnRecorrido);
     }
