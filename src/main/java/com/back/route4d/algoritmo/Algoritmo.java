@@ -715,6 +715,75 @@ public class Algoritmo {
         System.out.println("Máximo tiempo de entrega: " + maximoTiempo + " minutos");
     }
 
+    public void asignarRutas(){
+        log.info("Asignar rutas: ");
+        log.info("cantAutos: " + cantAutos);
+        log.info("cantMotos: " + cantMotos);
+        for(int i=0; i<cantAutos; i++){
+            int minimo = Integer.MAX_VALUE;
+            int contador = 0;
+            int minCont = -1;
+            for(Ruta ruta: listaRutas){
+                if(ruta.vehiculo.getTipo_id() == 1 && ruta.chofer == null && minimo > ruta.tiempoMin){
+                    minimo = ruta.tiempoMin;
+                    minCont = contador;
+                }
+                contador++;
+            }
+            if(minCont == -1) break;
+            for(APedido pedido: listaRutas.get(minCont).pedidos){
+                SPedido sPedido = new SPedido();
+                sPedido.id = pedido.id;
+                sPedido.tiempoMinutosEntrega = pedido.tiempoEntregaRealizada;
+                sPedido.tiempoMinutosLimite = getMinutesFromLocalDateTime(pedido.fechaLimite);
+                sPedido.cantidad = pedido.cantidad;
+                listaPedidosEnRuta.add(sPedido);
+                listaPedidosEnCola.remove(pedido);
+            }
+            Ruta ruta = listaRutas.get(minCont);
+            ruta.chofer = new Usuario();
+            SRuta sRuta = new SRuta();
+            sRuta.tipoVehiculo = 1;
+            sRuta.recorridoEnKm = ruta.recorrido.size() + ruta.retorno.size();
+            sRuta.tiempoMinutosFin = tiempoEnMinutosActual + sRuta.recorridoEnKm*2;
+            listaRutasEnRecorrido.add(sRuta);
+            autosDisponibles--;
+        }
+
+        for(int i=0; i<cantMotos; i++){
+            int minimo = Integer.MAX_VALUE;
+            int contador = 0;
+            int minCont = -1;
+            for(Ruta ruta: listaRutas){
+                if(ruta.vehiculo.getTipo_id() == 2 && ruta.chofer == null && minimo > ruta.tiempoMin){
+                    minimo = ruta.tiempoMin;
+                    minCont = contador;
+                }
+                contador++;
+            }
+            if(minCont == -1) break;
+            for(APedido pedido: listaRutas.get(minCont).pedidos){
+                SPedido sPedido = new SPedido();
+                sPedido.id = pedido.id;
+                sPedido.tiempoMinutosEntrega = pedido.tiempoEntregaRealizada;
+                sPedido.tiempoMinutosLimite = getMinutesFromLocalDateTime(pedido.fechaLimite);
+                sPedido.cantidad = pedido.cantidad;
+                listaPedidosEnRuta.add(sPedido);
+                listaPedidosEnCola.remove(pedido);
+            }
+            Ruta ruta = listaRutas.get(minCont);
+            ruta.chofer = new Usuario();
+            SRuta sRuta = new SRuta();
+            sRuta.tipoVehiculo = 2;
+            sRuta.recorridoEnKm = ruta.recorrido.size() + ruta.retorno.size();
+            sRuta.tiempoMinutosFin = tiempoEnMinutosActual + sRuta.recorridoEnKm;
+            listaRutasEnRecorrido.add(sRuta);
+            motosDisponibles--;
+        }
+        Collections.sort(listaPedidosEnCola);
+        Collections.sort(listaRutasEnRecorrido);
+    }
+
     /**
      * Verifica si un nodo está bloqueado
      *
