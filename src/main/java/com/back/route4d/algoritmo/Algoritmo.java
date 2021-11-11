@@ -355,12 +355,28 @@ public class Algoritmo {
                         convertLocalDateTimeToMinutes(dateFin));
 
                 // Agregando el identificador del nodo a la calle bloqueada
-                for (int i = 0; i < len; i += 2) {
+                int currentX = 0;
+                int currentY = 0;
+
+                for (int i = 0; i < len-2; i += 2) {
                     int x = coords[i];
                     int y = coords[i + 1];
-                    calleBloqueada.addNode(x + 71 * y + 1);
-                }
 
+                    int x2 = coords[i + 2];
+                    int y2 = coords[i + 3];
+
+                    if (y2 - y == 0){
+                        for (int j=x;j<=x2;j++){
+                            calleBloqueada.addNode(j + 71 * y + 1);
+                        }
+                    }else{
+                        if (x2 - x == 0){
+                            for (int k=y;k<=y2;k++){
+                                calleBloqueada.addNode(x + 71 * k + 1);
+                            }
+                        }
+                    }
+                }
                 listaCallesBloqueadas.add(calleBloqueada);
             }
 
