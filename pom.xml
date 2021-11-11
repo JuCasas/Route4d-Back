@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.back</groupId>
 	<artifactId>route4d</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>route4d</name>
 	<description>Backend para proyecto Route 4D </description>
 	<properties>
@@ -44,6 +44,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>route4d</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
