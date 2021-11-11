@@ -1,6 +1,5 @@
 package com.back.route4d.services.impl;
 
-import com.back.route4d.controller.VehicleController;
 import com.back.route4d.exception.ResourceNotFoundException;
 import com.back.route4d.model.Vehicle;
 import com.back.route4d.repository.TipoVehiculoRepository;
@@ -11,8 +10,6 @@ import com.back.route4d.model.TipoVehiculo;
 
 import java.util.List;
 import java.util.Map;
-
-
 
 @Service
 public class VehicleServiceImpl implements VehicleService {
@@ -82,6 +79,4 @@ public class VehicleServiceImpl implements VehicleService {
 
         vehicleRepository.deleteById(id);
     }
-
-
 }

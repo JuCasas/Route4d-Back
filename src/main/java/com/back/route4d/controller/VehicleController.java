@@ -1,9 +1,6 @@
 package com.back.route4d.controller;
-
 import com.back.route4d.model.Vehicle;
 import com.back.route4d.services.VehicleService;
-
-import org.aspectj.apache.bcel.classfile.InnerClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
