@@ -1,26 +1,44 @@
 package com.back.route4d.services.impl;
 
+import com.back.route4d.controller.VehicleController;
 import com.back.route4d.exception.ResourceNotFoundException;
 import com.back.route4d.model.Vehicle;
+import com.back.route4d.repository.TipoVehiculoRepository;
 import com.back.route4d.repository.VehicleRepository;
 import com.back.route4d.services.VehicleService;
 import org.springframework.stereotype.Service;
+import com.back.route4d.model.TipoVehiculo;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Service
 public class VehicleServiceImpl implements VehicleService {
 
     private VehicleRepository vehicleRepository;
+    private TipoVehiculoRepository tipoVehiculoRepository;
 
-    public VehicleServiceImpl(VehicleRepository vehicleRepository) {
+    public VehicleServiceImpl(VehicleRepository vehicleRepository,TipoVehiculoRepository tipoVehiculoRepository) {
         super();
         this.vehicleRepository = vehicleRepository;
+        this.tipoVehiculoRepository=tipoVehiculoRepository;
     }
 
     @Override
-    public Vehicle saveVehicle(Vehicle vehicle) {
+    public Vehicle saveVehicle(Map<String,String> nuevo) {
+        String aux = nuevo.get("idTipo");
+        int id = Integer.parseInt(aux);
+        String pl = nuevo.get("placa");
+        TipoVehiculo tipo = tipoVehiculoRepository.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException("TipoVehiculo","Id",id));
+
+        Vehicle vehicle = new Vehicle();
+
+        vehicle.setPlaca(pl);
+        vehicle.setCapacidadActual(tipo.getCapacidad());
+        vehicle.setTipo(tipo);
+
         return vehicleRepository.save(vehicle);
     }
 

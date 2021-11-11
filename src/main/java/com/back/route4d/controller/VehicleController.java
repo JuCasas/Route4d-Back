@@ -3,11 +3,13 @@ package com.back.route4d.controller;
 import com.back.route4d.model.Vehicle;
 import com.back.route4d.services.VehicleService;
 
+import org.aspectj.apache.bcel.classfile.InnerClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -22,9 +24,11 @@ public class VehicleController {
     }
 
     //Build create vehicle REST API
+
+
     @PostMapping("/")
-    public ResponseEntity<Vehicle> saveVehicle(@RequestBody Vehicle vehicle){
-        return new ResponseEntity<Vehicle>(vehicleService.saveVehicle(vehicle), HttpStatus.CREATED);
+    public ResponseEntity<Vehicle> saveVehicle(@RequestBody Map<String, String> nuevo){
+        return new ResponseEntity<Vehicle>(vehicleService.saveVehicle(nuevo), HttpStatus.CREATED);
     }
 
 
