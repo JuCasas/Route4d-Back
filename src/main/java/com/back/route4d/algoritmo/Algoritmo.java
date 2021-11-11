@@ -355,8 +355,6 @@ public class Algoritmo {
                         convertLocalDateTimeToMinutes(dateFin));
 
                 // Agregando el identificador del nodo a la calle bloqueada
-                int currentX = 0;
-                int currentY = 0;
 
                 for (int i = 0; i < len-2; i += 2) {
                     int x = coords[i];
