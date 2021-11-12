@@ -6,6 +6,7 @@ import com.back.route4d.model.*;
 // import com.back.route4d.repository.AlgoritmoRepository;
 // import com.back.route4d.repository.UsuarioRepository;
 import java.io.*;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -95,7 +96,14 @@ public class Algoritmo {
 
         listaCallesBloqueadasFront = new ArrayList<CallesBloqueadasFront>();
         for (CallesBloqueadas callesBloqueadas:listaCallesBloqueadas){
-            CallesBloqueadasFront calleFront = new CallesBloqueadasFront(callesBloqueadas.getMinutosInicio(),callesBloqueadas.getMinutosFin());
+
+            Integer minutosInicio = callesBloqueadas.getMinutosInicio();
+            Integer minutosFin = callesBloqueadas.getMinutosFin();
+            LocalDateTime fechaInicio = convertMinutesToLocalDateTime(minutosInicio);
+            LocalDateTime fechaFin = convertMinutesToLocalDateTime(minutosFin);
+            Integer duracionMinutos = minutosFin - minutosInicio;
+
+            CallesBloqueadasFront calleFront = new CallesBloqueadasFront(fechaInicio, fechaFin, duracionMinutos);
             for (Integer nodo:callesBloqueadas.getNodos()){
                 int x = (nodo - 1) % 71;
                 int y = (nodo - 1) / 71;
@@ -128,7 +136,7 @@ public class Algoritmo {
 
         // Sin vehículos
         if (listaVehiculoTipo1.size() == 0 && listaVehiculoTipo2.size() == 0 &&
-            listaVehiculoTipo3.size() == 0 && listaVehiculoTipo4.size() == 0) {
+                listaVehiculoTipo3.size() == 0 && listaVehiculoTipo4.size() == 0) {
             return "No hay vehículos disponibles para las rutas";
         }
 
@@ -264,13 +272,25 @@ public class Algoritmo {
     }
 
     /**
+     * Convierte minutos del tipo int a una fecha del tipo LocalDateTime
+     *
+     * @param mins cantidad de minutos que pasaron desde el inicio del año
+     * @return los minutos convertidos a la fecha correspondiente
+     */
+    private LocalDateTime convertMinutesToLocalDateTime(int mins) {
+        LocalDateTime d1 = LocalDateTime.of(2021, Month.JANUARY, 1, 0, 0);
+
+        return d1.plus(Duration.of(mins, ChronoUnit.MINUTES));
+    }
+
+    /**
      * Obtiene la lista de pedidos a partir de un archivo de texto
      */
     public void obtenerListaPedidos() {
         try {
             // Para lectura del archivo
-            String fileName = "/ventas202212.txt";
-            final BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
+            String fileName = "src/main/resources/ventas202212.txt";
+            final BufferedReader br = new BufferedReader(new FileReader(fileName));
             String strYearMonth = getOrdersDateFromName(fileName); // datos del nombre del archivo
             String line; // línea del archivo
             int id = 1; // contador para identificador
@@ -278,33 +298,26 @@ public class Algoritmo {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
 
             // Leyendo datos del archivo
-            boolean pedidoEnRango = false;
             while ((line = br.readLine()) != null) {
                 final String[] tokens = line.trim().split(",");
                 final String[] date = tokens[0].trim().split(":");
                 final int day = Integer.parseInt(date[0]);
 
                 // Para simulación de 3 días
-                if (day >= diaInfSimulacion && day <= diaSupSimulacion){
-                    pedidoEnRango = true;
-                }
-                if (day > diaSupSimulacion){
-                    break;
-                }
-
-                final int hour = Integer.parseInt(date[1]);
-                final int min = Integer.parseInt(date[2]);
-                final int x = Integer.parseInt(tokens[1]);
-                final int y = Integer.parseInt(tokens[2]);
-                final int demand = Integer.parseInt(tokens[3]);
-                final int remaining = Integer.parseInt(tokens[4]);
-                String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
-                LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
-
-                if (pedidoEnRango) {
+                if (day >= diaInfSimulacion && day <= diaSupSimulacion) {
+                    final int hour = Integer.parseInt(date[1]);
+                    final int min = Integer.parseInt(date[2]);
+                    final int x = Integer.parseInt(tokens[1]);
+                    final int y = Integer.parseInt(tokens[2]);
+                    final int demand = Integer.parseInt(tokens[3]);
+                    final int remaining = Integer.parseInt(tokens[4]);
+                    String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
+                    LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
                     Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate);
                     listaPedidos.add(pedido);
-                    pedidoEnRango = false;
+                }
+                else if (day > diaSupSimulacion) {
+                    break;
                 }
             }
 
@@ -319,70 +332,77 @@ public class Algoritmo {
      */
     public void obtenerCallesBloqueadas() {
         try {
-            String fileName = "/202209bloqueadas.txt";
-            final BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
+            String fileName = "src/main/resources/202209bloqueadas.txt";
+            final BufferedReader br = new BufferedReader(new FileReader(fileName));
             String strYearMonth = getLockedNodesDateFromName(fileName);
             String line;
             int id = 1; // para el identificador de la calle bloqueada
             listaCallesBloqueadas = new ArrayList<>(); // para calles bloqueadas
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
-            //TODO hacer lo mismo que con pedidos para el filtrado de rutas BLOQUEADAS
+
             while ((line = br.readLine()) != null) {
                 final String[] tokens = line.trim().split(",");
                 final String[] plazo = tokens[0].trim().split("-");
                 final String[] inicio = plazo[0].trim().split(":");
                 final String[] fin = plazo[1].trim().split(":");
                 final int diaIni = Integer.parseInt(inicio[0]);
-                final int horaIni = Integer.parseInt(inicio[1]);
-                final int minIni = Integer.parseInt(inicio[2]);
                 final int diaFin = Integer.parseInt(fin[0]);
-                final int horaFin = Integer.parseInt(fin[1]);
-                final int minFin = Integer.parseInt(fin[2]);
-                String strDateIni = strYearMonth + "-" + diaIni + " " + horaIni + ":" + minIni + ":0";
-                String strDateFin = strYearMonth + "-" + diaFin + " " + horaFin + ":" + minFin + ":0";
-                LocalDateTime dateIni = LocalDateTime.parse(strDateIni, formatter);
-                LocalDateTime dateFin = LocalDateTime.parse(strDateFin, formatter);
 
-                final int len = tokens.length - 1;
-                final String[] strCoords = Arrays.copyOfRange(tokens, 1, len + 1);
-                final int[] coords = new int[len];
+                boolean diaIniEnRango = diaIni >= diaInfSimulacion && diaIni <= diaSupSimulacion;
+                boolean diaFinEnRango = diaFin >= diaInfSimulacion && diaFin <= diaSupSimulacion;
+                boolean bloqueoEnRango = diaIni <= diaInfSimulacion && diaFin >= diaSupSimulacion;
 
-                for (int i = 0; i < len; i++) {
-                    coords[i] = Integer.parseInt(strCoords[i]); // pasando a enteros
-                }
+                if (diaIniEnRango || diaFinEnRango || bloqueoEnRango) {
+                    final int horaIni = Integer.parseInt(inicio[1]);
+                    final int horaFin = Integer.parseInt(fin[1]);
+                    final int minIni = Integer.parseInt(inicio[2]);
+                    final int minFin = Integer.parseInt(fin[2]);
+                    String strDateIni = strYearMonth + "-" + diaIni + " " + horaIni + ":" + minIni + ":0";
+                    String strDateFin = strYearMonth + "-" + diaFin + " " + horaFin + ":" + minFin + ":0";
+                    LocalDateTime dateIni = LocalDateTime.parse(strDateIni, formatter);
+                    LocalDateTime dateFin = LocalDateTime.parse(strDateFin, formatter);
 
-                CallesBloqueadas calleBloqueada = new CallesBloqueadas(id++, convertLocalDateTimeToMinutes(dateIni),
-                        convertLocalDateTimeToMinutes(dateFin));
+                    final int len = tokens.length - 1;
+                    final String[] strCoords = Arrays.copyOfRange(tokens, 1, len + 1);
+                    final int[] coords = new int[len];
 
-                // Agregando el identificador del nodo a la calle bloqueada
+                    for (int i = 0; i < len; i++) {
+                        coords[i] = Integer.parseInt(strCoords[i]); // pasando a enteros
+                    }
 
-                for (int i = 0; i < len-2; i += 2) {
-                    int x = coords[i];
-                    int y = coords[i + 1];
+                    CallesBloqueadas calleBloqueada = new CallesBloqueadas(id++, convertLocalDateTimeToMinutes(dateIni),
+                            convertLocalDateTimeToMinutes(dateFin));
 
-                    int x2 = coords[i + 2];
-                    int y2 = coords[i + 3];
+                    // Agregando el identificador del nodo a la calle bloqueada
 
-                    if (y2 - y == 0){
-                        for (int j=x;j<=x2;j++){
-                            calleBloqueada.addNode(j + 71 * y + 1);
-                        }
-                    }else{
-                        if (x2 - x == 0){
-                            for (int k=y;k<=y2;k++){
-                                calleBloqueada.addNode(x + 71 * k + 1);
+                    for (int i = 0; i < len - 2; i += 2) {
+                        int x = coords[i];
+                        int y = coords[i + 1];
+
+                        int x2 = coords[i + 2];
+                        int y2 = coords[i + 3];
+
+                        if (y2 - y == 0) {
+                            for (int j = x; j <= x2; j++) {
+                                calleBloqueada.addNode(j + 71 * y + 1);
+                            }
+                        } else {
+                            if (x2 - x == 0) {
+                                for (int k = y; k <= y2; k++) {
+                                    calleBloqueada.addNode(x + 71 * k + 1);
+                                }
                             }
                         }
                     }
+                    listaCallesBloqueadas.add(calleBloqueada);
                 }
-                listaCallesBloqueadas.add(calleBloqueada);
-            }
 
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            }
+                br.close();
+            } catch(IOException e){
+                e.printStackTrace();
+            }
         }
-    }
 
     /**
      * Obtiene la cantidad de clusters necesarios para el algoritmo
@@ -397,7 +417,7 @@ public class Algoritmo {
                 + " " + listaVehiculoTipo4.size());
 
         int k = (int) (0.9 * (cantidadProductos / (cantVehiculoTipo1 * 2.5 + cantVehiculoTipo2 * 2.0 +
-                    cantVehiculoTipo3 * 1.5 + cantVehiculoTipo4 * 1.0)));
+                cantVehiculoTipo3 * 1.5 + cantVehiculoTipo4 * 1.0)));
 
         if (k > 10)
             k = 10;
@@ -415,7 +435,7 @@ public class Algoritmo {
      */
     public void obtenerListaAdyacente() {
         int origen, destino;
-        InputStream grafo = getClass().getClassLoader().getResourceAsStream("/grafo.txt");
+        InputStream grafo = getClass().getClassLoader().getResourceAsStream("grafo.txt");
         Scanner sc = new Scanner(grafo);
 
         dijkstraAlgorithm = new Dijkstra(Configuraciones.V, listaCallesBloqueadas);
