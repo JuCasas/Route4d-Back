@@ -435,7 +435,7 @@ public class Algoritmo {
      */
     public void obtenerListaAdyacente() {
         int origen, destino;
-        InputStream grafo = getClass().getClassLoader().getResourceAsStream("grafo.txt");
+        InputStream grafo = getClass().getClassLoader().getResourceAsStream("/grafo.txt");
         Scanner sc = new Scanner(grafo);
 
         dijkstraAlgorithm = new Dijkstra(Configuraciones.V, listaCallesBloqueadas);
