@@ -23,7 +23,7 @@ public class AlgoritmoController {
 
 
     //Build get vehicle by ID
-    @GetMapping("/")
+    @GetMapping
     public HashMap getRoutes(){
         return algoritmoService.enviarRutas();
     }
