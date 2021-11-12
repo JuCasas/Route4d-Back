@@ -269,8 +269,8 @@ public class Algoritmo {
     public void obtenerListaPedidos() {
         try {
             // Para lectura del archivo
-            String fileName = "src/main/resources/ventas202212.txt";
-            final BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String fileName = "/ventas202212.txt";
+            final BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
             String strYearMonth = getOrdersDateFromName(fileName); // datos del nombre del archivo
             String line; // línea del archivo
             int id = 1; // contador para identificador
@@ -319,8 +319,8 @@ public class Algoritmo {
      */
     public void obtenerCallesBloqueadas() {
         try {
-            String fileName = "src/main/resources/202209bloqueadas.txt";
-            final BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String fileName = "/202209bloqueadas.txt";
+            final BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
             String strYearMonth = getLockedNodesDateFromName(fileName);
             String line;
             int id = 1; // para el identificador de la calle bloqueada
@@ -415,7 +415,7 @@ public class Algoritmo {
      */
     public void obtenerListaAdyacente() {
         int origen, destino;
-        InputStream grafo = getClass().getClassLoader().getResourceAsStream("grafo.txt");
+        InputStream grafo = getClass().getClassLoader().getResourceAsStream("/grafo.txt");
         Scanner sc = new Scanner(grafo);
 
         dijkstraAlgorithm = new Dijkstra(Configuraciones.V, listaCallesBloqueadas);
