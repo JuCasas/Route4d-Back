@@ -1,17 +1,22 @@
 package com.back.route4d;
 
 import com.back.route4d.algoritmo.Algoritmo;
+import com.back.route4d.services.FilesStorageService;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 
 @SpringBootApplication
-public class Route4dApplication {
+public class Route4dApplication implements CommandLineRunner {
 
+	@Resource
+	FilesStorageService storageService;
 	public static void main(String[] args) {
 		SpringApplication.run(Route4dApplication.class, args);
 	}
@@ -24,5 +29,11 @@ public class Route4dApplication {
 				registry.addMapping("/**").allowedOrigins("/**").allowedMethods("*").allowedHeaders("*");
 			}
 		};
+	}
+
+	@Override
+	public void run(String... arg) throws Exception {
+		storageService.deleteAll();
+		storageService.init();
 	}
 }
