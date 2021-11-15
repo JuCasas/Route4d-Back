@@ -45,6 +45,6 @@ public class PlantaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePlanta(@PathVariable("id") int id){
         plantaService.deletePlanta(id);
-        return new ResponseEntity<String>("Vehiculo eliminado correctamente!",HttpStatus.OK);
+        return new ResponseEntity<String>("Planta eliminada correctamente!",HttpStatus.OK);
     }
 }
