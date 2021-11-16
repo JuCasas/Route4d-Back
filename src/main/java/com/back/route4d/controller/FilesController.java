@@ -38,7 +38,7 @@ public class FilesController {
                 fileNames.add(file.getOriginalFilename());
             });
 
-            message = "Uploaded the files successfully: " + fileNames;
+            message = "Archivo cargado correctamente: " + fileNames;
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
             message = "Fail to upload files!";
