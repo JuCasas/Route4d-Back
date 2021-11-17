@@ -41,7 +41,7 @@ public class FilesController {
             message = "Archivo cargado correctamente: " + fileNames;
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
-            message = "Fail to upload files!";
+            message = "Error al cargar los archivos!";
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
     }

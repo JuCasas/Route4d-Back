@@ -17,14 +17,14 @@ import java.util.stream.Stream;
 @Service
 public class FileStorageServiceImpl implements FilesStorageService {
 
-    private final Path root = Paths.get("uploads");
+    private final Path root = Paths.get("src/main/resources");
 
     @Override
     public void init() {
         try {
             Files.createDirectory(root);
         } catch (IOException e) {
-            throw new RuntimeException("Could not initialize folder for upload!");
+            throw new RuntimeException("No se pudo crear o ubicar el directorio!");
         }
     }
 
@@ -33,7 +33,7 @@ public class FileStorageServiceImpl implements FilesStorageService {
         try {
             Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()));
         } catch (Exception e) {
-            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+            throw new RuntimeException("No se guardó el archivo. Error: " + e.getMessage());
         }
     }
 
@@ -46,7 +46,7 @@ public class FileStorageServiceImpl implements FilesStorageService {
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
-                throw new RuntimeException("Could not read the file!");
+                throw new RuntimeException("No se puede leer el archivo");
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException("Error: " + e.getMessage());
@@ -63,7 +63,7 @@ public class FileStorageServiceImpl implements FilesStorageService {
         try {
             return Files.walk(this.root, 1).filter(path -> !path.equals(this.root)).map(this.root::relativize);
         } catch (IOException e) {
-            throw new RuntimeException("Could not load the files!");
+            throw new RuntimeException("Error");
         }
     }
 }
