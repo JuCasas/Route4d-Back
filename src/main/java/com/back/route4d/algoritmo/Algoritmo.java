@@ -58,6 +58,7 @@ public class Algoritmo {
      */
 
     public HashMap resolver(){
+
         inicializar();
         generarRutas();
 
@@ -117,7 +118,7 @@ public class Algoritmo {
         HashMap<String,Object> enviar;
 
         enviar = new HashMap<>();
-
+//2 4 4 10
         enviar.put("Rutas",listaRutasFront);
         enviar.put("Bloqueos",listaCallesBloqueadasFront);
 
@@ -221,7 +222,7 @@ public class Algoritmo {
 
         obtenerPedidosClusterizados();
         obtenerRutas();
-//        asignarRutas();
+        asignarRutas();
 
         tiempo2 = LocalDateTime.now();
 
@@ -416,7 +417,7 @@ public class Algoritmo {
         System.out.println(listaVehiculoTipo1.size() + " " + listaVehiculoTipo2.size() + " " + listaVehiculoTipo3.size()
                 + " " + listaVehiculoTipo4.size());
 
-        int k = (int) (0.9 * (cantidadProductos / (cantVehiculoTipo1 * 2.5 + cantVehiculoTipo2 * 2.0 +
+        int k = (int) (1 * (listaPedidos.size() / (cantVehiculoTipo1 * 2.5 + cantVehiculoTipo2 * 2.0 +
                 cantVehiculoTipo3 * 1.5 + cantVehiculoTipo4 * 1.0)));
 
         if (k > 10)
@@ -424,10 +425,10 @@ public class Algoritmo {
         if (k < 3)
             k = 3;
 
-        cantClusterVehiculoTipo1 = cantVehiculoTipo1 * 1;
-        cantClusterVehiculoTipo2 = cantVehiculoTipo2 * 1;
-        cantClusterVehiculoTipo3 = cantVehiculoTipo3 * 1;
-        cantClusterVehiculoTipo4 = cantVehiculoTipo4 * 1;
+        cantClusterVehiculoTipo1 = cantVehiculoTipo1 * k;
+        cantClusterVehiculoTipo2 = cantVehiculoTipo2 * k;
+        cantClusterVehiculoTipo3 = cantVehiculoTipo3 * k;
+        cantClusterVehiculoTipo4 = cantVehiculoTipo4 * k;
     }
 
     /**
@@ -435,7 +436,7 @@ public class Algoritmo {
      */
     public void obtenerListaAdyacente() {
         int origen, destino;
-        InputStream grafo = getClass().getClassLoader().getResourceAsStream("/grafo.txt");
+        InputStream grafo = getClass().getClassLoader().getResourceAsStream("grafo.txt");
         Scanner sc = new Scanner(grafo);
 
         dijkstraAlgorithm = new Dijkstra(Configuraciones.V, listaCallesBloqueadas);
@@ -454,12 +455,7 @@ public class Algoritmo {
     public void obtenerPedidosClusterizados() {
         int cantClusters = cantClusterVehiculoTipo1 + cantClusterVehiculoTipo2 + cantClusterVehiculoTipo3 + cantClusterVehiculoTipo4;
 
-        //List<Vehicle> vehiculos = inicializarVehiculos();
-        List<Vehicle> vehiculos = new ArrayList<>();
-        vehiculos.addAll(listaVehiculoTipo1);
-        vehiculos.addAll(listaVehiculoTipo2);
-        vehiculos.addAll(listaVehiculoTipo3);
-        vehiculos.addAll(listaVehiculoTipo4);
+        List<Vehicle> vehiculos = inicializarVehiculos();
 
         // inicializar clusters
         List<Cluster> clustersList = inicializarClusters(vehiculos);
@@ -727,6 +723,96 @@ public class Algoritmo {
             listaRutas.add(ruta);
         }
         System.out.println("Máximo tiempo de entrega: " + maximoTiempo + " minutos");
+    }
+
+
+    /**
+     * Asigna las rutas
+     */
+    public void asignarRutas() {
+        log.info("Asignar rutas: ");
+        log.info("cantVehiculoTipo1: " + cantVehiculoTipo1);
+        log.info("cantVehiculoTipo2: " + cantVehiculoTipo2);
+        log.info("cantVehiculoTipo3: " + cantVehiculoTipo3);
+        log.info("cantVehiculoTipo4: " + cantVehiculoTipo4);
+
+        for (int i = 0; i < cantVehiculoTipo1; i++) {
+            int minimo = Integer.MAX_VALUE;
+            int contador = 0;
+            int minCont = -1;
+            for(Ruta ruta: listaRutas){
+                if(ruta.vehiculo.getTipo().getIdTipo() == 1 && ruta.vehiculo.getIdVehiculo()==0 && minimo > ruta.tiempoMin){
+                    minimo = ruta.tiempoMin;
+                    minCont = contador;
+                }
+                contador++;
+            }
+            if(minCont == -1) break;
+
+            listaRutas.get(minCont).setVehiculo(listaVehiculoTipo1.get(i));
+            
+//            listaRutasEnRecorrido.add(sRuta);
+//            disponiblesTipo1--;
+        }
+
+        for (int i = 0; i < cantVehiculoTipo2; i++) {
+            int minimo = Integer.MAX_VALUE;
+            int contador = 0;
+            int minCont = -1;
+            for(Ruta ruta: listaRutas){
+                if(ruta.vehiculo.getTipo().getIdTipo() == 2 && ruta.vehiculo.getIdVehiculo()==0 && minimo > ruta.tiempoMin){
+                    minimo = ruta.tiempoMin;
+                    minCont = contador;
+                }
+                contador++;
+            }
+            if(minCont == -1) break;
+
+            listaRutas.get(minCont).setVehiculo(listaVehiculoTipo2.get(i));
+
+//            listaRutasEnRecorrido.add(sRuta);
+//            disponiblesTipo2--;
+        }
+
+        for (int i = 0; i < cantVehiculoTipo3; i++) {
+            int minimo = Integer.MAX_VALUE;
+            int contador = 0;
+            int minCont = -1;
+            for(Ruta ruta: listaRutas){
+                if(ruta.vehiculo.getTipo().getIdTipo() == 3 && ruta.vehiculo.getIdVehiculo()==0 && minimo > ruta.tiempoMin){
+                    minimo = ruta.tiempoMin;
+                    minCont = contador;
+                }
+                contador++;
+            }
+            if(minCont == -1) break;
+
+            listaRutas.get(minCont).setVehiculo(listaVehiculoTipo3.get(i));
+
+//            listaRutasEnRecorrido.add(sRuta);
+//            disponiblesTipo3--;
+        }
+
+        for (int i = 0; i < cantVehiculoTipo4; i++) {
+            int minimo = Integer.MAX_VALUE;
+            int contador = 0;
+            int minCont = -1;
+            for(Ruta ruta: listaRutas){
+                if(ruta.vehiculo.getTipo().getIdTipo() == 4 && ruta.vehiculo.getIdVehiculo()==0 && minimo > ruta.tiempoMin){
+                    minimo = ruta.tiempoMin;
+                    minCont = contador;
+                }
+                contador++;
+            }
+            if(minCont == -1) break;
+
+            listaRutas.get(minCont).setVehiculo(listaVehiculoTipo4.get(i));
+
+//            listaRutasEnRecorrido.add(sRuta);
+//            disponiblesTipo4--;
+        }
+//        Collections.sort(listaPedidosEnCola);
+//        Collections.sort(listaRutasEnRecorrido);
     }
 
     /**
