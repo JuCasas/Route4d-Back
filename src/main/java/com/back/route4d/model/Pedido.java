@@ -27,6 +27,9 @@ public class Pedido implements Comparable<Pedido> {
     private LocalDateTime fechaLimite;
     private int tiempoEntrega;
 
+    public Pedido() {
+    }
+
     public Pedido(int id, int x, int y, int cantidad, int minFaltantes) {
         this.id = id;
         this.x = x;
