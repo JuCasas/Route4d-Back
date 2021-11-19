@@ -13,6 +13,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import javax.transaction.Transactional;
+
+import com.back.route4d.repository.PedidoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired; // para servicios
@@ -36,8 +38,6 @@ public class Algoritmo {
     public Dijkstra dijkstraAlgorithm;
     public Kmeans kmeans;
 
-    public Integer cantidadProductos = 0;
-
     public Integer cantClusterVehiculoTipo1 = 0;
     public Integer cantClusterVehiculoTipo2 = 0;
     public Integer cantClusterVehiculoTipo3 = 0;
@@ -59,7 +59,6 @@ public class Algoritmo {
 
     public HashMap resolver(){
 
-        inicializar();
         generarRutas();
 
         listaRutasFront = new ArrayList<RutaFront>();
@@ -94,7 +93,6 @@ public class Algoritmo {
             listaRutasFront.add(rutaFront);
         }
 
-
         listaCallesBloqueadasFront = new ArrayList<CallesBloqueadasFront>();
         for (CallesBloqueadas callesBloqueadas:listaCallesBloqueadas){
 
@@ -118,7 +116,7 @@ public class Algoritmo {
         HashMap<String,Object> enviar;
 
         enviar = new HashMap<>();
-//2 4 4 10
+
         enviar.put("Rutas",listaRutasFront);
         enviar.put("Bloqueos",listaCallesBloqueadasFront);
 
@@ -131,9 +129,6 @@ public class Algoritmo {
         listaVehiculoTipo2 = initializeVehicleList(2);
         listaVehiculoTipo3 = initializeVehicleList(3);
         listaVehiculoTipo4 = initializeVehicleList(4);
-
-        // Obteniendo la lista de pedidos
-        obtenerListaPedidos();
 
         // Sin vehículos
         if (listaVehiculoTipo1.size() == 0 && listaVehiculoTipo2.size() == 0 &&
@@ -160,6 +155,7 @@ public class Algoritmo {
 
         return "correcto";
     }
+
 
     /**
      * Inicializa una lista de vehículos
@@ -425,10 +421,10 @@ public class Algoritmo {
         if (k < 3)
             k = 3;
 
-        cantClusterVehiculoTipo1 = cantVehiculoTipo1 * k;
-        cantClusterVehiculoTipo2 = cantVehiculoTipo2 * k;
-        cantClusterVehiculoTipo3 = cantVehiculoTipo3 * k;
-        cantClusterVehiculoTipo4 = cantVehiculoTipo4 * k;
+        cantClusterVehiculoTipo1 = cantVehiculoTipo1 * 1;
+        cantClusterVehiculoTipo2 = cantVehiculoTipo2 * 1;
+        cantClusterVehiculoTipo3 = cantVehiculoTipo3 * 1;
+        cantClusterVehiculoTipo4 = cantVehiculoTipo4 * 1;
     }
 
     /**
