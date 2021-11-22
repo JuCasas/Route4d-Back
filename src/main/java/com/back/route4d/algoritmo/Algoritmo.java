@@ -173,28 +173,34 @@ public class Algoritmo {
         if (typeId == 1) {
             count = 2;
             capacity = 25.0;
+            type = "TIPO A";
             weight = 2.5;
         } else if (typeId == 2) {
             count = 4;
             capacity = 20.0;
+            type = "TIPO B";
             weight = 2.0;
         } else if (typeId == 3) {
             count = 4;
             capacity = 15.0;
+            type = "TIPO C";
             weight = 1.5;
         } else {
             count = 10;
             capacity = 10.0;
+            type = "TIPO D";
             weight = 1.0;
         }
 
         for (int i = 0; i < count; i++) {
             Vehicle vehiculo = new Vehicle();
             vehiculo.setIdVehiculo(typeId*10+i);
-
+            vehiculo.setPlaca("TC"+ Integer.toString(typeId*10+i));
+            vehiculo.setCapacidadActual(capacity);
             // agregando datos de tipo
             TipoVehiculo tipo = new TipoVehiculo();
             tipo.setIdTipo(typeId);
+            tipo.setNombre(type);
             tipo.setCapacidad(capacity);
             tipo.setPesoBruto(weight);
             tipo.setVelocidad(50.0);
