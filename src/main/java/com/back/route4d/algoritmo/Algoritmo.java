@@ -727,7 +727,7 @@ public class Algoritmo {
 
                 int tamanoIni = ruta.retorno.size(); // FALTA ENTENDER EL TAMANOINI AQUI
 
-                dijkstraAlgorithm.printShortestPath(Configuraciones.almacen, ruta, 2);
+                dijkstraAlgorithm.printShortestPath(almacenAIr(origen), ruta, 2);
             }
 
             System.out.println();
@@ -737,6 +737,27 @@ public class Algoritmo {
         System.out.println("Máximo tiempo de entrega: " + maximoTiempo + " minutos");
     }
 
+
+    public int almacenAIr(int idOrigen){
+        int minimo = 1 << 30;
+        int x = (idOrigen - 1) % 71;
+        int y = (idOrigen - 1) / 71;
+        int idEnviar = 0;
+
+        if (Math.abs(x - Configuraciones.almacenX) + Math.abs(y - Configuraciones.almacenY)<minimo){
+            idEnviar = Configuraciones.almacen;
+            minimo = Math.abs(x - Configuraciones.almacenX) + Math.abs(y - Configuraciones.almacenY);
+        }
+        if (Math.abs(x - Configuraciones.norteX) + Math.abs(y - Configuraciones.norteY)<minimo){
+            idEnviar = Configuraciones.norte;
+            minimo = Math.abs(x - Configuraciones.norteX) + Math.abs(y - Configuraciones.norteY);
+        }
+        if (Math.abs(x - Configuraciones.surX) + Math.abs(y - Configuraciones.surY)<minimo){
+            idEnviar = Configuraciones.sur;
+            minimo = Math.abs(x - Configuraciones.surX) + Math.abs(y - Configuraciones.surY);
+        }
+        return idEnviar;
+    }
 
     /**
      * Asigna las rutas
