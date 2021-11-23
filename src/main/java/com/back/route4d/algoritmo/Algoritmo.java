@@ -15,6 +15,7 @@ import java.util.*;
 import javax.transaction.Transactional;
 
 import com.back.route4d.repository.PedidoRepository;
+import com.back.route4d.services.VehicleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired; // para servicios
@@ -51,11 +52,7 @@ public class Algoritmo {
     public Integer diaInfSimulacion = 1;
     public Integer diaSupSimulacion = 3;
 
-    /**
-     * Inicializa las variables necesarias para ejecutar el algoritmo
-     *
-     * @return una cadena que indica el resultado del intento de inicialización
-     */
+    private VehicleService vehicleService;
 
     public HashMap resolver(){
 
@@ -133,12 +130,17 @@ public class Algoritmo {
         return (HashMap) enviar;
     }
 
+    /**
+     * Inicializa las variables necesarias para ejecutar el algoritmo
+     *
+     * @return una cadena que indica el resultado del intento de inicialización
+     */
     public String inicializar() {
         // Inicializando listas de vehículos
-        listaVehiculoTipo1 = initializeVehicleList(1);
-        listaVehiculoTipo2 = initializeVehicleList(2);
-        listaVehiculoTipo3 = initializeVehicleList(3);
-        listaVehiculoTipo4 = initializeVehicleList(4);
+        listaVehiculoTipo1 = vehicleService.getAllType(1);
+        listaVehiculoTipo2 = vehicleService.getAllType(2);
+        listaVehiculoTipo3 = vehicleService.getAllType(3);
+        listaVehiculoTipo4 = vehicleService.getAllType(4);
 
         // Sin vehículos
         if (listaVehiculoTipo1.size() == 0 && listaVehiculoTipo2.size() == 0 &&
@@ -165,62 +167,6 @@ public class Algoritmo {
 
         return "correcto";
     }
-
-
-    /**
-     * Inicializa una lista de vehículos
-     *
-     * @param typeId identificador del tipo de vehículo
-     * @return lista con vehículos agregados
-     */
-    public List<Vehicle> initializeVehicleList(int typeId) {
-        List<Vehicle> list = new ArrayList<>();
-        int count;
-        String type;
-        double capacity;
-        double weight;
-
-        if (typeId == 1) {
-            count = 2;
-            capacity = 25.0;
-            type = "TIPO A";
-            weight = 2.5;
-        } else if (typeId == 2) {
-            count = 4;
-            capacity = 20.0;
-            type = "TIPO B";
-            weight = 2.0;
-        } else if (typeId == 3) {
-            count = 4;
-            capacity = 15.0;
-            type = "TIPO C";
-            weight = 1.5;
-        } else {
-            count = 10;
-            capacity = 10.0;
-            type = "TIPO D";
-            weight = 1.0;
-        }
-
-        for (int i = 0; i < count; i++) {
-            Vehicle vehiculo = new Vehicle();
-            vehiculo.setIdVehiculo(typeId*10+i);
-            vehiculo.setPlaca("TC"+ Integer.toString(typeId*10+i));
-            vehiculo.setCapacidadActual(capacity);
-            // agregando datos de tipo
-            TipoVehiculo tipo = new TipoVehiculo();
-            tipo.setIdTipo(typeId);
-            tipo.setNombre(type);
-            tipo.setCapacidad(capacity);
-            tipo.setPesoBruto(weight);
-            tipo.setVelocidad(50.0);
-
-            vehiculo.setTipo(tipo);
-            list.add(vehiculo);
-        }
-
-        return list;
-    };
 
     /**
      * Genera las rutas a partir de los datos obtenidos
