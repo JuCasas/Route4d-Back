@@ -3,6 +3,7 @@ package com.back.route4d.services.impl;
 import com.back.route4d.algoritmo.Algoritmo;
 import com.back.route4d.repository.PedidoRepository;
 import com.back.route4d.services.AlgoritmoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,8 @@ import java.util.List;
 @Service
 public class AlgoritmoServiceImpl implements AlgoritmoService {
 
+    @Autowired
+    Algoritmo algoritmo;
     PedidoRepository pedidoRepository;
     public AlgoritmoServiceImpl(PedidoRepository pedidoRepository) {
         super();
@@ -29,7 +32,6 @@ public class AlgoritmoServiceImpl implements AlgoritmoService {
 
     @Override
     public HashMap enviarRutas() {
-        Algoritmo algoritmo = new Algoritmo();
         algoritmo.obtenerListaPedidos();
         algoritmo.inicializar();
         HashMap list = algoritmo.resolver();
@@ -38,7 +40,6 @@ public class AlgoritmoServiceImpl implements AlgoritmoService {
 
     @Override
     public HashMap enviarRutasOperacion(String k, String sa) {
-        Algoritmo algoritmo = new Algoritmo();
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         LocalDateTime initialDate = LocalDateTime.of(2022, Month.DECEMBER, 02, 0, 0, 0);
         LocalDateTime finalDate = initialDate.plus(Duration.of(Integer.parseInt(k)*Integer.parseInt(sa), ChronoUnit.MINUTES));

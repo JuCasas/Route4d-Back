@@ -52,6 +52,7 @@ public class Algoritmo {
     public Integer diaInfSimulacion = 1;
     public Integer diaSupSimulacion = 3;
 
+    @Autowired
     private VehicleService vehicleService;
 
     public HashMap resolver(){
