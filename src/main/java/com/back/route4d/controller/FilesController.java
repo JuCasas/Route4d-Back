@@ -1,6 +1,6 @@
 package com.back.route4d.controller;
 
-import com.back.route4d.algoritmo.Algoritmo;
+import com.back.route4d.helper.Helper;
 import com.back.route4d.model.FileInfo;
 import com.back.route4d.message.ResponseMessage;
 import com.back.route4d.model.Pedido;
@@ -55,7 +55,7 @@ public class FilesController {
                 // Por ahora, el proceso está limitado a agregar 100 pedidos por día, por los 5 primeros días
                 String fileName = FileStorageServiceImpl.folderName + "/" + fileNames.get(0);
                 final BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-                String strYearMonth = Algoritmo.getOrdersDateFromName(fileName); // datos del nombre del archivo
+                String strYearMonth = Helper.getOrdersDateFromName(fileName); // datos del nombre del archivo
                 String line; // línea del archivo
                 int id = 1; // contador para identificador
                 List<Pedido> listaPedidos = new ArrayList<>(); // para almacenar pedidos

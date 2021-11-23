@@ -2,6 +2,7 @@ package com.back.route4d.algoritmo;
 
 import com.back.route4d.algoritmo.dijkstra.Dijkstra;
 import com.back.route4d.algoritmo.kmeans.Kmeans;
+import com.back.route4d.helper.Helper;
 import com.back.route4d.model.*;
 // import com.back.route4d.repository.AlgoritmoRepository;
 // import com.back.route4d.repository.UsuarioRepository;
@@ -96,8 +97,8 @@ public class Algoritmo {
 
             Integer minutosInicio = callesBloqueadas.getMinutosInicio();
             Integer minutosFin = callesBloqueadas.getMinutosFin();
-            LocalDateTime fechaInicio = convertMinutesToLocalDateTime(minutosInicio);
-            LocalDateTime fechaFin = convertMinutesToLocalDateTime(minutosFin);
+            LocalDateTime fechaInicio = Helper.convertMinutesToLocalDateTime(minutosInicio);
+            LocalDateTime fechaFin = Helper.convertMinutesToLocalDateTime(minutosFin);
 
             for (Integer nodo:callesBloqueadas.getNodos()){
 
@@ -192,58 +193,6 @@ public class Algoritmo {
     }
 
     /**
-     * Obtiene mes y año a partir del nombre del archivo de nodos bloqueados
-     *
-     * @param fileName cadena con la ruta completa del archivo
-     * @return cadena con el mes y el año correspondientes
-     */
-    public static String getLockedNodesDateFromName(String fileName) {
-        File file = new File(fileName);
-        String name = file.getName();
-        String strYearMonth = name.substring(0, 4) + "-" + name.substring(4, 6);
-
-        return strYearMonth;
-    }
-
-    /**
-     * Obtiene mes y año a partir del nombre del archivo de pedidos
-     *
-     * @param fileName cadena con la ruta completa del archivo
-     * @return cadena con el mes y el año correspondientes
-     */
-    public static String getOrdersDateFromName(String fileName) {
-        File file = new File(fileName);
-        String name = file.getName();
-        String strYearMonth = name.substring(6, 10) + "-" + name.substring(10, 12);
-
-        return strYearMonth;
-    }
-
-    /**
-     * Convierte una fecha del tipo LocalDateTime a minutos del tipo int
-     *
-     * @param ldt fecha del tipo LocalDateTime
-     * @return la fecha convertida a los minutos que pasaron desde el inicio del año
-     */
-    private Integer convertLocalDateTimeToMinutes(LocalDateTime ldt) {
-        LocalDateTime d1 = LocalDateTime.of(2021, Month.JANUARY, 1, 0, 0);
-
-        return (int) ChronoUnit.MINUTES.between(d1, ldt);
-    }
-
-    /**
-     * Convierte minutos del tipo int a una fecha del tipo LocalDateTime
-     *
-     * @param mins cantidad de minutos que pasaron desde el inicio del año
-     * @return los minutos convertidos a la fecha correspondiente
-     */
-    private LocalDateTime convertMinutesToLocalDateTime(int mins) {
-        LocalDateTime d1 = LocalDateTime.of(2021, Month.JANUARY, 1, 0, 0);
-
-        return d1.plus(Duration.of(mins, ChronoUnit.MINUTES));
-    }
-
-    /**
      * Obtiene la lista de pedidos a partir de un archivo de texto
      */
     public void obtenerListaPedidos() {
@@ -251,7 +200,7 @@ public class Algoritmo {
             // Para lectura del archivo
             String fileName = "/ventas202212.txt";
             final BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
-            String strYearMonth = getOrdersDateFromName(fileName); // datos del nombre del archivo
+            String strYearMonth = Helper.getOrdersDateFromName(fileName); // datos del nombre del archivo
             String line; // línea del archivo
             int id = 1; // contador para identificador
             listaPedidos = new ArrayList<>(); // para almacenar pedidos
@@ -294,7 +243,7 @@ public class Algoritmo {
         try {
             String fileName = "/202209bloqueadas.txt";
             final BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
-            String strYearMonth = getLockedNodesDateFromName(fileName);
+            String strYearMonth = Helper.getLockedNodesDateFromName(fileName);
             String line;
             int id = 1; // para el identificador de la calle bloqueada
             listaCallesBloqueadas = new ArrayList<>(); // para calles bloqueadas
@@ -330,8 +279,8 @@ public class Algoritmo {
                         coords[i] = Integer.parseInt(strCoords[i]); // pasando a enteros
                     }
 
-                    CallesBloqueadas calleBloqueada = new CallesBloqueadas(id++, convertLocalDateTimeToMinutes(dateIni),
-                            convertLocalDateTimeToMinutes(dateFin));
+                    CallesBloqueadas calleBloqueada = new CallesBloqueadas(id++, Helper.convertLocalDateTimeToMinutes(dateIni),
+                            Helper.convertLocalDateTimeToMinutes(dateFin));
 
                     // Agregando el identificador del nodo a la calle bloqueada
 
@@ -358,11 +307,13 @@ public class Algoritmo {
                 }
 
             }
-                br.close();
-            } catch(IOException e){
-                e.printStackTrace();
-            }
+
+            br.close();
+
+        } catch(IOException e) {
+            e.printStackTrace();
         }
+    }
 
     /**
      * Obtiene la cantidad de clusters necesarios para el algoritmo
