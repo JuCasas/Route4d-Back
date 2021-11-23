@@ -100,18 +100,28 @@ public class Algoritmo {
             Integer minutosFin = callesBloqueadas.getMinutosFin();
             LocalDateTime fechaInicio = convertMinutesToLocalDateTime(minutosInicio);
             LocalDateTime fechaFin = convertMinutesToLocalDateTime(minutosFin);
-            Integer duracionMinutos = minutosFin - minutosInicio;
 
-            CallesBloqueadasFront calleFront = new CallesBloqueadasFront(fechaInicio, fechaFin, duracionMinutos);
             for (Integer nodo:callesBloqueadas.getNodos()){
+
                 int x = (nodo - 1) % 71;
                 int y = (nodo - 1) / 71;
-                Map<String ,Integer> map=new HashMap<String,Integer>();
-                map.put("x",x);
-                map.put("y",y);
-                calleFront.nodos.add(map);
+
+                boolean encontrado = false;
+                for (CallesBloqueadasFront bloqueoRevisar:listaCallesBloqueadasFront){
+                    if (bloqueoRevisar.esBloqueo(x,y)){
+                        bloqueoRevisar.addTime(fechaInicio,fechaFin);
+                        encontrado = true;
+                        break;
+                    }
+                }
+
+                if(!encontrado){
+                    CallesBloqueadasFront calleFront = new CallesBloqueadasFront(x,y);
+                    calleFront.addTime(fechaInicio,fechaFin);
+                    listaCallesBloqueadasFront.add(calleFront);
+                }
+
             }
-            listaCallesBloqueadasFront.add(calleFront);
         }
         HashMap<String,Object> enviar;
 
