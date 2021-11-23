@@ -55,6 +55,8 @@ public class Algoritmo {
 
     @Autowired
     private VehicleService vehicleService;
+    @Autowired
+    private PedidoRepository pedidoRepository;
 
     public HashMap resolver(){
 
@@ -681,7 +683,13 @@ public class Algoritmo {
             if(minCont == -1) break;
 
             listaRutas.get(minCont).setVehiculo(listaVehiculoTipo1.get(i));
-            
+
+            for (Pedido pedidoActualizar:listaRutas.get(minCont).pedidos){
+                pedidoActualizar.setVehicle(listaVehiculoTipo1.get(i));
+                pedidoActualizar.setEstado(1);
+                pedidoRepository.save(pedidoActualizar);
+            }
+
 //            listaRutasEnRecorrido.add(sRuta);
 //            disponiblesTipo1--;
         }
@@ -700,6 +708,12 @@ public class Algoritmo {
             if(minCont == -1) break;
 
             listaRutas.get(minCont).setVehiculo(listaVehiculoTipo2.get(i));
+
+            for (Pedido pedidoActualizar:listaRutas.get(minCont).pedidos){
+                pedidoActualizar.setVehicle(listaVehiculoTipo2.get(i));
+                pedidoActualizar.setEstado(1);
+                pedidoRepository.save(pedidoActualizar);
+            }
 
 //            listaRutasEnRecorrido.add(sRuta);
 //            disponiblesTipo2--;
@@ -720,6 +734,12 @@ public class Algoritmo {
 
             listaRutas.get(minCont).setVehiculo(listaVehiculoTipo3.get(i));
 
+            for (Pedido pedidoActualizar:listaRutas.get(minCont).pedidos){
+                pedidoActualizar.setVehicle(listaVehiculoTipo3.get(i));
+                pedidoActualizar.setEstado(1);
+                pedidoRepository.save(pedidoActualizar);
+            }
+
 //            listaRutasEnRecorrido.add(sRuta);
 //            disponiblesTipo3--;
         }
@@ -738,6 +758,12 @@ public class Algoritmo {
             if(minCont == -1) break;
 
             listaRutas.get(minCont).setVehiculo(listaVehiculoTipo4.get(i));
+
+            for (Pedido pedidoActualizar:listaRutas.get(minCont).pedidos){
+                pedidoActualizar.setVehicle(listaVehiculoTipo4.get(i));
+                pedidoActualizar.setEstado(1);
+                pedidoRepository.save(pedidoActualizar);
+            }
 
 //            listaRutasEnRecorrido.add(sRuta);
 //            disponiblesTipo4--;
