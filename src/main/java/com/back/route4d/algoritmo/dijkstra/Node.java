@@ -1,19 +1,24 @@
 package com.back.route4d.algoritmo.dijkstra;
 
-//En el caso de java usamos una clase que representara el pair de C++
-public class Node implements Comparable<Node>{
-    int first, second;
+public class Node implements Comparable<Node> {
+    int first;
+    int second;
 
-    //constructor
-    public Node( int d , int p ){
-        this.first = d;
-        this.second = p;
+    public Node(int first, int second) {
+        this.first = first;
+        this.second = second;
     }
 
-    //es necesario definir un comparador para el correcto funcionamiento del PriorityQueue
-    public int compareTo( Node other){
-        if( second > other.second ) return 1;
-        if( second == other.second ) return 0;
+    // comparador para la cola de prioridad del algoritmo Dijkstra
+    public int compareTo(Node other) {
+        if(second > other.second) {
+            return 1;
+        }
+
+        if(second == other.second) {
+            return 0;
+        }
+
         return -1;
     }
 };
