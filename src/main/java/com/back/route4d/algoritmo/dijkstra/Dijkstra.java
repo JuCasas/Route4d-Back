@@ -1,6 +1,5 @@
 package com.back.route4d.algoritmo.dijkstra;
 
-import com.back.route4d.model.Bloqueado;
 import com.back.route4d.model.CallesBloqueadas;
 import com.back.route4d.model.Ruta;
 
@@ -95,7 +94,6 @@ public class Dijkstra {
             return;
         }
         print(destino, ruta, tipo);
-        // System.out.printf("\n");
     }
 
     // Impresion del camino mas corto desde el vertice inicial y final ingresados
@@ -103,22 +101,14 @@ public class Dijkstra {
         if (previo[destino] != -1) { // si aun poseo un vertice previo
             print(previo[destino], ruta, tipo); // recursivamente sigo explorando
         }
+
+        // TODO: revisar la posibilidad de unir los ifs
         if (previo[destino] != -1) {
             if (tipo == 1)
                 ruta.addNodo(destino);
             else
                 ruta.addNodoRetorno(destino);
         }
-        // System.out.printf("%d " , destino ); //terminada la recursion imprimo los
-        // vertices recorridos
-    }
-
-    public int getNumberOfVertices() {
-        return V;
-    }
-
-    public void setNumberOfVertices(int numeroDeVertices) {
-        V = numeroDeVertices;
     }
 
     private boolean estaBloqueada(int tiempoMinutos, int nodoId) {
