@@ -1,5 +1,6 @@
 package com.back.route4d.algoritmo.dijkstra;
 
+import com.back.route4d.helper.Helper;
 import com.back.route4d.model.CallesBloqueadas;
 import com.back.route4d.model.Ruta;
 
@@ -9,114 +10,193 @@ import java.util.PriorityQueue;
 
 public class Dijkstra {
 
-    private final int MAX = 3622; // maximo numero de vértices
-    private final int INF = 1 << 30; // definimos un valor grande que represente la distancia infinita inicial, basta
-                                     // conque sea superior al maximo valor del peso en alguna de las aristas
+    // número máximo de vértices
+    private final int MAX = 3622; // 71 * 51 + 1
 
-    private List<List<Node>> ady = new ArrayList<List<Node>>(); // lista de adyacencia
-    private int distancia[] = new int[MAX]; // distancia[ u ] distancia de vértice inicial a vértice con ID = u
-    private boolean visitado[] = new boolean[MAX]; // para vértices visitados
-    private PriorityQueue<Node> Q = new PriorityQueue<Node>(); // priority queue propia de Java, usamos el comparador
-                                                               // definido para que el de menor valor este en el tope
-    private int V; // numero de vertices
-    private int previo[] = new int[MAX]; // para la impresion de caminos
-    private boolean dijkstraEjecutado;
-    private List<CallesBloqueadas> listaCallesBloqueadas;
+    // valor para la distancia infinita inicial
+    // es suficiente que supere máximo valor del peso en alguna de las aristas
+    private final int INF = 1 << 30; // TODO: considerar cambiar a un valor menor que 2 a la 30
 
-    public Dijkstra(int V, List<CallesBloqueadas> listaCallesBloqueadas) {
-        this.V = V;
-        for (int i = 0; i <= V; ++i)
-            ady.add(new ArrayList<Node>()); // inicializamos lista de adyacencia
-        dijkstraEjecutado = false;
-        this.listaCallesBloqueadas = listaCallesBloqueadas;
+    // número de vértices del grafo
+    private int vertexCount;
+
+    // lista de adyacencia
+    private List<List<Node>> adjacencyList = new ArrayList<>();
+
+    // lista que contiene calles bloqueados
+    private List<CallesBloqueadas> closedRoadsList;
+
+    // distancias del vértice inicial al vértice cuyo ID es el índice especificado
+    private int distance[] = new int[MAX];
+
+    // arreglo booleano para indicar si los vértices fueron visitados
+    private boolean visited[] = new boolean[MAX];
+
+    // arreglo de vértices previos para añadir nodos a las rutas
+    private int previous[] = new int[MAX];
+
+    // cola de prioridad en la que el menor valor está a la cabeza
+    private PriorityQueue<Node> queue = new PriorityQueue<>();
+
+    // flag para determinar si ya se ejecutó el algoritmo
+    private boolean hasRun;
+
+    /**
+     * Prepara el algoritmo Dijkstra usando los datos especificados
+     *
+     * @param  vertexCount      número de vértices del grafo
+     * @param  closedRoadsList  lista de calles bloqueados
+     */
+    public Dijkstra(int vertexCount, List<CallesBloqueadas> closedRoadsList) {
+        this.vertexCount = vertexCount;
+        this.closedRoadsList = closedRoadsList;
+
+        // se inicializa la lista de adyacencia
+        for (int i = 0; i <= vertexCount; ++i) {
+            adjacencyList.add(new ArrayList<>());
+        }
+
+        hasRun = false; // el algoritmo aún no se ha ejecutado
     }
 
-    // función de inicialización
-    private void init() {
-        for (int i = 0; i <= V; ++i) {
-            distancia[i] = INF; // inicializamos todas las distancias con valor infinito
-            visitado[i] = false; // inicializamos todos los vértices como no visitados
-            previo[i] = -1; // inicializamos el previo del vertice i con -1
+    /**
+     * Inicializa los arreglos a ser utilizados en el algoritmo Dijkstra
+     */
+    private void initialize() {
+        for (int i = 0; i <= vertexCount; ++i) {
+            distance[i] = INF;   // se inicializan las distancias con un valor muy grande
+            visited[i] = false;  // se indica que ningún vértice ha sido visitado aún
+            previous[i] = -1;    // se inicializan todos los vértices previos con -1
         }
     }
 
-    // Paso de relajacion
-    private void relajacion(int actual, int adyacente, int peso) {
-        // Si la distancia del origen al vertice actual + peso de su arista es menor a
-        // la distancia del origen al vertice adyacente
-        if (distancia[actual] + peso < distancia[adyacente]) {
-            distancia[adyacente] = distancia[actual] + peso; // relajamos el vertice actualizando la distancia
-            previo[adyacente] = actual; // a su vez actualizamos el vertice previo
-            Q.add(new Node(adyacente, distancia[adyacente])); // agregamos adyacente a la cola de prioridad
+    /**
+     * Agrega aristas entre nodos
+     *
+     * @param  initial  nodo de origen
+     * @param  end      nodo de destino
+     */
+    public void addEdge(int initial, int end) {
+        adjacencyList.get(initial).add(new Node(end, 1));
+    }
+
+    /**
+     * Realiza el proceso de relajación de Dijkstra
+     *
+     * @param  current   ID del vértice actual
+     * @param  adjacent  ID del vértice adyacente
+     * @param  weight    peso
+     */
+    private void relaxation(int current, int adjacent, int weight) {
+        // si la distancia hasta el vértice actual más el peso de su arista hacia un adyacente
+        // es menor a la distancia anteriormente calculada hasta dicho vértice adyacente,
+        // entonces se ha encontrado una ruta más corta
+        if (distance[current] + weight < distance[adjacent]) {
+            distance[adjacent] = distance[current] + weight;    // se actualiza la distancia hasta el adyacente
+            previous[adjacent] = current;                       // se marca el actual como previo al adyacente
+            queue.add(new Node(adjacent, distance[adjacent]));  // se agrega el adyacente a la cola
         }
     }
 
-    public void dijkstra(int inicial, int tiempoMinutos, int velocidad) {
-        init(); // inicializamos nuestros arreglos
-        Q.add(new Node(inicial, 0)); // Insertamos el vértice inicial en la Cola de Prioridad
-        distancia[inicial] = 0; // Este paso es importante, inicializamos la distancia del inicial como 0
-        int actual, adyacente, peso, tiempoTranscurrido;
-        while (!Q.isEmpty()) { // Mientras cola no este vacia
-            actual = Q.element().first; // Obtengo de la cola el nodo con menor peso, en un comienzo será el inicial
-            Q.remove(); // Sacamos el elemento de la cola
-            if (visitado[actual])
-                continue; // Si el vértice actual ya fue visitado entonces sigo sacando elementos de la
-                          // cola
-            visitado[actual] = true; // Marco como visitado el vértice actual
-            tiempoTranscurrido = distancia[actual] * 60 / (velocidad);
-            tiempoTranscurrido = tiempoMinutos + tiempoTranscurrido;
-            boolean estaBloqueada = estaBloqueada(tiempoTranscurrido, actual);
-            // System.out.println("bloqueado: " + estaBloqueada);
-            for (int i = 0; i < ady.get(actual).size(); ++i) { // reviso sus adyacentes del vertice actual
-                adyacente = ady.get(actual).get(i).first; // id del vertice adyacente
-                if (estaBloqueada)
-                    peso = INF;
-                else
-                    peso = ady.get(actual).get(i).second; // peso de la arista que une actual con adyacente ( actual ,
-                                                          // adyacente )
-                if (!visitado[adyacente]) { // si el vertice adyacente no fue visitado
-                    relajacion(actual, adyacente, peso); // realizamos el paso de relajacion
+    /**
+     * Ejecuta el algoritmo Dijkstra
+     *
+     * @param  initial      ID del vértice inicial
+     * @param  currentTime  tiempo transcurrido al momento de ejecutar el algoritmo
+     * @param  speed        velocidad de desplazamiento
+     */
+    public void run(int initial, int currentTime, int speed) {
+        int current, adjacent, weight, timeElapsed;
+
+        // se inicializan los arreglos
+        initialize();
+
+        // se agrega el vértice inicial a la cola y se establece la distancia hacia él en 0
+        queue.add(new Node(initial, 0));
+        distance[initial] = 0;
+
+        while (!queue.isEmpty()) {
+            // se obtiene y remueve el ID del nodo con menor peso de la cola
+            // TODO: considerar juntar las dos líneas siguientes
+            current = queue.element().getFirst();
+            queue.remove();
+
+            // se continúan sacando nodos de la cola si el actual ya fue visitado
+            if (visited[current]) {
+                continue;
+            }
+
+            // se indica que ya se visitó el vértice actual
+            visited[current] = true;
+
+            // se actualiza el tiempo transcurrido
+            timeElapsed = distance[current] * 60 / (speed);
+            timeElapsed += currentTime;
+
+            // determina si el nodo actual está bloqueado
+            boolean isBlocked = Helper.isBlocked(timeElapsed, current, closedRoadsList);
+
+            // se recorren los vértices adyacentes al actual
+            for (int i = 0; i < adjacencyList.get(current).size(); i++) {
+                adjacent = adjacencyList.get(current).get(i).getFirst();
+
+                // si está bloqueado, el peso se establece en un número muy grande para evitar la relajación
+                if (isBlocked) {
+                    weight = INF;
+                }
+
+                // si no está bloqueado, se toma el peso de la arista que conecta dicho vértice con el actual
+                else {
+                    weight = adjacencyList.get(current).get(i).getSecond();
+                }
+
+                // se realiza la relajación solo si el vértice adyacente no ha sido visitado aún
+                if (!visited[adjacent]) {
+                    relaxation(current, adjacent, weight);
                 }
             }
         }
-        dijkstraEjecutado = true;
+
+        hasRun = true; // el algoritmo ya se ha ejecutado
     }
 
-    public void addEdge(int origen, int destino) {
-        // llenando lista de adyacencia
-        ady.get(origen).add(new Node(destino, 1));
-    }
-
-    public void printShortestPath(int destino, Ruta ruta, int tipo) {
-        if (!dijkstraEjecutado) {
-            System.out.println(
-                    "Es necesario ejecutar el algorithmo de Dijkstra antes de poder imprimir el camino mas corto");
-            return;
+    /**
+     * Agrega los nodos correspondientes a la ruta
+     *
+     * @param  destination  ID del nodo de destino
+     * @param  path         ruta a modificar
+     * @param  type         1 para camino de ida, 2 para camino de regreso
+     */
+    public void addNodesToPath(int destination, Ruta path, int type) {
+        if (hasRun) {
+            addNodes(destination, path, type);
         }
-        print(destino, ruta, tipo);
+        else {
+            System.out.println("El algoritmo Dijkstra no se ha ejecutado.");
+        }
     }
 
-    // Impresion del camino mas corto desde el vertice inicial y final ingresados
-    private void print(int destino, Ruta ruta, int tipo) {
-        if (previo[destino] != -1) { // si aun poseo un vertice previo
-            print(previo[destino], ruta, tipo); // recursivamente sigo explorando
+    /**
+     * Agrega de manera recursiva los nodos a la ruta
+     *
+     * @param  destination  ID del nodo de destino
+     * @param  path         ruta a modificar
+     * @param  type         1 para camino de ida, 2 para camino de regreso
+     */
+    private void addNodes(int destination, Ruta path, int type) {
+        // se busca que no existan nodos previos para finalizar con la recursión
+        if (previous[destination] != -1) {
+            addNodes(previous[destination], path, type);
         }
 
         // TODO: revisar la posibilidad de unir los ifs
-        if (previo[destino] != -1) {
-            if (tipo == 1)
-                ruta.addNodo(destino);
-            else
-                ruta.addNodoRetorno(destino);
-        }
-    }
-
-    private boolean estaBloqueada(int tiempoMinutos, int nodoId) {
-        for (CallesBloqueadas par : listaCallesBloqueadas) {
-            if ((tiempoMinutos >= par.getMinutosInicio()) && (tiempoMinutos < par.getMinutosFin())) {
-                return par.estaNodo(nodoId);
+        if (previous[destination] != -1) {
+            if (type == 1) {
+                path.addNodo(destination);
+            }
+            else {
+                path.addNodoRetorno(destination);
             }
         }
-        return false;
     }
 }

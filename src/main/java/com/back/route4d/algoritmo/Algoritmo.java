@@ -7,7 +7,6 @@ import com.back.route4d.model.*;
 // import com.back.route4d.repository.AlgoritmoRepository;
 // import com.back.route4d.repository.UsuarioRepository;
 import java.io.*;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -510,19 +509,19 @@ public class Algoritmo {
                 System.out.println("x:  " + pedido.getX() + "   y: " + pedido.getY() + "   z: " + pedido.getMinFaltantes()
                         + "   cant: " + pedido.getCantidad() + "   idNodo: " + pedido.getNodoId());
 
-                boolean estaBloqueada = estaBloqueada(tiempoMinutos, origen);
+                boolean estaBloqueada = Helper.isBlocked(tiempoMinutos, origen, listaCallesBloqueadas);
 
                 if (estaBloqueada) {
                     System.out.println("Bloqueado!");
                     origen = ultimoViable;
                 }
 
-                dijkstraAlgorithm.dijkstra(origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
+                dijkstraAlgorithm.run(origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
                 System.out.printf("Ruta: ");
 
                 int tamanoIni = ruta.recorrido.size();
 
-                dijkstraAlgorithm.printShortestPath(pedido.getNodoId(), ruta, 1);
+                dijkstraAlgorithm.addNodesToPath(pedido.getNodoId(), ruta, 1);
 
                 int tamanoFin = ruta.recorrido.size();
 
@@ -557,7 +556,7 @@ public class Algoritmo {
                 // verificamos si nos encontramos en un nodo bloqueado
                 // esto puede ocurrir ya que hemos entregado un pedido en un nodo bloqueado
                 // o si el almancén es un nodo bloqueado
-                boolean estaBloqueada = estaBloqueada(tiempoMinutos, origen);
+                boolean estaBloqueada = Helper.isBlocked(tiempoMinutos, origen, listaCallesBloqueadas);
 
                 if (estaBloqueada) {
                     System.out.println("Bloqueado!");
@@ -566,14 +565,14 @@ public class Algoritmo {
                 }
 
                 // corremos el algoritmo de dijkstra
-                dijkstraAlgorithm.dijkstra(origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
+                dijkstraAlgorithm.run(origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
                 System.out.printf("Ruta: ");
 
                 // tamano antes de la nueva parte de la ruta
                 int tamanoIni = ruta.recorrido.size();
 
                 // obtenemos la ruta en un array
-                dijkstraAlgorithm.printShortestPath(pedido.getNodoId(), ruta, 1);
+                dijkstraAlgorithm.addNodesToPath(pedido.getNodoId(), ruta, 1);
 
                 // tamano luego de la nueva parte de la ruta
                 int tamanoFin = ruta.recorrido.size();
@@ -615,7 +614,7 @@ public class Algoritmo {
                 System.out.println("Camino de retorno al almacén:  ");
 
                 origen = ruta.recorrido.get(ruta.recorrido.size() - 1);
-                boolean estaBloqueada = estaBloqueada(tiempoMinutos, origen);
+                boolean estaBloqueada = Helper.isBlocked(tiempoMinutos, origen, listaCallesBloqueadas);
 
                 if (estaBloqueada) {
                     System.out.println("Bloqueado!");
@@ -623,11 +622,11 @@ public class Algoritmo {
                     ruta.addNodoRetorno(origen);
                 }
 
-                dijkstraAlgorithm.dijkstra(origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
+                dijkstraAlgorithm.run(origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
 
                 int tamanoIni = ruta.retorno.size(); // FALTA ENTENDER EL TAMANOINI AQUI
 
-                dijkstraAlgorithm.printShortestPath(almacenAIr(origen), ruta, 2);
+                dijkstraAlgorithm.addNodesToPath(almacenAIr(origen), ruta, 2);
             }
 
             System.out.println();
@@ -770,22 +769,5 @@ public class Algoritmo {
         }
 //        Collections.sort(listaPedidosEnCola);
 //        Collections.sort(listaRutasEnRecorrido);
-    }
-
-    /**
-     * Verifica si un nodo está bloqueado
-     *
-     * @param tiempoMinutos el tiempo que lleva ejecutándose el algoritmo
-     * @param nodoId        identificador del nodo a verificar
-     *
-     * @return true o false dependiendo de si el nodo está bloqueado o no
-     */
-    private boolean estaBloqueada(int tiempoMinutos, int nodoId) {
-        for (CallesBloqueadas par : listaCallesBloqueadas) {
-            if ((tiempoMinutos >= par.getMinutosInicio()) && (tiempoMinutos < par.getMinutosFin())) {
-                return par.estaNodo(nodoId);
-            }
-        }
-        return false;
     }
 }
