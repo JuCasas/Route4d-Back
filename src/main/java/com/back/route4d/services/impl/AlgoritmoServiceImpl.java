@@ -43,7 +43,7 @@ public class AlgoritmoServiceImpl implements AlgoritmoService {
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         LocalDateTime initialDate = LocalDateTime.of(2022, Month.DECEMBER, 02, 0, 0, 0);
         LocalDateTime finalDate = initialDate.plus(Duration.of(Integer.parseInt(k)*Integer.parseInt(sa), ChronoUnit.MINUTES));
-        algoritmo.listaPedidos = pedidoRepository.findByDate(initialDate,finalDate);
+        algoritmo.listaPedidos = pedidoRepository.findByDate(initialDate,finalDate,0);
         algoritmo.inicializar();
         HashMap list = algoritmo.resolver();
         return list;

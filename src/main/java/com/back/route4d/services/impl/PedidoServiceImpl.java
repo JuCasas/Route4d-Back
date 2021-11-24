@@ -6,6 +6,7 @@ import com.back.route4d.repository.PedidoRepository;
 import com.back.route4d.services.PedidoService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -52,6 +53,11 @@ public class PedidoServiceImpl implements PedidoService {
         //Save vehicle to DB
         pedidoRepository.save(existingPedido);
         return existingPedido;
+    }
+
+    @Override
+    public List<Pedido> findByDate(LocalDateTime inicio, LocalDateTime fin) {
+        return pedidoRepository.findByDate(inicio,fin,1);
     }
 
     @Override

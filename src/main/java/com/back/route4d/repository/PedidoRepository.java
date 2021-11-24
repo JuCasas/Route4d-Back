@@ -10,6 +10,6 @@ import java.util.List;
 
 public interface PedidoRepository extends JpaRepository<Pedido,Integer> {
     @Query(value = "select * from route4d.pedido \n" +
-            "where fecha_pedido between ?1 and ?2 ",nativeQuery = true)
-    List<Pedido> findByDate(LocalDateTime inicio, LocalDateTime fin);
+            "where fecha_pedido between ?1 and ?2 and estado = ?3 ",nativeQuery = true)
+    List<Pedido> findByDate(LocalDateTime inicio, LocalDateTime fin, int estado);
 }
