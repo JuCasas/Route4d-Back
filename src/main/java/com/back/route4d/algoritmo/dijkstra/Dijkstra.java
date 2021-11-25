@@ -14,8 +14,8 @@ public class Dijkstra {
     private final int MAX = 3622; // 71 * 51 + 1
 
     // valor para la distancia infinita inicial
-    // es suficiente que supere máximo valor del peso en alguna de las aristas
-    private final int INF = 1 << 30; // TODO: considerar cambiar a un valor menor que 2 a la 30
+    // es suficiente que supere máximo valor del costo en alguna de las aristas
+    private final int INF = 1 << 30; // TODO: considerar cambiar a un valor distinto de 2 a la 30
 
     // número de vértices del grafo
     private int vertexCount;
@@ -85,14 +85,14 @@ public class Dijkstra {
      *
      * @param  current   ID del vértice actual
      * @param  adjacent  ID del vértice adyacente
-     * @param  weight    peso
+     * @param  cost    costo desde vértice actual hasta el adyacente
      */
-    private void relaxation(int current, int adjacent, int weight) {
-        // si la distancia hasta el vértice actual más el peso de su arista hacia un adyacente
+    private void relaxation(int current, int adjacent, int cost) {
+        // si la distancia hasta el vértice actual más el costo de su arista hacia un adyacente
         // es menor a la distancia anteriormente calculada hasta dicho vértice adyacente,
         // entonces se ha encontrado una ruta más corta
-        if (distance[current] + weight < distance[adjacent]) {
-            distance[adjacent] = distance[current] + weight;    // se actualiza la distancia hasta el adyacente
+        if (distance[current] + cost < distance[adjacent]) {
+            distance[adjacent] = distance[current] + cost;      // se actualiza la distancia hasta el adyacente
             previous[adjacent] = current;                       // se marca el actual como previo al adyacente
             queue.add(new Node(adjacent, distance[adjacent]));  // se agrega el adyacente a la cola
         }
@@ -106,7 +106,7 @@ public class Dijkstra {
      * @param  speed        velocidad de desplazamiento
      */
     public void run(int initial, int currentTime, int speed) {
-        int current, adjacent, weight, timeElapsed;
+        int current, adjacent, cost, timeElapsed;
 
         // se inicializan los arreglos
         initialize();
@@ -116,9 +116,9 @@ public class Dijkstra {
         distance[initial] = 0;
 
         while (!queue.isEmpty()) {
-            // se obtiene y remueve el ID del nodo con menor peso de la cola
+            // se obtiene y remueve el ID del nodo con menor costo de la cola
             // TODO: considerar juntar las dos líneas siguientes
-            current = queue.element().getFirst();
+            current = queue.element().getID();
             queue.remove();
 
             // se continúan sacando nodos de la cola si el actual ya fue visitado
@@ -138,21 +138,21 @@ public class Dijkstra {
 
             // se recorren los vértices adyacentes al actual
             for (int i = 0; i < adjacencyList.get(current).size(); i++) {
-                adjacent = adjacencyList.get(current).get(i).getFirst();
+                adjacent = adjacencyList.get(current).get(i).getID();
 
-                // si está bloqueado, el peso se establece en un número muy grande para evitar la relajación
+                // si está bloqueado, el costo se establece en un número muy grande para evitar la relajación
                 if (isBlocked) {
-                    weight = INF;
+                    cost = INF;
                 }
 
-                // si no está bloqueado, se toma el peso de la arista que conecta dicho vértice con el actual
+                // si no está bloqueado, se toma el costo de la arista que conecta dicho vértice con el actual
                 else {
-                    weight = adjacencyList.get(current).get(i).getSecond();
+                    cost = adjacencyList.get(current).get(i).getCost();
                 }
 
                 // se realiza la relajación solo si el vértice adyacente no ha sido visitado aún
                 if (!visited[adjacent]) {
-                    relaxation(current, adjacent, weight);
+                    relaxation(current, adjacent, cost);
                 }
             }
         }

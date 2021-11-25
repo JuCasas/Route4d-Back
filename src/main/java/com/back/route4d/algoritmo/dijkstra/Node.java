@@ -1,37 +1,29 @@
 package com.back.route4d.algoritmo.dijkstra;
 
 public class Node implements Comparable<Node> {
-    private int first;
-    private int second;
+    private int ID;
+    private int cost;
 
-    public Node(int first, int second) {
-        this.first = first;
-        this.second = second;
+    public Node(int ID, int cost) {
+        this.ID = ID;
+        this.cost = cost;
     }
 
-    public int getFirst() {
-        return first;
+    public int getID() {
+        return ID;
     }
 
-    public void setFirst(int first) {
-        this.first = first;
-    }
-
-    public int getSecond() {
-        return second;
-    }
-
-    public void setSecond(int second) {
-        this.second = second;
+    public int getCost() {
+        return cost;
     }
 
     // comparador para la cola de prioridad del algoritmo Dijkstra
     public int compareTo(Node other) {
-        if(second > other.second) {
+        if(cost > other.cost) {
             return 1;
         }
 
-        if(second == other.second) {
+        if(cost == other.cost) {
             return 0;
         }
 
