@@ -48,19 +48,38 @@ public class PlantaServiceImpl implements  PlantaService{
                 ()-> new ResourceNotFoundException("Planta","id",idPlanta));
 
         Planta plantaM = mapPersistenceModelToRestModel(planta);
-
         campos.forEach(
                 (campo, value) -> {
                     if("idPlanta".equals(campo)){
                         plantaM.setIdPlantas((int) value);
                     }else if ("capacidad".equals(campo)) {
-                        plantaM.setCapacidad((int) value);
+                        if(value.getClass().getName() == "java.lang.Integer"){
+                            Integer aux = (Integer) value;
+                            plantaM.setCapacidad(aux);
+                        }else{
+                            plantaM.setCapacidad(Integer.parseInt((String) value) );
+                        }
                     } else if ("tipo".equals(campo)) {
-                        plantaM.setTipo((int) value);
+                        if(value.getClass().getName() == "java.lang.Integer"){
+                            Integer aux = (Integer) value;
+                            plantaM.setTipo(aux);
+                        }else{
+                            plantaM.setTipo(Integer.parseInt((String) value) );
+                        }
                     } else if ("x".equals(campo)) {
-                        plantaM.setX((int) value);
+                        if(value.getClass().getName() == "java.lang.Integer"){
+                            Integer aux = (Integer) value;
+                            plantaM.setX(aux);
+                        }else{
+                            plantaM.setX(Integer.parseInt((String) value) );
+                        }
                     } else if ("y".equals(campo)) {
-                        plantaM.setY((int) value);
+                        if(value.getClass().getName() == "java.lang.Integer"){
+                            Integer aux = (Integer) value;
+                            plantaM.setY(aux);
+                        }else{
+                            plantaM.setY(Integer.parseInt((String) value) );
+                        }
                     }
                 }
         );
