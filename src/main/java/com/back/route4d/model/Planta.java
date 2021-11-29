@@ -26,5 +26,6 @@ public class Planta {
     private int capacidad;
 
     public Planta() {
+        super();
     }
 }

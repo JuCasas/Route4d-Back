@@ -35,13 +35,17 @@ public class PlantaController {
     }
 
 
-    //Build update vehicle by ID
     @PutMapping("/{id}")
     public ResponseEntity<Planta> updatePlanta(@PathVariable("id") int id, @RequestBody Planta planta){
         return new ResponseEntity<Planta>(plantaService.updatePlanta(planta,id),HttpStatus.OK);
     }
 
-    //Build delete vehicle by ID
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PatchMapping("/{id}")
+    public ResponseEntity<Planta> patch(@PathVariable("id") int idPlanta, @RequestBody Map<Object, Object> campos) {
+        return new ResponseEntity<Planta>(plantaService.patch(idPlanta,campos),HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePlanta(@PathVariable("id") int id){
         plantaService.deletePlanta(id);

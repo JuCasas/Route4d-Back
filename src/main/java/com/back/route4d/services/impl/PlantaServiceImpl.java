@@ -2,21 +2,13 @@ package com.back.route4d.services.impl;
 
 import com.back.route4d.exception.ResourceNotFoundException;
 import com.back.route4d.model.Planta;
-import com.back.route4d.model.TipoVehiculo;
 import com.back.route4d.repository.PlantaRepository;
 import com.back.route4d.services.PlantaService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.validation.Validator;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import org.springframework.stereotype.Service;
+
 
 @Service
 public class PlantaServiceImpl implements  PlantaService{
@@ -38,6 +30,44 @@ public class PlantaServiceImpl implements  PlantaService{
         return plantaRepository.findAll();
     }
 
+    @Override
+    public Planta mapPersistenceModelToRestModel(Planta planta) {
+        Planta plantaM = new Planta();
+
+        plantaM.setIdPlantas(planta.getIdPlantas());
+        plantaM.setCapacidad(planta.getCapacidad());
+        plantaM.setX(planta.getX());
+        plantaM.setY(planta.getY());
+        plantaM.setTipo(planta.getTipo());
+        return plantaM;
+    }
+
+    @Override
+    public Planta patch(int idPlanta, Map<Object, Object> campos) {
+        Planta planta = plantaRepository.findById(idPlanta).orElseThrow(
+                ()-> new ResourceNotFoundException("Planta","id",idPlanta));
+
+        Planta plantaM = mapPersistenceModelToRestModel(planta);
+
+        campos.forEach(
+                (campo, value) -> {
+                    if("idPlanta".equals(campo)){
+                        plantaM.setIdPlantas((int) value);
+                    }else if ("capacidad".equals(campo)) {
+                        plantaM.setCapacidad((int) value);
+                    } else if ("tipo".equals(campo)) {
+                        plantaM.setTipo((int) value);
+                    } else if ("x".equals(campo)) {
+                        plantaM.setX((int) value);
+                    } else if ("y".equals(campo)) {
+                        plantaM.setY((int) value);
+                    }
+                }
+        );
+
+        plantaRepository.save(plantaM);
+        return plantaM;
+    }
 
     @Override
     public Planta updatePlanta(Planta planta, int id) {
