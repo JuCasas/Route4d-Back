@@ -46,15 +46,6 @@ public class AlgoritmoServiceImpl implements AlgoritmoService {
     }
 
     @Override
-    public String hola() {
-        Algoritmo algoritmo = new Algoritmo(pedidoRepository,vehicleRepository);
-        LocalDateTime finalDate = LocalDateTime.of(2022, Month.DECEMBER, 3, 0, 33, 0);
-        algoritmo.listaPedidos = pedidoRepository.findLessThanDate(finalDate,0);
-        algoritmo.inicializar();
-        return "Hola Pe";
-    }
-
-    @Override
     public HashMap enviarRutasOperacion(String k, String sa) {
 //        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 //        LocalDateTime initialDate = LocalDateTime.of(2022, Month.DECEMBER, 02, 0, 0, 0);
