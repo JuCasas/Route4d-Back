@@ -2,6 +2,7 @@ package com.back.route4d.services.impl;
 
 import com.back.route4d.algoritmo.Algoritmo;
 import com.back.route4d.repository.PedidoRepository;
+import com.back.route4d.repository.VehicleRepository;
 import com.back.route4d.services.AlgoritmoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,19 @@ public class AlgoritmoServiceImpl implements AlgoritmoService {
     @Autowired
     Algoritmo algoritmo;
     PedidoRepository pedidoRepository;
-    public AlgoritmoServiceImpl(PedidoRepository pedidoRepository) {
+    VehicleRepository vehicleRepository;
+
+    public AlgoritmoServiceImpl(PedidoRepository pedidoRepository,VehicleRepository vehicleRepository) {
         super();
         this.pedidoRepository = pedidoRepository;
+        this.vehicleRepository = vehicleRepository;
     }
+
+
 
     @Override
     public HashMap enviarRutas() {
+        Algoritmo algoritmo = new Algoritmo(pedidoRepository,vehicleRepository);
         algoritmo.obtenerListaPedidos();
         algoritmo.inicializar();
         HashMap list = algoritmo.resolver();
@@ -39,11 +46,22 @@ public class AlgoritmoServiceImpl implements AlgoritmoService {
     }
 
     @Override
+    public String hola() {
+        Algoritmo algoritmo = new Algoritmo(pedidoRepository,vehicleRepository);
+        LocalDateTime finalDate = LocalDateTime.of(2022, Month.DECEMBER, 3, 0, 33, 0);
+        algoritmo.listaPedidos = pedidoRepository.findLessThanDate(finalDate,0);
+        algoritmo.inicializar();
+        return "Hola Pe";
+    }
+
+    @Override
     public HashMap enviarRutasOperacion(String k, String sa) {
 //        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 //        LocalDateTime initialDate = LocalDateTime.of(2022, Month.DECEMBER, 02, 0, 0, 0);
 //        LocalDateTime finalDate = initialDate.plus(Duration.of(Integer.parseInt(k)*Integer.parseInt(sa), ChronoUnit.MINUTES));
-        LocalDateTime finalDate = LocalDateTime.now();
+//        LocalDateTime finalDate = LocalDateTime.now();
+        Algoritmo algoritmo = new Algoritmo(pedidoRepository,vehicleRepository);
+        LocalDateTime finalDate = LocalDateTime.of(2022, Month.DECEMBER, 3, 0, 33, 0);
         algoritmo.listaPedidos = pedidoRepository.findLessThanDate(finalDate,0);
         algoritmo.inicializar();
         HashMap list = algoritmo.resolver();

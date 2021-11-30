@@ -14,8 +14,11 @@ public class PedidoTask {
     @Scheduled(fixedRate = 10000, initialDelay = 3000)
     public void run() {
         try {
+
             System.out.println("Estoy corriendo...");
             algoritmoService.enviarRutasOperacion("s","s");
+            System.out.println("Estoy terminando...");
+
         } catch (Exception e) {
             System.out.println(e);
         }

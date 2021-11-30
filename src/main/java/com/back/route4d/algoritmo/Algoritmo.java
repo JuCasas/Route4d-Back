@@ -15,14 +15,18 @@ import java.util.*;
 import javax.transaction.Transactional;
 
 import com.back.route4d.repository.PedidoRepository;
+import com.back.route4d.repository.VehicleRepository;
 import com.back.route4d.services.VehicleService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired; // para servicios
 
-@Service
+
 @Slf4j
 @Transactional
+@Component
 public class Algoritmo {
     public List<Pedido> listaPedidos;
 
@@ -53,9 +57,14 @@ public class Algoritmo {
     public Integer diaSupSimulacion = 3;
 
     @Autowired
-    private VehicleService vehicleService;
+    private VehicleRepository vehicleService;
     @Autowired
     private PedidoRepository pedidoRepository;
+
+    public Algoritmo(PedidoRepository pedidoRepository, VehicleRepository vehicleRepository) {
+        this.pedidoRepository = pedidoRepository;
+        this.vehicleService = vehicleRepository;
+    }
 
     public HashMap resolver(){
 
@@ -140,10 +149,10 @@ public class Algoritmo {
      */
     public String inicializar() {
         // Inicializando listas de vehículos
-        listaVehiculoTipo1 = vehicleService.getAllType(1);
-        listaVehiculoTipo2 = vehicleService.getAllType(2);
-        listaVehiculoTipo3 = vehicleService.getAllType(3);
-        listaVehiculoTipo4 = vehicleService.getAllType(4);
+        listaVehiculoTipo1 = vehicleService.getAllByType(1);
+        listaVehiculoTipo2 = vehicleService.getAllByType(2);
+        listaVehiculoTipo3 = vehicleService.getAllByType(3);
+        listaVehiculoTipo4 = vehicleService.getAllByType(4);
 
         // Sin vehículos
         if (listaVehiculoTipo1.size() == 0 && listaVehiculoTipo2.size() == 0 &&
