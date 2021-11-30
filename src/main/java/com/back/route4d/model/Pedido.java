@@ -26,6 +26,7 @@ public class Pedido implements Comparable<Pedido> {
     private LocalDateTime fechaPedido;
     private LocalDateTime fechaLimite;
     private int tiempoEntrega;
+    private int tipoPedido;
     @ManyToOne
     @JoinColumn(name="idVehiculo",nullable = true)
     private Vehicle vehicle;
@@ -44,13 +45,14 @@ public class Pedido implements Comparable<Pedido> {
         this.minFaltantes = minFaltantes;
     }
 
-    public Pedido(int id, int x, int y, int cantidad, int minFaltantes, LocalDateTime fechaPedido) {
+    public Pedido(int id, int x, int y, int cantidad, int minFaltantes, LocalDateTime fechaPedido, int tipoPedido) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.cantidad = cantidad;
         this.minFaltantes = minFaltantes;
         this.fechaPedido = fechaPedido;
+        this.tipoPedido = tipoPedido;
     }
 
     public int getNodoId() {

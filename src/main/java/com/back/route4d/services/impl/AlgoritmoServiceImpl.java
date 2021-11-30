@@ -54,9 +54,14 @@ public class AlgoritmoServiceImpl implements AlgoritmoService {
         Algoritmo algoritmo = new Algoritmo(pedidoRepository,vehicleRepository);
         LocalDateTime finalDate = LocalDateTime.of(2022, Month.DECEMBER, 3, 0, 33, 0);
         algoritmo.listaPedidos = pedidoRepository.findLessThanDate(finalDate,0);
-        algoritmo.inicializar();
-        HashMap list = algoritmo.resolver();
-        System.out.println("Rutas generadas...");
-        return list;
+        String message = algoritmo.inicializar();
+        if (message=="correcto"){
+            HashMap list = algoritmo.resolver();
+            System.out.println("Rutas generadas...");
+        }else {
+            System.out.println(message);
+        }
+        HashMap<String,String> map = new HashMap<>();
+        return map;
     }
 }

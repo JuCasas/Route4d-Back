@@ -84,7 +84,7 @@ public class FilesController {
                         final int remaining = Integer.parseInt(tokens[4]);
                         String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
                         LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
-                        Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate);
+                        Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate,0);
                         listaPedidos.add(pedido);
                         pedidoCont++; // eliminar luego
                     }
