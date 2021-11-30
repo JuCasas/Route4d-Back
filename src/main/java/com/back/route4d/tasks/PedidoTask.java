@@ -1,24 +1,22 @@
 package com.back.route4d.tasks;
 
-import com.back.route4d.algoritmo.Algoritmo;
 import com.back.route4d.services.AlgoritmoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
-public class PedidoTask implements Runnable {
+@Component
+public class PedidoTask {
 
     @Autowired
     private AlgoritmoService algoritmoService;
-    public PedidoTask() {
 
-    }
-
-    @Override
+    @Scheduled(fixedRate = 10000, initialDelay = 3000)
     public void run() {
-        try{
+        try {
             System.out.println("Estoy corriendo...");
             algoritmoService.enviarRutasOperacion("s","s");
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
