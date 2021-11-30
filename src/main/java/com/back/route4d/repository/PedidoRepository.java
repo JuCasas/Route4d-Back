@@ -12,4 +12,8 @@ public interface PedidoRepository extends JpaRepository<Pedido,Integer> {
     @Query(value = "select * from route4d.pedido \n" +
             "where fecha_pedido between ?1 and ?2 and estado = ?3 ",nativeQuery = true)
     List<Pedido> findByDate(LocalDateTime inicio, LocalDateTime fin, int estado);
+
+    @Query(value = "select * from route4d.pedido \n" +
+            "where fecha_pedido <= ?1 and estado = ?2 ",nativeQuery = true)
+    List<Pedido> findLessThanDate(LocalDateTime fin, int estado);
 }
