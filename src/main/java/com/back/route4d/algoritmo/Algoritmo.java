@@ -16,12 +16,9 @@ import javax.transaction.Transactional;
 
 import com.back.route4d.repository.PedidoRepository;
 import com.back.route4d.repository.VehicleRepository;
-import com.back.route4d.services.VehicleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 
 @Slf4j
@@ -94,7 +91,7 @@ public class Algoritmo {
             }
 
             RutaFront rutaFront = new RutaFront(ruta.vehiculo,ruta.capacidad);
-            rutaFront.setTiempoMin(ruta.getTiempoMin());
+            rutaFront.setTiempoMin(ruta.getPlazoEntrega());
             rutaFront.pedidos.addAll(ruta.pedidos);
             rutaFront.recorrido.addAll(recorridoEnviar);
             rutaFront.retorno.addAll(retornoEnviar);
@@ -682,8 +679,8 @@ public class Algoritmo {
             int contador = 0;
             int minCont = -1;
             for(Ruta ruta: listaRutas){
-                if(ruta.vehiculo.getTipo().getIdTipo() == 1 && ruta.vehiculo.getIdVehiculo()==0 && minimo > ruta.tiempoMin){
-                    minimo = ruta.tiempoMin;
+                if(ruta.vehiculo.getTipo().getIdTipo() == 1 && ruta.vehiculo.getIdVehiculo()==0 && minimo > ruta.plazoEntrega){
+                    minimo = ruta.plazoEntrega;
                     minCont = contador;
                 }
                 contador++;
@@ -707,8 +704,8 @@ public class Algoritmo {
             int contador = 0;
             int minCont = -1;
             for(Ruta ruta: listaRutas){
-                if(ruta.vehiculo.getTipo().getIdTipo() == 2 && ruta.vehiculo.getIdVehiculo()==0 && minimo > ruta.tiempoMin){
-                    minimo = ruta.tiempoMin;
+                if(ruta.vehiculo.getTipo().getIdTipo() == 2 && ruta.vehiculo.getIdVehiculo()==0 && minimo > ruta.plazoEntrega){
+                    minimo = ruta.plazoEntrega;
                     minCont = contador;
                 }
                 contador++;
@@ -732,8 +729,8 @@ public class Algoritmo {
             int contador = 0;
             int minCont = -1;
             for(Ruta ruta: listaRutas){
-                if(ruta.vehiculo.getTipo().getIdTipo() == 3 && ruta.vehiculo.getIdVehiculo()==0 && minimo > ruta.tiempoMin){
-                    minimo = ruta.tiempoMin;
+                if(ruta.vehiculo.getTipo().getIdTipo() == 3 && ruta.vehiculo.getIdVehiculo()==0 && minimo > ruta.plazoEntrega){
+                    minimo = ruta.plazoEntrega;
                     minCont = contador;
                 }
                 contador++;
@@ -757,8 +754,8 @@ public class Algoritmo {
             int contador = 0;
             int minCont = -1;
             for(Ruta ruta: listaRutas){
-                if(ruta.vehiculo.getTipo().getIdTipo() == 4 && ruta.vehiculo.getIdVehiculo()==0 && minimo > ruta.tiempoMin){
-                    minimo = ruta.tiempoMin;
+                if(ruta.vehiculo.getTipo().getIdTipo() == 4 && ruta.vehiculo.getIdVehiculo()==0 && minimo > ruta.plazoEntrega){
+                    minimo = ruta.plazoEntrega;
                     minCont = contador;
                 }
                 contador++;

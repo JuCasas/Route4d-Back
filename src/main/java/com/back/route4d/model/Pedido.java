@@ -27,6 +27,7 @@ public class Pedido implements Comparable<Pedido> {
     private LocalDateTime fechaLimite;
     private int tiempoEntrega;
     private int tipoPedido;
+
     @ManyToOne
     @JoinColumn(name="idVehiculo",nullable = true)
     private Vehicle vehicle;
