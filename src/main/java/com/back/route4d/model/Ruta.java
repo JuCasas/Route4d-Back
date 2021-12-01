@@ -22,7 +22,7 @@ public class Ruta {
     @Transient
     public List<Integer> retorno;
 
-    @Transient
+    @OneToMany(mappedBy="ruta")
     public List<Pedido> pedidos;
 
     @ManyToOne

@@ -29,6 +29,10 @@ public class Pedido implements Comparable<Pedido> {
     private int tipoPedido;
 
     @ManyToOne
+    @JoinColumn(name="idRuta", nullable=true)
+    private Ruta ruta;
+
+    @ManyToOne
     @JoinColumn(name="idVehiculo",nullable = true)
     private Vehicle vehicle;
 
@@ -46,11 +50,12 @@ public class Pedido implements Comparable<Pedido> {
         this.minFaltantes = minFaltantes;
     }
 
-    public Pedido(int id, int x, int y, int cantidad, int minFaltantes, LocalDateTime fechaPedido, int tipoPedido) {
+    public Pedido(int id, int x, int y, int cantidad, int minFaltantes, LocalDateTime fechaPedido,LocalDateTime fechaLimite, int tipoPedido) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.cantidad = cantidad;
+        this.fechaLimite = fechaLimite;
         this.minFaltantes = minFaltantes;
         this.fechaPedido = fechaPedido;
         this.tipoPedido = tipoPedido;

@@ -8,8 +8,10 @@ import com.back.route4d.repository.PedidoRepository;
 import com.back.route4d.services.FilesStorageService;
 
 import java.io.*;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -84,7 +86,8 @@ public class FilesController {
                         final int remaining = Integer.parseInt(tokens[4]);
                         String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
                         LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
-                        Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate,0);
+                        LocalDateTime limitDate = orderDate.plus(Duration.of(remaining, ChronoUnit.HOURS));
+                        Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate, limitDate, 0);
                         listaPedidos.add(pedido);
                         pedidoCont++; // eliminar luego
                     }

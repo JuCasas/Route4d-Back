@@ -7,6 +7,7 @@ import com.back.route4d.model.*;
 // import com.back.route4d.repository.AlgoritmoRepository;
 // import com.back.route4d.repository.UsuarioRepository;
 import java.io.*;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +16,7 @@ import java.util.*;
 import javax.transaction.Transactional;
 
 import com.back.route4d.repository.PedidoRepository;
+import com.back.route4d.repository.RutaRepository;
 import com.back.route4d.repository.VehicleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,84 +59,93 @@ public class Algoritmo {
     private VehicleRepository vehicleService;
     @Autowired
     private PedidoRepository pedidoRepository;
+    @Autowired
+    private RutaRepository rutaRepository;
 
-    public Algoritmo(PedidoRepository pedidoRepository, VehicleRepository vehicleRepository) {
+    public Algoritmo(PedidoRepository pedidoRepository, VehicleRepository vehicleRepository, RutaRepository rutaRepository) {
         this.pedidoRepository = pedidoRepository;
         this.vehicleService = vehicleRepository;
+        this.rutaRepository = rutaRepository;
     }
 
     public HashMap resolver(){
 
         generarRutas();
 
-        listaRutasFront = new ArrayList<RutaFront>();
+        rutaRepository.saveAll(listaRutas);
 
-        for (Ruta ruta:listaRutas){
-            List<Map<String,Integer>> recorridoEnviar = new ArrayList<>();
-            List<Map<String,Integer>> retornoEnviar = new ArrayList<>();
-            for (int nodoRecorrido:ruta.recorrido){
-                int x = (nodoRecorrido - 1) % 71;
-                int y = (nodoRecorrido - 1) / 71;
-                Map<String ,Integer> map=new HashMap<String,Integer>();
-                map.put("x",x);
-                map.put("y",y);
-                recorridoEnviar.add(map);
-            }
 
-            for (int nodoRetorno: ruta.retorno){
-                int x = (nodoRetorno - 1) % 71;
-                int y = (nodoRetorno - 1) / 71;
-                Map<String ,Integer> map=new HashMap<String,Integer>();
-                map.put("x",x);
-                map.put("y",y);
-                retornoEnviar.add(map);
-            }
 
-            RutaFront rutaFront = new RutaFront(ruta.vehiculo,ruta.capacidad);
-            rutaFront.setTiempoMin(ruta.getPlazoEntrega());
-            rutaFront.pedidos.addAll(ruta.pedidos);
-            rutaFront.recorrido.addAll(recorridoEnviar);
-            rutaFront.retorno.addAll(retornoEnviar);
 
-            listaRutasFront.add(rutaFront);
-        }
+        //TODO enviar al getRutas
+//        listaRutasFront = new ArrayList<RutaFront>();
+//
+//        for (Ruta ruta:listaRutas){
+//            List<Map<String,Integer>> recorridoEnviar = new ArrayList<>();
+//            List<Map<String,Integer>> retornoEnviar = new ArrayList<>();
+//            for (int nodoRecorrido:ruta.recorrido){
+//                int x = (nodoRecorrido - 1) % 71;
+//                int y = (nodoRecorrido - 1) / 71;
+//                Map<String ,Integer> map=new HashMap<String,Integer>();
+//                map.put("x",x);
+//                map.put("y",y);
+//                recorridoEnviar.add(map);
+//            }
+//
+//            for (int nodoRetorno: ruta.retorno){
+//                int x = (nodoRetorno - 1) % 71;
+//                int y = (nodoRetorno - 1) / 71;
+//                Map<String ,Integer> map=new HashMap<String,Integer>();
+//                map.put("x",x);
+//                map.put("y",y);
+//                retornoEnviar.add(map);
+//            }
+//
+//            RutaFront rutaFront = new RutaFront(ruta.vehiculo,ruta.capacidad);
+//            rutaFront.setTiempoMin(ruta.getPlazoEntrega());
+//            rutaFront.pedidos.addAll(ruta.pedidos);
+//            rutaFront.recorrido.addAll(recorridoEnviar);
+//            rutaFront.retorno.addAll(retornoEnviar);
+//
+//            listaRutasFront.add(rutaFront);
+//        }
 
-        listaCallesBloqueadasFront = new ArrayList<CallesBloqueadasFront>();
-        for (CallesBloqueadas callesBloqueadas:listaCallesBloqueadas){
-
-            Integer minutosInicio = callesBloqueadas.getMinutosInicio();
-            Integer minutosFin = callesBloqueadas.getMinutosFin();
-            LocalDateTime fechaInicio = Helper.convertMinutesToLocalDateTime(minutosInicio);
-            LocalDateTime fechaFin = Helper.convertMinutesToLocalDateTime(minutosFin);
-
-            for (Integer nodo:callesBloqueadas.getNodos()){
-
-                int x = (nodo - 1) % 71;
-                int y = (nodo - 1) / 71;
-
-                boolean encontrado = false;
-                for (CallesBloqueadasFront bloqueoRevisar:listaCallesBloqueadasFront){
-                    if (bloqueoRevisar.esBloqueo(x,y)){
-                        bloqueoRevisar.addTime(fechaInicio,fechaFin);
-                        encontrado = true;
-                        break;
-                    }
-                }
-
-                if(!encontrado){
-                    CallesBloqueadasFront calleFront = new CallesBloqueadasFront(x,y);
-                    calleFront.addTime(fechaInicio,fechaFin);
-                    listaCallesBloqueadasFront.add(calleFront);
-                }
-
-            }
-        }
+        //TODO enviar al getBloqueos
+//
+//        listaCallesBloqueadasFront = new ArrayList<CallesBloqueadasFront>();
+//        for (CallesBloqueadas callesBloqueadas:listaCallesBloqueadas){
+//
+//            Integer minutosInicio = callesBloqueadas.getMinutosInicio();
+//            Integer minutosFin = callesBloqueadas.getMinutosFin();
+//            LocalDateTime fechaInicio = Helper.convertMinutesToLocalDateTime(minutosInicio);
+//            LocalDateTime fechaFin = Helper.convertMinutesToLocalDateTime(minutosFin);
+//
+//            for (Integer nodo:callesBloqueadas.getNodos()){
+//
+//                int x = (nodo - 1) % 71;
+//                int y = (nodo - 1) / 71;
+//
+//                boolean encontrado = false;
+//                for (CallesBloqueadasFront bloqueoRevisar:listaCallesBloqueadasFront){
+//                    if (bloqueoRevisar.esBloqueo(x,y)){
+//                        bloqueoRevisar.addTime(fechaInicio,fechaFin);
+//                        encontrado = true;
+//                        break;
+//                    }
+//                }
+//
+//                if(!encontrado){
+//                    CallesBloqueadasFront calleFront = new CallesBloqueadasFront(x,y);
+//                    calleFront.addTime(fechaInicio,fechaFin);
+//                    listaCallesBloqueadasFront.add(calleFront);
+//                }
+//
+//            }
+//        }
         HashMap<String,Object> enviar;
-
         enviar = new HashMap<>();
-
-        enviar.put("Rutas",listaRutasFront);
-        enviar.put("Bloqueos",listaCallesBloqueadasFront);
+//        enviar.put("Rutas",listaRutasFront);
+//        enviar.put("Bloqueos",listaCallesBloqueadasFront);
 
         return (HashMap) enviar;
     }
@@ -229,7 +240,8 @@ public class Algoritmo {
                     final int remaining = Integer.parseInt(tokens[4]);
                     String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
                     LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
-                    Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate, 0);
+                    LocalDateTime limitDate = orderDate.plus(Duration.of(remaining, ChronoUnit.HOURS));
+                    Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate, limitDate, 0);
                     listaPedidos.add(pedido);
                 }
                 else if (day > diaSupSimulacion) {
