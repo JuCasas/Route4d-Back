@@ -31,4 +31,8 @@ public class Usuario {
     @Column(nullable = false)
     private int tipoUsuario;
 
+    public Usuario() {
+        super();
+    }
+
 }
