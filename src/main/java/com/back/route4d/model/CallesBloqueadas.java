@@ -2,27 +2,38 @@ package com.back.route4d.model;
 
 import lombok.Data;
 
+import javax.persistence.*;
 import java.util.HashSet;
 
 @Data
+@Entity
+@Table(name = "CallesBloqueadas")
 public class CallesBloqueadas {
-    private final Integer id;
-    private final Integer minutosInicio;
-    private final Integer minutosFin;
-    private final HashSet<Integer> nodos;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    public CallesBloqueadas(Integer id, int minutosInicio, int minutosFin) {
+    private int minutosInicio;
+    private int minutosFin;
+
+    @Transient
+    private final HashSet<Integer> conjuntoNodos;
+
+    private final String nodos;
+
+    public CallesBloqueadas(int id, int minutosInicio, int minutosFin) {
         this.id = id;
         this.minutosInicio = minutosInicio;
         this.minutosFin = minutosFin;
-        this.nodos = new HashSet<>();
+        this.conjuntoNodos = new HashSet<>();
+        this.nodos = "";
     }
 
     public void addNode(int nodoId) {
-        nodos.add(nodoId);
+        conjuntoNodos.add(nodoId);
     }
 
     public boolean estaNodo(int nodoId) {
-        return nodos.contains(nodoId);
+        return conjuntoNodos.contains(nodoId);
     }
 }
