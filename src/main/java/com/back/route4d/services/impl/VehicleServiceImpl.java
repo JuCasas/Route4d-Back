@@ -97,6 +97,8 @@ public class VehicleServiceImpl implements VehicleService {
         Vehicle vehicle = vehicleRepository.findById(vehicleId).orElseThrow(
                 ()-> new ResourceNotFoundException("Vehicle","Id",vehicleId));
 
+
+
         Vehicle vehicleM = mapPersistenceModelToRestModel(vehicle);
 
         campos.forEach(
@@ -119,8 +121,11 @@ public class VehicleServiceImpl implements VehicleService {
                         }
                     } else if ("placa".equals(campo)) {
                         vehicleM.setPlaca((String) value);
-                    } else if ("tipo".equals(campo)) {
-                        vehicleM.setEstado((int) value);
+                    } else if ("idTipo".equals(campo)) {
+                        TipoVehiculo tipo = tipoVehiculoRepository.findById((Integer) value).orElseThrow(
+                                ()-> new ResourceNotFoundException("Vehicle","Id",vehicle.getTipo().getIdTipo()));
+                        vehicleM.setCapacidadActual(tipo.getCapacidad());
+                        vehicleM.setTipo(tipo);
                     }
                 }
         );
