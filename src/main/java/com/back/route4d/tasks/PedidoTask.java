@@ -11,7 +11,7 @@ public class PedidoTask {
     @Autowired
     private AlgoritmoService algoritmoService;
 
-    @Scheduled(fixedRate = 40000, initialDelay = 3000)
+//    @Scheduled(fixedRate = 40000, initialDelay = 40000)
     public void run() {
         try {
 
