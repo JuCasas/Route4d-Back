@@ -125,7 +125,7 @@ public class Algoritmo {
 //            LocalDateTime fechaInicio = Helper.convertMinutesToLocalDateTime(minutosInicio);
 //            LocalDateTime fechaFin = Helper.convertMinutesToLocalDateTime(minutosFin);
 //
-//            for (Integer nodo:callesBloqueadas.getNodos()){
+//            for (Integer nodo:callesBloqueadas.getConjuntoNodos()){
 //
 //                int x = (nodo - 1) % 71;
 //                int y = (nodo - 1) / 71;
