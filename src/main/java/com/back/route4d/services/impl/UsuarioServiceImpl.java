@@ -1,6 +1,7 @@
 package com.back.route4d.services.impl;
 
 import com.back.route4d.exception.ResourceNotFoundException;
+import com.back.route4d.model.Planta;
 import com.back.route4d.model.Usuario;
 import com.back.route4d.repository.UsuarioRepository;
 import com.back.route4d.services.UsuarioService;
@@ -8,6 +9,7 @@ import com.back.route4d.services.UsuarioService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -29,10 +31,55 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioRepository.findAll();
     }
 
+    public Usuario mapPersistenceModelToRestModel(Usuario usuario) {
+        Usuario usuarioM = new Usuario();
+
+        usuarioM.setIdUsuario(usuario.getIdUsuario());
+        usuarioM.setTipoUsuario(usuario.getTipoUsuario());
+        usuarioM.setNombres(usuario.getNombres());
+        usuarioM.setApellidos(usuario.getApellidos());
+        usuarioM.setEmail(usuario.getEmail());
+        usuarioM.setPassword(usuario.getPassword());
+        usuarioM.setEstado(usuario.getEstado());
+        return usuarioM;
+    }
     @Override
     public Usuario getUsuarioById(int id) {
         return usuarioRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Usuario", "Id", id));
+    }
+    @Override
+    public Usuario patch(int idUsuario, Map<Object, Object> campos) {
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(
+                ()-> new ResourceNotFoundException("Usuario","id",idUsuario));
+
+        Usuario usuarioM = mapPersistenceModelToRestModel(usuario);
+        campos.forEach(
+                (campo, value) -> {
+                    if("idUsuario".equals(campo)){
+                        usuarioM.setIdUsuario((int) value);
+                    }else if ("nombres".equals(campo)) {
+                        usuarioM.setNombres((String)value);
+                    } else if ("apellidos".equals(campo)) {
+                        usuarioM.setApellidos((String)value);
+                    } else if ("email".equals(campo)) {
+                        usuarioM.setEmail((String)value);
+                    } else if ("password".equals(campo)) {
+                        usuarioM.setPassword((String) value);
+                    }else if ("estado".equals(campo)) {
+                        if(value.getClass().getName() == "java.lang.Integer"){
+                            Integer aux = (Integer) value;
+                            usuarioM.setEstado(aux);
+                        }else{
+                            usuarioM.setEstado(Integer.parseInt((String) value) );
+                        }
+                    }
+
+                }
+        );
+
+        usuarioRepository.save(usuarioM);
+        return usuarioM;
     }
 
     @Override
