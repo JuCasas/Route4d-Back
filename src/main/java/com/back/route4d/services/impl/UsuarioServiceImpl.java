@@ -1,10 +1,8 @@
 package com.back.route4d.services.impl;
 
 import com.back.route4d.exception.ResourceNotFoundException;
-import com.back.route4d.model.Planta;
 import com.back.route4d.model.Usuario;
 import com.back.route4d.repository.UsuarioRepository;
-import com.back.route4d.services.UsuarioService;
 import com.back.route4d.services.UsuarioService;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +29,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioRepository.findAll();
     }
 
+    @Override
     public Usuario mapPersistenceModelToRestModel(Usuario usuario) {
         Usuario usuarioM = new Usuario();
 

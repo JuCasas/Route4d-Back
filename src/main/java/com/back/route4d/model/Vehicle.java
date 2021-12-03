@@ -31,5 +31,6 @@ public class Vehicle {
     private int estado;
 
     public Vehicle() {
+        super();
     }
 }

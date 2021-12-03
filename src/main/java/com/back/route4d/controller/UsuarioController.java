@@ -1,5 +1,6 @@
 package com.back.route4d.controller;
 
+import com.back.route4d.model.Planta;
 import com.back.route4d.model.Usuario;
 import com.back.route4d.services.UsuarioService;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,12 @@ public class UsuarioController {
     @PostMapping("/")
     public ResponseEntity<Usuario> saveUsuario(@RequestBody Usuario usuario){
         return new ResponseEntity<Usuario>(usuarioService.saveUsuario(usuario), HttpStatus.CREATED);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PatchMapping("/{id}")
+    public ResponseEntity<Usuario> patch(@PathVariable("id") int idUsuario, @RequestBody Map<Object, Object> campos) {
+        return new ResponseEntity<Usuario>(usuarioService.patch(idUsuario,campos),HttpStatus.OK);
     }
 
     @PostMapping("/validate")

@@ -56,6 +56,17 @@ public class VehicleServiceImpl implements VehicleService {
                 new ResourceNotFoundException("Vehicle","Id",id));
     }
 
+    public Double convertirADouble(Object value){
+        Double valor = null;
+        if(value.getClass().getName().equals("java.lang.String")){
+            valor = Double.parseDouble((String) value);
+        }else if(value.getClass().getName().equals("java.lang.Integer")){
+            Integer aux = (Integer) value;
+            valor = new Double(aux);
+        }
+        return valor;
+    }
+
     @Override
     public Vehicle updateVehicle(Vehicle vehicle, int id) {
         //Vehicle exists?
@@ -66,9 +77,56 @@ public class VehicleServiceImpl implements VehicleService {
         existingVehicle.setTipo(vehicle.getTipo());
         existingVehicle.setCapacidadActual(vehicle.getCapacidadActual());
         existingVehicle.setEstado(vehicle.getEstado());
-        //Save vehicle to DB
         vehicleRepository.save(existingVehicle);
         return existingVehicle;
+    }
+
+    @Override
+    public Vehicle mapPersistenceModelToRestModel(Vehicle vehicle) {
+        Vehicle vehicleM = new Vehicle();
+        vehicleM.setPlaca(vehicle.getPlaca());
+        vehicleM.setIdVehiculo(vehicle.getIdVehiculo());
+        vehicleM.setTipo(vehicle.getTipo());
+        vehicleM.setCapacidadActual(vehicle.getCapacidadActual());
+        vehicleM.setEstado(vehicle.getEstado());
+        return vehicleM;
+    }
+
+    @Override
+    public Vehicle patch(int vehicleId, Map<Object, Object> campos) {
+        Vehicle vehicle = vehicleRepository.findById(vehicleId).orElseThrow(
+                ()-> new ResourceNotFoundException("Vehicle","Id",vehicleId));
+
+        Vehicle vehicleM = mapPersistenceModelToRestModel(vehicle);
+
+        campos.forEach(
+                (campo, value) -> {
+                    if("idVehiculo".equals(campo)){
+                        vehicleM.setIdVehiculo((int) value);
+                    }else if ("estado".equals(campo)) {
+                        if(value.getClass().getName().equals("java.lang.Integer")){
+                            Integer aux = (Integer) value;
+                            vehicleM.setEstado(aux);
+                        }else{
+                            vehicleM.setEstado(Integer.parseInt((String) value) );
+                        }
+                    } else if ("capacidadActual".equals(campo)) {
+                        if(!value.getClass().getName().equals("java.lang.Double")){
+                            Double nuevo = convertirADouble(value);
+                            vehicleM.setCapacidadActual(nuevo);
+                        }else{
+                            vehicleM.setCapacidadActual((Double) value);
+                        }
+                    } else if ("placa".equals(campo)) {
+                        vehicleM.setPlaca((String) value);
+                    } else if ("tipo".equals(campo)) {
+                        vehicleM.setEstado((int) value);
+                    }
+                }
+        );
+
+        vehicleRepository.save(vehicleM);
+        return vehicleM;
     }
 
     @Override

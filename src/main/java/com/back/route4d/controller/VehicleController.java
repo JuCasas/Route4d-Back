@@ -1,4 +1,5 @@
 package com.back.route4d.controller;
+import com.back.route4d.model.Usuario;
 import com.back.route4d.model.Vehicle;
 import com.back.route4d.services.VehicleService;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,11 @@ public class VehicleController {
         return new ResponseEntity<Vehicle>(vehicleService.saveVehicle(nuevo), HttpStatus.CREATED);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PatchMapping("/{id}")
+    public ResponseEntity<Vehicle> patch(@PathVariable("id") int idVehicle, @RequestBody Map<Object, Object> campos) {
+        return new ResponseEntity<Vehicle>(vehicleService.patch(idVehicle,campos),HttpStatus.OK);
+    }
 
 
     @GetMapping("/tipo/{id}")
