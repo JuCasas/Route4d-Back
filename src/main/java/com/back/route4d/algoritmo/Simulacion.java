@@ -52,10 +52,6 @@ public class Simulacion {
 //    @Autowired
 //    private FirebaseInitializer firebase;
 
-
-
-
-
     // VARIABLES QUE SE ENVIARAN A FIRESTORE PARA LA SIMULACION
 
     public Integer tiempoEnMinutosActual = 0;
@@ -101,14 +97,14 @@ public class Simulacion {
     private void getAllPedidos(File fileObj) throws FileNotFoundException {
         Scanner sc = new Scanner(fileObj);
         String strYearMonth = Helper.getOrdersDateFromName(fileObj.getName());
-        int cont = 1;
+        int id = 1;
         listaPedidosTotales = new ArrayList<>();
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             Pedido pedido = getPedidoFromLine(line, strYearMonth);
-            pedido.setId(cont);
+            pedido.setId(id);
             listaPedidosTotales.add(pedido);
-            cont++;
+            id++;
         }
         Collections.sort(listaPedidosTotales,
                 (p1,p2) -> (int)ChronoUnit.MINUTES.between(p2.getFechaPedido(), p1.getFechaPedido()));
@@ -146,6 +142,58 @@ public class Simulacion {
         return pedido;
     }
 
+    private CallesBloqueadas getCalleBloqueadaFromLine(String line, String strYearMonth, DateTimeFormatter formatter) {
+        final String[] tokens = line.trim().split(",");
+        final String[] plazo = tokens[0].trim().split("-");
+        final String[] inicio = plazo[0].trim().split(":");
+        final String[] fin = plazo[1].trim().split(":");
+        final int diaIni = Integer.parseInt(inicio[0]);
+        final int diaFin = Integer.parseInt(fin[0]);
+        final int horaIni = Integer.parseInt(inicio[1]);
+        final int horaFin = Integer.parseInt(fin[1]);
+        final int minIni = Integer.parseInt(inicio[2]);
+        final int minFin = Integer.parseInt(fin[2]);
+        String strDateIni = strYearMonth + "-" + diaIni + " " + horaIni + ":" + minIni + ":0";
+        String strDateFin = strYearMonth + "-" + diaFin + " " + horaFin + ":" + minFin + ":0";
+        LocalDateTime dateIni = LocalDateTime.parse(strDateIni, formatter);
+        LocalDateTime dateFin = LocalDateTime.parse(strDateFin, formatter);
+
+        final int len = tokens.length - 1;
+        final String[] strCoords = Arrays.copyOfRange(tokens, 1, len + 1);
+        final int[] coords = new int[len];
+
+        for (int i = 0; i < len; i++) {
+            coords[i] = Integer.parseInt(strCoords[i]); // pasando a enteros
+        }
+
+        CallesBloqueadas calleBloqueada = new CallesBloqueadas(0, Helper.convertLocalDateTimeToMinutes(dateIni),
+                Helper.convertLocalDateTimeToMinutes(dateFin));
+
+        // Agregando el identificador del nodo a la calle bloqueada
+
+        for (int i = 0; i < len - 2; i += 2) {
+            int x = coords[i];
+            int y = coords[i + 1];
+
+            int x2 = coords[i + 2];
+            int y2 = coords[i + 3];
+
+            if (y2 - y == 0) {
+                for (int j = x; j <= x2; j++) {
+                    calleBloqueada.addNode(j + 71 * y + 1);
+                }
+            } else {
+                if (x2 - x == 0) {
+                    for (int k = y; k <= y2; k++) {
+                        calleBloqueada.addNode(x + 71 * k + 1);
+                    }
+                }
+            }
+        }
+
+        return calleBloqueada;
+    }
+
     private Integer getIntFromLine(String line, String c){
         int indexChar = line.indexOf(c);
         return Integer.parseInt( line.substring( 0, indexChar ) );
@@ -164,69 +212,22 @@ public class Simulacion {
     }
 
     private void getCallesBloqueadas(File fileObj) throws FileNotFoundException {
-        listaCallesBloqueadas = new ArrayList<>();
         Scanner sc = new Scanner(fileObj);
-        List<Intervalo> intervaloList = new ArrayList<>();
-        String strYear = fileObj.getName().substring(0,4);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d H:m:s");
-        int cont = 1;
+        String strYearMonth = Helper.getLockedNodesDateFromName(fileObj.getName());
+        int id = 1;
+        listaCallesBloqueadas = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
+
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
-            Intervalo intervalo = getIntervaloFromLine(line, strYear);
-            CallesBloqueadas cb = new CallesBloqueadas(cont,
-                    (int)ChronoUnit.MINUTES.between(LocalDateTime.parse("2021-1-1 0:0:0", formatter), intervalo.getInicio()),
-                    (int)ChronoUnit.MINUTES.between(LocalDateTime.parse("2021-1-1 0:0:0", formatter), intervalo.getFin()));
-            line = line.substring( line.indexOf(',') + 1 );
-            while(line.length() != 0){
-                int indexChar = line.indexOf(',');
-                int x,y;
-                x = Integer.parseInt( line.substring( 0, indexChar ) );
-                line = line.substring( indexChar + 1 );
-                indexChar = line.indexOf(',');
-                if (indexChar == -1){
-                    y = Integer.parseInt( line );
-                    line = "";
-                }
-                else{
-                    y = Integer.parseInt( line.substring( 0, indexChar ) );
-                    line = line.substring( indexChar + 1 );
-                }
-                cb.addNode(x + 71 * y + 1);
-            }
-            listaCallesBloqueadas.add(cb);
-            cont++;
+            CallesBloqueadas calleBloqueada = getCalleBloqueadaFromLine(line, strYearMonth, formatter);
+            calleBloqueada.setId(id);
+            listaCallesBloqueadas.add(calleBloqueada);
+            id++;
         }
         sc.close();
     }
 
-    private Intervalo getIntervaloFromLine(String line, String strYear){
-        Intervalo intervalo = new Intervalo();
-
-        int mes = getIntFromLine(line,":");
-        line = line.substring( line.indexOf(':') + 1 );
-        int dia = getIntFromLine(line,":");
-        line = line.substring( line.indexOf(':') + 1 );
-        int hh = getIntFromLine(line,":");
-        line = line.substring( line.indexOf(':') + 1 );
-        int mm = getIntFromLine(line,"-");
-        line = line.substring( line.indexOf('-') + 1 );
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d H:m:s");
-        LocalDateTime inicio = LocalDateTime.parse(strYear + "-" + mes + "-" + dia + " " + hh + ":" + mm + ":0", formatter);
-        intervalo.setInicio(inicio);
-
-        mes = getIntFromLine(line,":");
-        line = line.substring( line.indexOf(':') + 1 );
-        dia = getIntFromLine(line,":");
-        line = line.substring( line.indexOf(':') + 1 );
-        hh = getIntFromLine(line,":");
-        line = line.substring( line.indexOf(':') + 1 );
-        mm = getIntFromLine(line,",");
-        line = line.substring( line.indexOf(',') + 1 );
-        LocalDateTime fin = LocalDateTime.parse(strYear + "-" + mes + "-" + dia + " " + hh + ":" + mm + ":0", formatter);
-        intervalo.setFin(fin);
-
-        return intervalo;
-    }
 //
 //    // SECCION RELACIONADA NETAMENTE A LA INICIALIZACION DE LA SIMULACION
 //
