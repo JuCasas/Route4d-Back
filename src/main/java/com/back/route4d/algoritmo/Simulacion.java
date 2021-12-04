@@ -14,7 +14,6 @@ import com.back.route4d.algoritmo.kmeans.Kmeans;
 import com.back.route4d.helper.Helper;
 import com.back.route4d.model.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,7 +23,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 @Service
 @Slf4j
@@ -45,7 +43,7 @@ public class Simulacion {
     public Integer cantAutos = 0;
     public Integer cantMotos = 0;
 
-    public Integer cantidadProductos = 0;
+    public Integer demandaTotal = 0;
 
     public double constantePenalidad = 1;
 
@@ -69,8 +67,6 @@ public class Simulacion {
     public Integer numPedidoEntregados = 0;
     public double costoMantenimiento = 0;
 
-    // SECCION RELACIONADA NETAMENTE A MOSTRAR LISTAS USADAS PARA LA SIMULACION
-
     public List<Pedido> getPedidos(){
         return listaPedidosTotales;
     }
@@ -78,8 +74,6 @@ public class Simulacion {
     public List<CallesBloqueadas> getListaCallesBloqueadas(){
         return listaCallesBloqueadas;
     }
-
-    // SECCION RELACIONADA NETAMENTE A SUBIR ARCHIVOS DE CARGA MASIVA PARA PEDIDOS
 
     public String subirArchivoPedidos(MultipartFile file){
         try {
@@ -123,9 +117,6 @@ public class Simulacion {
 
     private Pedido getPedidoFromLine(String line, String strYearMonth){
 
-
-
-        //set Fecha del pedido
         int day = getIntFromLine(line,":");
         line = line.substring( line.indexOf(':') + 1 );
         int hour = getIntFromLine(line,":");
@@ -150,9 +141,7 @@ public class Simulacion {
 
         Pedido pedido = new Pedido(0, x, y, demand, minutosFaltantes, orderDate, limitDate, 0);
 
-        //TODO AVERIGUAR
-        int numPaq = Integer.parseInt(line);
-        cantidadProductos += numPaq;
+        demandaTotal += demand;
 
         return pedido;
     }
@@ -162,84 +151,82 @@ public class Simulacion {
         return Integer.parseInt( line.substring( 0, indexChar ) );
     }
 
-    // SECCION RELACIONADA NETAMENTE A SUBIR ARCHIVOS DE CARGA MASIVA PARA PEDIDOS
+    public String subirArchivoCallesBloqueadas (MultipartFile file) {
+        try {
+            File fileObj = convertMultiPartFileToFile(file);
+            getCallesBloqueadas(fileObj);
+            fileObj.delete();
+            return "Done!";
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-//    public String subirArchivoCallesBloqueadas (MultipartFile file) {
-//        try {
-//            File fileObj = convertMultiPartFileToFile(file);
-//            getCallesBloqueadas(fileObj);
-//            fileObj.delete();
-//            return "Done!";
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
+    private void getCallesBloqueadas(File fileObj) throws FileNotFoundException {
+        listaCallesBloqueadas = new ArrayList<>();
+        Scanner sc = new Scanner(fileObj);
+        List<Intervalo> intervaloList = new ArrayList<>();
+        String strYear = fileObj.getName().substring(0,4);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d H:m:s");
+        int cont = 1;
+        while (sc.hasNextLine()) {
+            String line = sc.nextLine();
+            Intervalo intervalo = getIntervaloFromLine(line, strYear);
+            CallesBloqueadas cb = new CallesBloqueadas(cont,
+                    (int)ChronoUnit.MINUTES.between(LocalDateTime.parse("2021-1-1 0:0:0", formatter), intervalo.getInicio()),
+                    (int)ChronoUnit.MINUTES.between(LocalDateTime.parse("2021-1-1 0:0:0", formatter), intervalo.getFin()));
+            line = line.substring( line.indexOf(',') + 1 );
+            while(line.length() != 0){
+                int indexChar = line.indexOf(',');
+                int x,y;
+                x = Integer.parseInt( line.substring( 0, indexChar ) );
+                line = line.substring( indexChar + 1 );
+                indexChar = line.indexOf(',');
+                if (indexChar == -1){
+                    y = Integer.parseInt( line );
+                    line = "";
+                }
+                else{
+                    y = Integer.parseInt( line.substring( 0, indexChar ) );
+                    line = line.substring( indexChar + 1 );
+                }
+                cb.addNode(x + 71 * y + 1);
+            }
+            listaCallesBloqueadas.add(cb);
+            cont++;
+        }
+        sc.close();
+    }
 
-//    private void getCallesBloqueadas(File fileObj) throws FileNotFoundException {
-//        listaCallesBloqueadas = new ArrayList<>();
-//        Scanner sc = new Scanner(fileObj);
-//        List<Intervalo> intervaloList = new ArrayList<>();
-//        String strYear = fileObj.getName().substring(0,4);
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d H:m:s");
-//        int cont = 1;
-//        while (sc.hasNextLine()) {
-//            String line = sc.nextLine();
-//            Intervalo intervalo = getIntervaloFromLine(line, strYear);
-//            CallesBloqueadas cb = new CallesBloqueadas(cont,
-//                    (int)ChronoUnit.MINUTES.between(LocalDateTime.parse("2021-1-1 0:0:0", formatter), intervalo.getInicio()),
-//                    (int)ChronoUnit.MINUTES.between(LocalDateTime.parse("2021-1-1 0:0:0", formatter), intervalo.getFin()));
-//            line = line.substring( line.indexOf(',') + 1 );
-//            while(line.length() != 0){
-//                int indexChar = line.indexOf(',');
-//                int x,y;
-//                x = Integer.parseInt( line.substring( 0, indexChar ) );
-//                line = line.substring( indexChar + 1 );
-//                indexChar = line.indexOf(',');
-//                if (indexChar == -1){
-//                    y = Integer.parseInt( line );
-//                    line = "";
-//                }
-//                else{
-//                    y = Integer.parseInt( line.substring( 0, indexChar ) );
-//                    line = line.substring( indexChar + 1 );
-//                }
-//                cb.addNode(x + 71 * y + 1);
-//            }
-//            listaCallesBloqueadas.add(cb);
-//            cont++;
-//        }
-//        sc.close();
-//    }
-//
-//    private Intervalo getIntervaloFromLine(String line, String strYear){
-//        Intervalo intervalo = new Intervalo();
-//
-//        int mes = getIntFromLine(line,":");
-//        line = line.substring( line.indexOf(':') + 1 );
-//        int dia = getIntFromLine(line,":");
-//        line = line.substring( line.indexOf(':') + 1 );
-//        int hh = getIntFromLine(line,":");
-//        line = line.substring( line.indexOf(':') + 1 );
-//        int mm = getIntFromLine(line,"-");
-//        line = line.substring( line.indexOf('-') + 1 );
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d H:m:s");
-//        LocalDateTime inicio = LocalDateTime.parse(strYear + "-" + mes + "-" + dia + " " + hh + ":" + mm + ":0", formatter);
-//        intervalo.setInicio(inicio);
-//
-//        mes = getIntFromLine(line,":");
-//        line = line.substring( line.indexOf(':') + 1 );
-//        dia = getIntFromLine(line,":");
-//        line = line.substring( line.indexOf(':') + 1 );
-//        hh = getIntFromLine(line,":");
-//        line = line.substring( line.indexOf(':') + 1 );
-//        mm = getIntFromLine(line,",");
-//        line = line.substring( line.indexOf(',') + 1 );
-//        LocalDateTime fin = LocalDateTime.parse(strYear + "-" + mes + "-" + dia + " " + hh + ":" + mm + ":0", formatter);
-//        intervalo.setFin(fin);
-//
-//        return intervalo;
-//    }
+    private Intervalo getIntervaloFromLine(String line, String strYear){
+        Intervalo intervalo = new Intervalo();
+
+        int mes = getIntFromLine(line,":");
+        line = line.substring( line.indexOf(':') + 1 );
+        int dia = getIntFromLine(line,":");
+        line = line.substring( line.indexOf(':') + 1 );
+        int hh = getIntFromLine(line,":");
+        line = line.substring( line.indexOf(':') + 1 );
+        int mm = getIntFromLine(line,"-");
+        line = line.substring( line.indexOf('-') + 1 );
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d H:m:s");
+        LocalDateTime inicio = LocalDateTime.parse(strYear + "-" + mes + "-" + dia + " " + hh + ":" + mm + ":0", formatter);
+        intervalo.setInicio(inicio);
+
+        mes = getIntFromLine(line,":");
+        line = line.substring( line.indexOf(':') + 1 );
+        dia = getIntFromLine(line,":");
+        line = line.substring( line.indexOf(':') + 1 );
+        hh = getIntFromLine(line,":");
+        line = line.substring( line.indexOf(':') + 1 );
+        mm = getIntFromLine(line,",");
+        line = line.substring( line.indexOf(',') + 1 );
+        LocalDateTime fin = LocalDateTime.parse(strYear + "-" + mes + "-" + dia + " " + hh + ":" + mm + ":0", formatter);
+        intervalo.setFin(fin);
+
+        return intervalo;
+    }
 //
 //    // SECCION RELACIONADA NETAMENTE A LA INICIALIZACION DE LA SIMULACION
 //
