@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-public class RutaFront {
+public class RutaFront implements Comparable<RutaFront>{
     public List<Map<String,Integer>>  recorrido;
     public List<Map<String,Integer>>  retorno;
     public List<Pedido> pedidos;
     public Vehicle vehiculo;
-    public int tiempoMin;
+    public Integer tiempoMin;
     public int capacidad;
 
     public RutaFront(){
@@ -32,6 +32,11 @@ public class RutaFront {
         this.capacidad = capacidad;
         this.vehiculo = new Vehicle();
         this.vehiculo = vehiculo;
+    }
+
+    @Override
+    public int compareTo(RutaFront ruta) {
+        return this.tiempoMin.compareTo(ruta.tiempoMin);
     }
 
 

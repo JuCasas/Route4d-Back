@@ -38,10 +38,14 @@ public class Simulacion {
     public Dijkstra dijkstraAlgorithm;
     public Kmeans kmeans;
 
-    public Integer cantClusterMotos = 0;
-    public Integer cantClusterAutos = 0;
-    public Integer cantAutos = 0;
-    public Integer cantMotos = 0;
+    public Integer cantClusterVehiculoTipo1 = 0;
+    public Integer cantClusterVehiculoTipo2 = 0;
+    public Integer cantClusterVehiculoTipo3 = 0;
+    public Integer cantClusterVehiculoTipo4 = 0;
+    public Integer cantVehiculoTipo1 = 0;
+    public Integer cantVehiculoTipo2 = 0;
+    public Integer cantVehiculoTipo3 = 0;
+    public Integer cantVehiculoTipo4 = 0;
 
     public Integer demandaTotal = 0;
 
@@ -55,8 +59,16 @@ public class Simulacion {
     // VARIABLES QUE SE ENVIARAN A FIRESTORE PARA LA SIMULACION
 
     public Integer tiempoEnMinutosActual = 0;
+
     public Integer autosDisponibles = 0;
     public Integer motosDisponibles = 0;
+
+    public Integer vehiculosDisponiblesTipo1 = 0;
+    public Integer vehiculosDisponiblesTipo2 = 0;
+    public Integer vehiculosDisponiblesTipo3 = 0;
+    public Integer vehiculosDisponiblesTipo4 = 0;
+
+
     public double ganancia = 0.0;
     public Integer numPenalidades = 0;
     public double montoPenalidades = 0.0;
@@ -228,194 +240,204 @@ public class Simulacion {
         sc.close();
     }
 
-//
-//    // SECCION RELACIONADA NETAMENTE A LA INICIALIZACION DE LA SIMULACION
-//
-//    public void inicializar(SimulacionParametros parametros){
-//        try {
-//            archivo = new FileWriter("firestore.txt");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        listaRutasEnRecorrido = new ArrayList<>();
-//        listaPedidosEnCola = new ArrayList<>();
-//        listaPedidosEnRuta = new ArrayList<>();
-//        configurarParametros(parametros.autos,parametros.motos,parametros.constantePenalidad);
-//        obtenerListaAdyacente();
-//        simular();
-//    }
-//
-//    public void configurarParametros(int numeroAutos, int numeroMotos, double constPenalidad){
-//        autosDisponibles = numeroAutos;
-//        motosDisponibles = numeroMotos;
-//        constantePenalidad = constPenalidad;
-//    }
-//
-//    public void obtenerListaAdyacente(){
-//        int origen, destino;
-//        InputStream grafo = getClass().getClassLoader().getResourceAsStream("grafo.txt");
-//        Scanner sc = new Scanner( grafo );
-//        dijkstraAlgorithm = new Dijkstra(Configuraciones.V, listaCallesBloqueadas);
-//        for( int i = 0 ; i < Configuraciones.E ; ++i ){
-//            origen = sc.nextInt() +1;
-//            destino = sc.nextInt() +1;
-//            dijkstraAlgorithm.addEdge(origen, destino);
-//        }
-//    }
+    public void inicializar(){
+        try {
+            archivo = new FileWriter("firestore.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        listaRutasEnRecorrido = new ArrayList<>();
+        listaPedidosEnCola = new ArrayList<>();
+        listaPedidosEnRuta = new ArrayList<>();
+        vehiculosDisponiblesTipo1 = 2;
+        vehiculosDisponiblesTipo2 = 4;
+        vehiculosDisponiblesTipo3 = 4;
+        vehiculosDisponiblesTipo4 = 10;
+
+        obtenerListaAdyacente();
+        simular();
+    }
+
+    public void configurarParametros(int numeroAutos, int numeroMotos, double constPenalidad){
+        autosDisponibles = numeroAutos;
+        motosDisponibles = numeroMotos;
+        constantePenalidad = constPenalidad;
+    }
+
+
 //
 //    // SECCION RELACIONADA NETAMENTE CON LA SIMULACION DE ENTREGA DE PEDIDOS
 //
-//    public void simular(){
+    public void simular(){
+        //TODO INICIO DATA FIRESTORE
 //        enviarDataFirestore();
-//        while(true) {
-//            int caso = obtenerCasoSimulacion();
-//            if(caso == 0) break;
-//            if(caso == 1) casoNuevoPedido();
-//            if(caso == 2) casoEntregaPedido();
-//            if(caso == 3) casoTerminoRuta();
-//            cantMotos = motosDisponibles;
-//            cantAutos = autosDisponibles;
-//        }
+        while(true) {
+            int caso = obtenerCasoSimulacion();
+            if(caso == 0) break;
+            if(caso == 1) casoNuevoPedido();
+            if(caso == 2) casoEntregaPedido();
+            if(caso == 3) casoTerminoRuta();
+            cantVehiculoTipo1 = vehiculosDisponiblesTipo1;
+            cantVehiculoTipo2 = vehiculosDisponiblesTipo2;
+            cantVehiculoTipo3 = vehiculosDisponiblesTipo3;
+            cantVehiculoTipo4 = vehiculosDisponiblesTipo4;
+        }
+        //TODO FIN DATA FIRESTORE
 //        enviarDataFirestoreFin();
-//    }
-//
-//    public Integer obtenerCasoSimulacion(){
-//        int minutosNuevoPedido = Integer.MAX_VALUE;
-//        int minutosPedidoEntregado = Integer.MAX_VALUE;
-//        int minutosTerminoRuta = Integer.MAX_VALUE;
-//
-//        if(listaPedidosTotales.size() != 0) minutosNuevoPedido = getMinutesFromLocalDateTime(listaPedidosTotales.get(0).fechaPedido);
-//        if(listaPedidosEnRuta.size() != 0) minutosPedidoEntregado = listaPedidosEnRuta.get(0).tiempoMinutosEntrega;
-//        if(listaRutasEnRecorrido.size() != 0) minutosTerminoRuta = listaRutasEnRecorrido.get(0).tiempoMinutosFin;
-//
-//        if(montoPenalidades >= constantePenalidad) {
-//            return 0;
-//        }
-//        if(minutosNuevoPedido == minutosPedidoEntregado && minutosNuevoPedido == minutosTerminoRuta && minutosNuevoPedido == Integer.MAX_VALUE){
-//            return 0;
-//        }
-//        else if(minutosNuevoPedido <= minutosPedidoEntregado && minutosNuevoPedido <= minutosTerminoRuta){
-//            tiempoEnMinutosActual = minutosNuevoPedido;
-//            return 1;
-//        }
-//        else if(minutosPedidoEntregado <= minutosNuevoPedido && minutosPedidoEntregado <= minutosTerminoRuta){
-//            tiempoEnMinutosActual = minutosPedidoEntregado;
-//            return 2;
-//        }
-//        else{
-//            tiempoEnMinutosActual = minutosTerminoRuta;
-//            return 3;
-//        }
-//    }
-//
-//    public void casoNuevoPedido(){
-//        //añadir todos los pedidos entrantes a la lista de pedidos en cola
-//        for(int i = 0; i< listaPedidosTotales.size(); i++){
-//            if((int)getMinutesFromLocalDateTime(listaPedidosTotales.get(0).fechaPedido) == (tiempoEnMinutosActual)){
-//                listaPedidosEnCola.add(listaPedidosTotales.get(0));
-//                listaPedidosTotales.remove(0);
-//            }
-//            else break;
-//        }
-//
-//        //enviar data a firestore
-//        try {
-//            archivo.write("Se agregó un nuevo pedido\n");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+    }
+
+    public Integer obtenerCasoSimulacion(){
+        int minutosNuevoPedido = Integer.MAX_VALUE;
+        int minutosPedidoEntregado = Integer.MAX_VALUE;
+        int minutosTerminoRuta = Integer.MAX_VALUE;
+
+        if(listaPedidosTotales.size() != 0) minutosNuevoPedido = getMinutesFromLocalDateTime(listaPedidosTotales.get(0).getFechaPedido());
+        if(listaPedidosEnRuta.size() != 0) minutosPedidoEntregado = listaPedidosEnRuta.get(0).getTiempoEntrega();
+        if(listaRutasEnRecorrido.size() != 0) minutosTerminoRuta = listaRutasEnRecorrido.get(0).getTiempoMin();
+
+        if(montoPenalidades >= constantePenalidad) {
+            return 0;
+        }
+        if(minutosNuevoPedido == minutosPedidoEntregado && minutosNuevoPedido == minutosTerminoRuta && minutosNuevoPedido == Integer.MAX_VALUE){
+            return 0;
+        }
+        else if(minutosNuevoPedido <= minutosPedidoEntregado && minutosNuevoPedido <= minutosTerminoRuta){
+            tiempoEnMinutosActual = minutosNuevoPedido;
+            return 1;
+        }
+        else if(minutosPedidoEntregado <= minutosNuevoPedido && minutosPedidoEntregado <= minutosTerminoRuta){
+            tiempoEnMinutosActual = minutosPedidoEntregado;
+            return 2;
+        }
+        else{
+            tiempoEnMinutosActual = minutosTerminoRuta;
+            return 3;
+        }
+    }
+
+    public void casoNuevoPedido(){
+        //añadir todos los pedidos entrantes a la lista de pedidos en cola
+        for(int i = 0; i< listaPedidosTotales.size(); i++){
+            if((int)getMinutesFromLocalDateTime(listaPedidosTotales.get(0).getFechaPedido()) == (tiempoEnMinutosActual)){
+                listaPedidosEnCola.add(listaPedidosTotales.get(0));
+                listaPedidosTotales.remove(0);
+            }
+            else break;
+        }
+
+        //enviar data a firestore
+        try {
+            archivo.write("Se agregó un nuevo pedido\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //enviarDataFirestore();
+
+        //vemos si hay vehiculos disponibles
+        if((vehiculosDisponiblesTipo1+vehiculosDisponiblesTipo2+vehiculosDisponiblesTipo3+vehiculosDisponiblesTipo4) > 0){
+            ejecutarAlgoritmo();
+            try {
+                archivo.write("Se asignaron rutas\n");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //enviarDataFirestore();
+        }
+    }
+
+    public void casoEntregaPedido(){
+        for(int i=0; i<listaPedidosEnRuta.size(); i++){
+            Pedido pedido = listaPedidosEnRuta.get(0);
+            if(pedido.getTiempoEntrega() == tiempoEnMinutosActual){
+                numPedidoEntregados++;
+                if(getMinutesFromLocalDateTime(pedido.getFechaLimite()) < pedido.getTiempoEntrega()){
+                    //TODO Enviar info de colapso logistico
+                }
+                listaPedidosEnRuta.remove(0);
+            }
+            else break;
+        }
+        //enviar data a firestore
+        try {
+            archivo.write("Se entregó un pedido\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 //        enviarDataFirestore();
-//
-//        //vemos si hay vehiculos disponibles
-//        if((autosDisponibles + motosDisponibles) > 0){
-//            ejecutarAlgoritmo();
-//            try {
-//                archivo.write("Se asignaron rutas\n");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+    }
+
+    public void casoTerminoRuta(){
+        for(int i=0; i<listaRutasEnRecorrido.size(); i++){
+            RutaFront rutaFront = listaRutasEnRecorrido.get(0);
+            if(rutaFront.tiempoMin.equals(tiempoEnMinutosActual)){
+                try {
+                    archivo.write("Tipo vehiculo que retorna: " + rutaFront.vehiculo.getTipo().getIdTipo() + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(rutaFront.getVehiculo().getTipo().getIdTipo() == 1){
+                    try {
+                        archivo.write("Terminó un vehiculo tipo 1\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    vehiculosDisponiblesTipo1++;
+//                    costoMantenimiento += Configuraciones.costoKmAuto * rutaFront.recorridoEnKm;
+                }
+                else if (rutaFront.getVehiculo().getTipo().getIdTipo() == 2){
+                    try {
+                        archivo.write("Terminó un vehiculo tipo 2\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    vehiculosDisponiblesTipo2++;
+//                    costoMantenimiento += Configuraciones.costoKmAuto * rutaFront.recorridoEnKm;
+                }
+                else if (rutaFront.getVehiculo().getTipo().getIdTipo() == 3){
+                    try {
+                        archivo.write("Terminó un vehiculo tipo 3\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    vehiculosDisponiblesTipo3++;
+//                    costoMantenimiento += Configuraciones.costoKmAuto * rutaFront.recorridoEnKm;
+                }
+                else{
+                    try {
+                        archivo.write("Terminó un vehiculo tipo 4\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    vehiculosDisponiblesTipo4++;
+                }
+                listaRutasEnRecorrido.remove(0);
+            }
+            else break;
+        }
+
+        //enviar data a firestore
+        try {
+            archivo.write("Se terminó una ruta\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        enviarDataFirestore();
+
+        //vemos si hay vehiculos disponibles
+        if(listaPedidosEnCola.size() > 0){
+            ejecutarAlgoritmo();
+
+            //enviar data a firestore
+            try {
+                archivo.write("Se asignaron rutas\n");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 //            enviarDataFirestore();
-//        }
-//    }
-//
-//    public void casoEntregaPedido(){
-//        for(int i=0; i<listaPedidosEnRuta.size(); i++){
-//            SPedido sPedido = listaPedidosEnRuta.get(0);
-//            if((int)sPedido.tiempoMinutosEntrega == tiempoEnMinutosActual){
-//                numPedidoEntregados++;
-//                ganancia += sPedido.cantidad * Configuraciones.precio;
-//                if(sPedido.tiempoMinutosLimite < sPedido.tiempoMinutosEntrega){
-//                    numPenalidades++;
-//                    montoPenalidades += Configuraciones.penalidad *
-//                            (int)((sPedido.tiempoMinutosEntrega - sPedido.tiempoMinutosLimite)/60 + 1);
-//                }
-//                listaPedidosEnRuta.remove(0);
-//            }
-//            else break;
-//        }
-//
-//        //enviar data a firestore
-//        try {
-//            archivo.write("Se entregó un pedido\n");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        enviarDataFirestore();
-//    }
-//
-//    public void casoTerminoRuta(){
-//        for(int i=0; i<listaRutasEnRecorrido.size(); i++){
-//            SRuta sRuta = listaRutasEnRecorrido.get(0);
-//            if(sRuta.tiempoMinutosFin.equals(tiempoEnMinutosActual)){
-//                try {
-//                    archivo.write("Tipo vehiculo que retorna: " + sRuta.tipoVehiculo + "\n");
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                if(sRuta.tipoVehiculo == 1){
-//                    try {
-//                        archivo.write("Terminó un auto\n");
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                    autosDisponibles++;
-//                    costoMantenimiento += Configuraciones.costoKmAuto * sRuta.recorridoEnKm;
-//                }
-//                else{
-//                    try {
-//                        archivo.write("Terminó una moto\n");
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                    motosDisponibles++;
-//                    costoMantenimiento += Configuraciones.costoKmMoto * sRuta.recorridoEnKm;
-//                }
-//                listaRutasEnRecorrido.remove(0);
-//            }
-//            else break;
-//        }
-//
-//        //enviar data a firestore
-//        try {
-//            archivo.write("Se terminó una ruta\n");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        enviarDataFirestore();
-//
-//        //vemos si hay vehiculos disponibles
-//        if(listaPedidosEnCola.size() > 0){
-//            ejecutarAlgoritmo();
-//
-//            //enviar data a firestore
-//            try {
-//                archivo.write("Se asignaron rutas\n");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            enviarDataFirestore();
-//        }
-//    }
+        }
+    }
 
     public Integer getMinutesFromLocalDateTime(LocalDateTime ldt){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d H:m:s");
@@ -497,299 +519,358 @@ public class Simulacion {
 //        }
 //    }
 //
-//    // SECCION RELACIONADA NETAMENTE AL ALGORITMO
-//
-//    public void ejecutarAlgoritmo(){
-//        obtenerCantidadClusters();
-//        kmeans = new Kmeans(cantMotos, cantAutos);
-//        obtenerPedidosClusterizados();
-//        obtenerRutas();
-//        asignarRutas();
-//    }
-//
-//    public void obtenerCantidadClusters(){
-//        cantMotos = motosDisponibles;   //5
-//        cantAutos = autosDisponibles;   //5
-//        //0.9 * (10/5*4+5*25)
-//        int k = (int) (0.9 * (cantidadProductos / ( cantMotos * 4 + cantAutos * 25 )));
-//        if(k > 10) k = 10;
-//        if(k < 3) k = 3;
-//        // 15  15
-//        cantClusterMotos = cantMotos * k;
-//        cantClusterAutos = cantAutos * k;
-//    }
-//
-//    public void obtenerPedidosClusterizados(){
-//        int cantClusters = cantClusterMotos + cantClusterAutos;
-//        List<AVehiculo> vehiculos = inicializarVehiculos();
-//
-//        //inicializar clusters
-//        List<Cluster> clustersList = inicializarClusters(vehiculos);
-//        List<Cluster> clustersAns = inicializarClusters(vehiculos);
-//
-//        //Clusterizacion
-//        clusterResult = kmeans.kmeans(listaPedidosEnCola,clustersList,cantClusters,clustersAns);
-//        Double SSE = kmeans.getOptimo(listaPedidosEnCola,clustersAns,cantClusters);
-//    }
-//
-//    public List<AVehiculo> inicializarVehiculos() {
-//        List<AVehiculo> lista = new ArrayList<>();
-//        for(int i=0; i<cantClusterMotos;i++){
-//            AVehiculo vehiculo = new AVehiculo();
-//            vehiculo.setCapacidad(4);
-//            vehiculo.setCosto_km(3.0);
-//            vehiculo.setVelocidad(60.00);
-//            vehiculo.setTipo_id(2);
-//            lista.add(vehiculo);
-//        }
-//        for(int i=0; i<cantClusterAutos;i++){
-//            AVehiculo vehiculo = new AVehiculo();
-//            vehiculo.setCapacidad(25);
-//            vehiculo.setCosto_km(5.0);
-//            vehiculo.setVelocidad(30.00);
-//            vehiculo.setTipo_id(1);
-//            lista.add(vehiculo);
-//        }
-//        return lista;
-//    }
-//
-//    public List<Cluster> inicializarClusters(List<AVehiculo>  vehiculos){
-//        List<Cluster> lista = new ArrayList<Cluster>();
-//        for(AVehiculo vehiculo: vehiculos){
-//            Cluster cluster =  new Cluster();
-//            cluster.pedidos = new PriorityQueue<APedido>(500,
-//                    new Comparator<APedido>(){
-//                        //override compare method
-//                        public int compare(APedido i, APedido j){
-//                            if(Math.abs(i.x - Configuraciones.almacenX) + Math.abs(i.y - Configuraciones.almacenY) > Math.abs(j.x - Configuraciones.almacenX) + Math.abs(j.y - Configuraciones.almacenY)) return 1;
-//                            else if (Math.abs(i.x - Configuraciones.almacenX) + Math.abs(i.y - Configuraciones.almacenY) < Math.abs(j.x - Configuraciones.almacenX) + Math.abs(j.y - Configuraciones.almacenY)) return -1;
-//                            else if (i.cantidad > j.cantidad) return 1;
-//                            else if (i.cantidad < j.cantidad) return -1;
-//                            else return 1;
-//                        }
-//                    }
-//            );
-//            cluster.centroideX = 0;
-//            cluster.centroideY = 0;
-//            cluster.vehiculo = vehiculo;
-//            lista.add(cluster);
-//        }
-//        return lista;
-//    }
-//
-//    public void obtenerRutas(){
-//
-//        int tiempoMinutosInicio = tiempoEnMinutosActual;
-//
-//        //para calcular el tiempo máximo de entrega
-//        int maximoTiempo = -1;
-//
-//        //inicializamos la lista de rutas
-//        listaRutas = new ArrayList< Ruta >();
-//
-//        for(Cluster cluster:clusterResult){
-//            //asignamos el tiempo en minutos en que iniciamos a correr el algoritmo
-//            int tiempoMinutos = tiempoMinutosInicio;
-//            if(cluster.firstPedido == null) continue;
-//            //imprimos en forma de reporte la información relacionada a la ruta
-//
-//            //incializamos la ruta
-//            Ruta ruta = new Ruta(cluster.vehiculo, cluster.capacidad);
-//
-//            //seteamos el origen a nuestro almacén
-//            int origen = Configuraciones.almacen;
-//
-//            //nos servirá para hallar un ruta si estamos en un nodo bloqueado
-//            int ultimoViable = Configuraciones.almacen;
-//
-//            //para el firstPedido
-//            if(cluster.firstPedido != null){
-//                APedido pedido = cluster.firstPedido;
-//                ruta.addPedido(pedido);
-//
-//                boolean estaBloqueada = estaBloqueada(tiempoMinutos, origen);
-//
-//                if(estaBloqueada){
-//                    origen = ultimoViable;
-//                    // if(pedido.id == 271) System.out.println("Sí está bloqueada");
-//                }
-//
-//                dijkstraAlgorithm.dijkstra( origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getVelocidad()));
-//
-//                int tamanoIni = ruta.recorrido.size();
-//
-//                dijkstraAlgorithm.printShortestPath(pedido.getNodoId(), ruta, 1);
-//
-//                int tamanoFin = ruta.recorrido.size();
-//
-//                if(tamanoFin - tamanoIni >= 2) {
-//                    ultimoViable = ruta.recorrido.get(ruta.recorrido.size() - 2);
-//                }
-//
-//                int tiempoEnLlegar = (tamanoFin - tamanoIni-1) * 60 / ((int) Math.round(cluster.vehiculo.getVelocidad()));
-//
-//                tiempoMinutos += tiempoEnLlegar;
-//
-//                ruta.pedidos.get(ruta.pedidos.size()-1).tiempoEntregaRealizada = tiempoMinutos;
-//                // System.out.println("Pedido id: " + pedido.id + " " + pedido.x + " " + pedido.y);
-//                origen = pedido.getNodoId();
-//            }
-//
-//            //iteramos mientras sacamos pedidos de la cola de prioridad del cluster
-//            //ordenados por distancia manhattan al almacén
-//            while(!cluster.pedidos.isEmpty()){
-//
-//                //extraemos un pedido del cluster
-//                APedido pedido = cluster.pedidos.poll();
-//                ruta.addPedido(pedido);
-//                //imprimir información del pedido
-//
-//                //verificamos si nos encontramos en un nodo bloqueado
-//                //esto puede ocurrir ya que hemos entregado un pedido en un nodo bloqueado
-//                //o si el almancén es un nodo bloqueado
-//                boolean estaBloqueada = estaBloqueada(tiempoMinutos, origen);
-//
-//                if(estaBloqueada){
-//                    origen = ultimoViable;
-//                    ruta.addNodo(origen);
-//                }
-//
-//                //corremos el algoritmo de dijkstra
-//                dijkstraAlgorithm.dijkstra( origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getVelocidad()) );
-//
-//                //tamano antes de la nueva parte de la ruta
-//                int tamanoIni = ruta.recorrido.size();
-//
-//                //obtenemos la ruta en un array
-//                dijkstraAlgorithm.printShortestPath(pedido.getNodoId(), ruta, 1);
-//
-//                //tamano luego de la nueva parte de la ruta
-//                int tamanoFin = ruta.recorrido.size();
-//
-//                // para obtener el último nodo que no está bloqueado si es que acabamos de entregar un pedido en un nodo bloqueado
-//                if(tamanoFin - tamanoIni >= 2) {
-//                    ultimoViable = ruta.recorrido.get(ruta.recorrido.size() - 2);
-//                }
-//
-//                //calculamos el tiempo que tomó en llegar
-//                int tiempoEnLlegar = (tamanoFin - tamanoIni-1) * 60 / ((int) Math.round(cluster.vehiculo.getVelocidad()));
-//
-//
-//                // calculamos el nuevo tiempo en el que nos encontramos
-//                tiempoMinutos += tiempoEnLlegar;
-//
-//                ruta.pedidos.get(ruta.pedidos.size()-1).tiempoEntregaRealizada = tiempoMinutos;
-//                // System.out.println("Pedido id: " + pedido.id + " " + pedido.x + " " + pedido.y);
-//                //cambiamos el origen
-//                origen = pedido.getNodoId();
-//            }
-//
-//            //tiempo que tomó realizar la entrega
-//            int diferenciaTiempo = tiempoMinutos - tiempoMinutosInicio;
-//
-//            if(diferenciaTiempo > maximoTiempo){
-//                maximoTiempo = diferenciaTiempo;
-//            }
-//
-//            if(cluster.firstPedido != null){
-//                // System.out.println("Ruta recorrido: " + ruta.recorrido);
-//                origen = ruta.recorrido.get(ruta.recorrido.size() - 1);
-//                boolean estaBloqueada = estaBloqueada(tiempoMinutos, origen);
-//
-//                if(estaBloqueada){
-//                    origen = ultimoViable;
-//                    ruta.addNodoRetorno(origen);
-//                }
-//
-//                dijkstraAlgorithm.dijkstra( origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getVelocidad()) );
-//
-//                int tamanoIni = ruta.retorno.size();
-//
-//                dijkstraAlgorithm.printShortestPath(Configuraciones.almacen, ruta, 2);
-//            }
-//            listaRutas.add(ruta);
-//        }
-//        // System.out.println("Máximo tiempo de entrega: " + maximoTiempo + " minutos");
-//        // System.out.println("Número de rutas: " + listaRutas.size());
-//    }
-//
-//    public void asignarRutas(){
-//        log.info("Asignar rutas: ");
-//        log.info("cantAutos: " + cantAutos);
-//        log.info("cantMotos: " + cantMotos);
-//        for(int i=0; i<cantAutos; i++){
-//            int minimo = Integer.MAX_VALUE;
-//            int contador = 0;
-//            int minCont = -1;
-//            for(Ruta ruta: listaRutas){
-//                if(ruta.vehiculo.getTipo_id() == 1 && ruta.chofer == null && minimo > ruta.tiempoMin){
-//                    minimo = ruta.tiempoMin;
-//                    minCont = contador;
-//                }
-//                contador++;
-//            }
-//            if(minCont == -1) break;
-//            for(APedido pedido: listaRutas.get(minCont).pedidos){
-//                SPedido sPedido = new SPedido();
-//                sPedido.id = pedido.id;
-//                sPedido.tiempoMinutosEntrega = pedido.tiempoEntregaRealizada;
-//                sPedido.tiempoMinutosLimite = getMinutesFromLocalDateTime(pedido.fechaLimite);
-//                sPedido.cantidad = pedido.cantidad;
-//                listaPedidosEnRuta.add(sPedido);
-//                listaPedidosEnCola.remove(pedido);
-//            }
-//            Ruta ruta = listaRutas.get(minCont);
-//            ruta.chofer = new Usuario();
-//            SRuta sRuta = new SRuta();
-//            sRuta.tipoVehiculo = 1;
-//            sRuta.recorridoEnKm = ruta.recorrido.size() + ruta.retorno.size();
-//            sRuta.tiempoMinutosFin = tiempoEnMinutosActual + sRuta.recorridoEnKm*2;
-//            listaRutasEnRecorrido.add(sRuta);
-//            autosDisponibles--;
-//        }
-//
-//        for(int i=0; i<cantMotos; i++){
-//            int minimo = Integer.MAX_VALUE;
-//            int contador = 0;
-//            int minCont = -1;
-//            for(Ruta ruta: listaRutas){
-//                if(ruta.vehiculo.getTipo_id() == 2 && ruta.chofer == null && minimo > ruta.tiempoMin){
-//                    minimo = ruta.tiempoMin;
-//                    minCont = contador;
-//                }
-//                contador++;
-//            }
-//            if(minCont == -1) break;
-//            for(APedido pedido: listaRutas.get(minCont).pedidos){
-//                SPedido sPedido = new SPedido();
-//                sPedido.id = pedido.id;
-//                sPedido.tiempoMinutosEntrega = pedido.tiempoEntregaRealizada;
-//                sPedido.tiempoMinutosLimite = getMinutesFromLocalDateTime(pedido.fechaLimite);
-//                sPedido.cantidad = pedido.cantidad;
-//                listaPedidosEnRuta.add(sPedido);
-//                listaPedidosEnCola.remove(pedido);
-//            }
-//            Ruta ruta = listaRutas.get(minCont);
-//            ruta.chofer = new Usuario();
-//            SRuta sRuta = new SRuta();
-//            sRuta.tipoVehiculo = 2;
-//            sRuta.recorridoEnKm = ruta.recorrido.size() + ruta.retorno.size();
-//            sRuta.tiempoMinutosFin = tiempoEnMinutosActual + sRuta.recorridoEnKm;
-//            listaRutasEnRecorrido.add(sRuta);
-//            motosDisponibles--;
-//        }
-//        Collections.sort(listaPedidosEnCola);
-//        Collections.sort(listaRutasEnRecorrido);
-//    }
-//
-//    private boolean estaBloqueada(int tiempoMinutos, int nodoId){
-//        for( CallesBloqueadas par : listaCallesBloqueadas ){
-//            if( ( tiempoMinutos >= par.getMinutosInicio() ) && ( tiempoMinutos < par.getMinutosFin() ) ){
-//                return par.estaNodo(nodoId);
-//            }
-//        }
-//        return false;
-//    }
+
+
+    public void obtenerListaAdyacente(){
+        int origen, destino;
+        InputStream grafo = getClass().getClassLoader().getResourceAsStream("grafo.txt");
+        Scanner sc = new Scanner( grafo );
+        dijkstraAlgorithm = new Dijkstra(Configuraciones.V, listaCallesBloqueadas);
+        for( int i = 0 ; i < Configuraciones.E ; ++i ){
+            origen = sc.nextInt() +1;
+            destino = sc.nextInt() +1;
+            dijkstraAlgorithm.addEdge(origen, destino);
+        }
+    }
+
+    public void ejecutarAlgoritmo(){
+        obtenerCantidadClusters();
+        kmeans = new Kmeans(cantVehiculoTipo1, cantVehiculoTipo2, cantVehiculoTipo3, cantVehiculoTipo4);
+        obtenerPedidosClusterizados();
+        obtenerRutas();
+        asignarRutas();
+    }
+
+    public void obtenerCantidadClusters(){
+
+        cantVehiculoTipo1 = vehiculosDisponiblesTipo1;
+        cantVehiculoTipo2 = vehiculosDisponiblesTipo2;
+        cantVehiculoTipo3 = vehiculosDisponiblesTipo3;
+        cantVehiculoTipo4 = vehiculosDisponiblesTipo4;
+
+        int k = (int) (0.9 * (demandaTotal / (cantVehiculoTipo1 * 2.5 + cantVehiculoTipo2 * 2.0 +
+                cantVehiculoTipo3 * 1.5 + cantVehiculoTipo4 * 1.0)));
+
+        if(k > 10) k = 10;
+        if(k < 3) k = 3;
+
+        cantClusterVehiculoTipo1= cantVehiculoTipo1*k;
+        cantClusterVehiculoTipo2= cantVehiculoTipo2*k;
+        cantClusterVehiculoTipo3= cantVehiculoTipo3*k;
+        cantClusterVehiculoTipo4= cantVehiculoTipo4*k;
+
+    }
+
+    public void obtenerPedidosClusterizados(){
+        int cantClusters = cantClusterVehiculoTipo1+cantVehiculoTipo2+cantVehiculoTipo3+cantVehiculoTipo4;
+        List<Vehicle> vehiculos = inicializarVehiculos();
+
+        List<Cluster> clustersList = inicializarClusters(vehiculos);
+        List<Cluster> clustersAns = inicializarClusters(vehiculos);
+
+        clusterResult = kmeans.kmeans(listaPedidosEnCola,clustersList,cantClusters,clustersAns);
+        kmeans.getOptimo(listaPedidosEnCola,clustersAns,cantClusters);
+    }
+
+    public List<Vehicle> inicializarVehiculos() {
+        List<Vehicle> lista = new ArrayList<>();
+
+        for (int i = 0; i < cantClusterVehiculoTipo1; i++) {
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            tipo.setIdTipo(1);
+            tipo.setCapacidad(25.0);
+            tipo.setPesoBruto(2.5);
+            tipo.setVelocidad(50.0);
+            vehiculo.setTipo(tipo);
+            lista.add(vehiculo);
+        }
+        for (int i = 0; i < cantClusterVehiculoTipo2; i++) {
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            tipo.setIdTipo(2);
+            tipo.setCapacidad(20.0);
+            tipo.setPesoBruto(2.0);
+            tipo.setVelocidad(50.0);
+            vehiculo.setTipo(tipo);
+            lista.add(vehiculo);
+        }
+        for (int i = 0; i < cantClusterVehiculoTipo3; i++) {
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            tipo.setIdTipo(3);
+            tipo.setCapacidad(15.0);
+            tipo.setPesoBruto(1.5);
+            tipo.setVelocidad(50.0);
+            vehiculo.setTipo(tipo);
+            lista.add(vehiculo);
+        }
+        for (int i = 0; i < cantClusterVehiculoTipo4; i++) {
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            tipo.setIdTipo(4);
+            tipo.setCapacidad(10.0);
+            tipo.setPesoBruto(1.0);
+            tipo.setVelocidad(50.0);
+            vehiculo.setTipo(tipo);
+            lista.add(vehiculo);
+        }
+
+        return lista;
+    }
+
+    public List<Cluster> inicializarClusters(List<Vehicle> vehiculos) {
+        List<Cluster> lista = new ArrayList<Cluster>();
+        for (Vehicle vehiculo : vehiculos) {
+            Cluster cluster = new Cluster();
+            cluster.pedidos = new PriorityQueue<Pedido>(500, new Comparator<Pedido>() {
+                public int compare(Pedido i, Pedido j) {
+                    if (Math.abs(i.getX() - Configuraciones.almacenX) + Math.abs(i.getY() - Configuraciones.almacenY) > Math
+                            .abs(j.getX() - Configuraciones.almacenX) + Math.abs(j.getY() - Configuraciones.almacenY))
+                        return 1;
+                    else if (Math.abs(i.getX() - Configuraciones.almacenX) + Math.abs(i.getY() - Configuraciones.almacenY) < Math
+                            .abs(j.getX() - Configuraciones.almacenX) + Math.abs(j.getY() - Configuraciones.almacenY))
+                        return -1;
+                    else if (i.getCantidad() > j.getCantidad())
+                        return 1;
+                    else if (i.getCantidad() < j.getCantidad())
+                        return -1;
+                    else
+                        return 1;
+                }
+            });
+            cluster.centroideX = 0;
+            cluster.centroideY = 0;
+            cluster.vehiculo = vehiculo;
+            lista.add(cluster);
+        }
+        return lista;
+    }
+
+
+    public void obtenerRutas(){
+
+        int tiempoMinutosInicio = tiempoEnMinutosActual;
+
+        //para calcular el tiempo máximo de entrega
+        int maximoTiempo = -1;
+
+        //inicializamos la lista de rutas
+        listaRutas = new ArrayList< Ruta >();
+
+        for(Cluster cluster:clusterResult){
+            //asignamos el tiempo en minutos en que iniciamos a correr el algoritmo
+            int tiempoMinutos = tiempoMinutosInicio;
+            if(cluster.firstPedido == null) continue;
+            //imprimos en forma de reporte la información relacionada a la ruta
+
+            //incializamos la ruta
+            Ruta ruta = new Ruta(cluster.vehiculo, cluster.capacidad);
+
+            //seteamos el origen a nuestro almacén
+            int origen = Configuraciones.almacen;
+
+            //nos servirá para hallar un ruta si estamos en un nodo bloqueado
+            int ultimoViable = Configuraciones.almacen;
+
+            //para el firstPedido
+            if(cluster.firstPedido != null){
+                Pedido pedido = cluster.firstPedido;
+                ruta.addPedido(pedido);
+
+                boolean estaBloqueada = estaBloqueada(tiempoMinutos, origen);
+
+                if(estaBloqueada){
+                    origen = ultimoViable;
+                    // if(pedido.id == 271) System.out.println("Sí está bloqueada");
+                }
+
+                dijkstraAlgorithm.run( origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
+
+                int tamanoIni = ruta.recorrido.size();
+
+                dijkstraAlgorithm.addNodesToPath(pedido.getNodoId(), ruta, 1);
+
+                int tamanoFin = ruta.recorrido.size();
+
+                if(tamanoFin - tamanoIni >= 2) {
+                    ultimoViable = ruta.recorrido.get(ruta.recorrido.size() - 2);
+                }
+
+                int tiempoEnLlegar = (tamanoFin - tamanoIni-1) * 60 / ((int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
+
+                tiempoMinutos += tiempoEnLlegar;
+
+                ruta.pedidos.get(ruta.pedidos.size()-1).setTiempoEntrega(tiempoMinutos);
+
+                origen = pedido.getNodoId();
+            }
+
+            //iteramos mientras sacamos pedidos de la cola de prioridad del cluster
+            //ordenados por distancia manhattan al almacén
+            while(!cluster.pedidos.isEmpty()){
+
+                //extraemos un pedido del cluster
+                Pedido pedido = cluster.pedidos.poll();
+                ruta.addPedido(pedido);
+                //imprimir información del pedido
+
+                //verificamos si nos encontramos en un nodo bloqueado
+                //esto puede ocurrir ya que hemos entregado un pedido en un nodo bloqueado
+                //o si el almancén es un nodo bloqueado
+                boolean estaBloqueada = estaBloqueada(tiempoMinutos, origen);
+
+                if(estaBloqueada){
+                    origen = ultimoViable;
+                    ruta.addNodo(origen);
+                }
+
+                //corremos el algoritmo de dijkstra
+                dijkstraAlgorithm.run( origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getTipo().getVelocidad()) );
+
+                //tamano antes de la nueva parte de la ruta
+                int tamanoIni = ruta.recorrido.size();
+
+                //obtenemos la ruta en un array
+                dijkstraAlgorithm.addNodesToPath(pedido.getNodoId(), ruta, 1);
+
+                //tamano luego de la nueva parte de la ruta
+                int tamanoFin = ruta.recorrido.size();
+
+                // para obtener el último nodo que no está bloqueado si es que acabamos de entregar un pedido en un nodo bloqueado
+                if(tamanoFin - tamanoIni >= 2) {
+                    ultimoViable = ruta.recorrido.get(ruta.recorrido.size() - 2);
+                }
+
+                //calculamos el tiempo que tomó en llegar
+                int tiempoEnLlegar = (tamanoFin - tamanoIni-1) * 60 / ((int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
+
+
+                // calculamos el nuevo tiempo en el que nos encontramos
+                tiempoMinutos += tiempoEnLlegar;
+
+                ruta.pedidos.get(ruta.pedidos.size()-1).setTiempoEntrega(tiempoMinutos);
+                // System.out.println("Pedido id: " + pedido.id + " " + pedido.x + " " + pedido.y);
+                //cambiamos el origen
+                origen = pedido.getNodoId();
+            }
+
+            //tiempo que tomó realizar la entrega
+            int diferenciaTiempo = tiempoMinutos - tiempoMinutosInicio;
+
+            if(diferenciaTiempo > maximoTiempo){
+                maximoTiempo = diferenciaTiempo;
+            }
+
+            if(cluster.firstPedido != null){
+                // System.out.println("Ruta recorrido: " + ruta.recorrido);
+                origen = ruta.recorrido.get(ruta.recorrido.size() - 1);
+                boolean estaBloqueada = estaBloqueada(tiempoMinutos, origen);
+
+                if(estaBloqueada){
+                    origen = ultimoViable;
+                    ruta.addNodoRetorno(origen);
+                }
+
+                dijkstraAlgorithm.run( origen, tiempoMinutos, (int) Math.round(cluster.vehiculo.getTipo().getVelocidad()) );
+
+                int tamanoIni = ruta.retorno.size();
+
+                dijkstraAlgorithm.addNodesToPath(Configuraciones.almacen, ruta, 2);
+            }
+            listaRutas.add(ruta);
+        }
+        // System.out.println("Máximo tiempo de entrega: " + maximoTiempo + " minutos");
+        // System.out.println("Número de rutas: " + listaRutas.size());
+    }
+
+    public void asignarRutaTipo(int idTipo, int cantClusterVehiculoTipo){
+        for(int i=0; i<cantClusterVehiculoTipo; i++){
+            int minimo = Integer.MAX_VALUE;
+            int contador = 0;
+            int minCont = -1;
+            for(Ruta ruta: listaRutas){
+                if(ruta.vehiculo.getTipo().getIdTipo() == idTipo  && minimo > getMinutesFromLocalDateTime(ruta.plazoEntrega)){
+                    minimo = getMinutesFromLocalDateTime(ruta.plazoEntrega);
+                    minCont = contador;
+                }
+                contador++;
+            }
+            if(minCont == -1) break;
+            for(Pedido pedido: listaRutas.get(minCont).pedidos){
+                listaPedidosEnRuta.add(pedido);
+                listaPedidosEnCola.remove(pedido);
+            }
+
+            Ruta ruta = listaRutas.get(minCont);
+            RutaFront rutaFront = new RutaFront(ruta.vehiculo,ruta.capacidad);
+
+            List<Map<String,Integer>> recorridoEnviar = new ArrayList<>();
+            List<Map<String,Integer>> retornoEnviar = new ArrayList<>();
+            for (int nodoRecorrido:ruta.recorrido){
+                int x = (nodoRecorrido - 1) % 71;
+                int y = (nodoRecorrido - 1) / 71;
+                Map<String ,Integer> map=new HashMap<String,Integer>();
+                map.put("x",x);
+                map.put("y",y);
+                recorridoEnviar.add(map);
+            }
+
+            for (int nodoRetorno: ruta.retorno){
+                int x = (nodoRetorno - 1) % 71;
+                int y = (nodoRetorno - 1) / 71;
+                Map<String ,Integer> map=new HashMap<String,Integer>();
+                map.put("x",x);
+                map.put("y",y);
+                retornoEnviar.add(map);
+            }
+
+            rutaFront.setTiempoMin(getMinutesFromLocalDateTime(ruta.plazoEntrega));
+            rutaFront.pedidos.addAll(ruta.pedidos);
+            rutaFront.recorrido.addAll(recorridoEnviar);
+            rutaFront.retorno.addAll(retornoEnviar);
+            rutaFront.tiempoMin = getMinutesFromLocalDateTime(ruta.plazoEntrega);
+
+            listaRutasEnRecorrido.add(rutaFront);
+
+            switch (idTipo){
+                case 1:
+                    vehiculosDisponiblesTipo1--;
+                    break;
+                case 2:
+                    vehiculosDisponiblesTipo2--;
+                    break;
+                case 3:
+                    vehiculosDisponiblesTipo3--;
+                    break;
+                case 4:
+                    vehiculosDisponiblesTipo4--;
+                    break;
+            }
+
+        }
+
+    }
+
+    public void asignarRutas(){
+
+        asignarRutaTipo(1,cantClusterVehiculoTipo1);
+        asignarRutaTipo(2,cantClusterVehiculoTipo2);
+        asignarRutaTipo(3,cantClusterVehiculoTipo3);
+        asignarRutaTipo(4,cantClusterVehiculoTipo4);
+
+        Collections.sort(listaPedidosEnCola);
+        Collections.sort(listaRutasEnRecorrido);
+    }
+
+    private boolean estaBloqueada(int tiempoMinutos, int nodoId){
+        for( CallesBloqueadas par : listaCallesBloqueadas ){
+            if( ( tiempoMinutos >= par.getMinutosInicio() ) && ( tiempoMinutos < par.getMinutosFin() ) ){
+                return par.estaNodo(nodoId);
+            }
+        }
+        return false;
+    }
 //
 //
 //    public void reiniciarSimulacion(){

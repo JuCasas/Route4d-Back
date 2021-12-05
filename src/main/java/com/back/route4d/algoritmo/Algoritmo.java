@@ -79,78 +79,73 @@ public class Algoritmo {
 
         rutaRepository.saveAll(listaRutas);
 
+        listaRutasFront = new ArrayList<RutaFront>();
 
+        for (Ruta ruta:listaRutas){
+            List<Map<String,Integer>> recorridoEnviar = new ArrayList<>();
+            List<Map<String,Integer>> retornoEnviar = new ArrayList<>();
+            for (int nodoRecorrido:ruta.recorrido){
+                int x = (nodoRecorrido - 1) % 71;
+                int y = (nodoRecorrido - 1) / 71;
+                Map<String ,Integer> map=new HashMap<String,Integer>();
+                map.put("x",x);
+                map.put("y",y);
+                recorridoEnviar.add(map);
+            }
 
+            for (int nodoRetorno: ruta.retorno){
+                int x = (nodoRetorno - 1) % 71;
+                int y = (nodoRetorno - 1) / 71;
+                Map<String ,Integer> map=new HashMap<String,Integer>();
+                map.put("x",x);
+                map.put("y",y);
+                retornoEnviar.add(map);
+            }
 
-        //TODO enviar al getRutas
-//        listaRutasFront = new ArrayList<RutaFront>();
-//
-//        for (Ruta ruta:listaRutas){
-//            List<Map<String,Integer>> recorridoEnviar = new ArrayList<>();
-//            List<Map<String,Integer>> retornoEnviar = new ArrayList<>();
-//            for (int nodoRecorrido:ruta.recorrido){
-//                int x = (nodoRecorrido - 1) % 71;
-//                int y = (nodoRecorrido - 1) / 71;
-//                Map<String ,Integer> map=new HashMap<String,Integer>();
-//                map.put("x",x);
-//                map.put("y",y);
-//                recorridoEnviar.add(map);
-//            }
-//
-//            for (int nodoRetorno: ruta.retorno){
-//                int x = (nodoRetorno - 1) % 71;
-//                int y = (nodoRetorno - 1) / 71;
-//                Map<String ,Integer> map=new HashMap<String,Integer>();
-//                map.put("x",x);
-//                map.put("y",y);
-//                retornoEnviar.add(map);
-//            }
-//
-//            RutaFront rutaFront = new RutaFront(ruta.vehiculo,ruta.capacidad);
-//            rutaFront.setTiempoMin(ruta.getPlazoEntrega());
-//            rutaFront.pedidos.addAll(ruta.pedidos);
-//            rutaFront.recorrido.addAll(recorridoEnviar);
-//            rutaFront.retorno.addAll(retornoEnviar);
-//
-//            listaRutasFront.add(rutaFront);
-//        }
+            RutaFront rutaFront = new RutaFront(ruta.vehiculo,ruta.capacidad);
+            //TODO FIX
+            rutaFront.setTiempoMin(ruta.getPlazoEntrega().getMinute());
+            rutaFront.pedidos.addAll(ruta.pedidos);
+            rutaFront.recorrido.addAll(recorridoEnviar);
+            rutaFront.retorno.addAll(retornoEnviar);
 
-        //TODO enviar al getBloqueos
-//
-//        listaCallesBloqueadasFront = new ArrayList<CallesBloqueadasFront>();
-//        for (CallesBloqueadas callesBloqueadas:listaCallesBloqueadas){
-//
-//            Integer minutosInicio = callesBloqueadas.getMinutosInicio();
-//            Integer minutosFin = callesBloqueadas.getMinutosFin();
-//            LocalDateTime fechaInicio = Helper.convertMinutesToLocalDateTime(minutosInicio);
-//            LocalDateTime fechaFin = Helper.convertMinutesToLocalDateTime(minutosFin);
-//
-//            for (Integer nodo:callesBloqueadas.getConjuntoNodos()){
-//
-//                int x = (nodo - 1) % 71;
-//                int y = (nodo - 1) / 71;
-//
-//                boolean encontrado = false;
-//                for (CallesBloqueadasFront bloqueoRevisar:listaCallesBloqueadasFront){
-//                    if (bloqueoRevisar.esBloqueo(x,y)){
-//                        bloqueoRevisar.addTime(fechaInicio,fechaFin);
-//                        encontrado = true;
-//                        break;
-//                    }
-//                }
-//
-//                if(!encontrado){
-//                    CallesBloqueadasFront calleFront = new CallesBloqueadasFront(x,y);
-//                    calleFront.addTime(fechaInicio,fechaFin);
-//                    listaCallesBloqueadasFront.add(calleFront);
-//                }
-//
-//            }
-//        }
+            listaRutasFront.add(rutaFront);
+        }
+
+        listaCallesBloqueadasFront = new ArrayList<CallesBloqueadasFront>();
+        for (CallesBloqueadas callesBloqueadas:listaCallesBloqueadas){
+
+            Integer minutosInicio = callesBloqueadas.getMinutosInicio();
+            Integer minutosFin = callesBloqueadas.getMinutosFin();
+            LocalDateTime fechaInicio = Helper.convertMinutesToLocalDateTime(minutosInicio);
+            LocalDateTime fechaFin = Helper.convertMinutesToLocalDateTime(minutosFin);
+
+            for (Integer nodo:callesBloqueadas.getConjuntoNodos()){
+
+                int x = (nodo - 1) % 71;
+                int y = (nodo - 1) / 71;
+
+                boolean encontrado = false;
+                for (CallesBloqueadasFront bloqueoRevisar:listaCallesBloqueadasFront){
+                    if (bloqueoRevisar.esBloqueo(x,y)){
+                        bloqueoRevisar.addTime(fechaInicio,fechaFin);
+                        encontrado = true;
+                        break;
+                    }
+                }
+
+                if(!encontrado){
+                    CallesBloqueadasFront calleFront = new CallesBloqueadasFront(x,y);
+                    calleFront.addTime(fechaInicio,fechaFin);
+                    listaCallesBloqueadasFront.add(calleFront);
+                }
+
+            }
+        }
         HashMap<String,Object> enviar;
         enviar = new HashMap<>();
-//        enviar.put("Rutas",listaRutasFront);
-//        enviar.put("Bloqueos",listaCallesBloqueadasFront);
+        enviar.put("Rutas",listaRutasFront);
+        enviar.put("Bloqueos",listaCallesBloqueadasFront);
 
         return (HashMap) enviar;
     }
@@ -168,10 +163,10 @@ public class Algoritmo {
         listaVehiculoTipo3 = vehicleService.getAvailableByType(tiempoAhora,3);
         listaVehiculoTipo4 = vehicleService.getAvailableByType(tiempoAhora,4);
 
-        listaRutasTipo1 = rutaRepository.getRoutesByTypeId(1);
-        listaRutasTipo2 = rutaRepository.getRoutesByTypeId(2);
-        listaRutasTipo3 = rutaRepository.getRoutesByTypeId(3);
-        listaRutasTipo4 = rutaRepository.getRoutesByTypeId(4);
+//        listaRutasTipo1 = rutaRepository.getRoutesByTypeId(1);
+//        listaRutasTipo2 = rutaRepository.getRoutesByTypeId(2);
+//        listaRutasTipo3 = rutaRepository.getRoutesByTypeId(3);
+//        listaRutasTipo4 = rutaRepository.getRoutesByTypeId(4);
 
         // Sin vehículos
         if (listaVehiculoTipo1.size() == 0 && listaVehiculoTipo2.size() == 0 &&
@@ -727,20 +722,6 @@ public class Algoritmo {
 //            disponiblesTipo1--;
             }
         }
-
-
-        //TODO revisar donde agregar nuevas rutas en cola de rutas de pedidos
-//        int minCont = -1;
-//        LocalDateTime minimo = LocalDateTime.of(2034,12,30,12,12);
-//        for(Ruta ruta: listaRutas){
-//            if(ruta.vehiculo.getTipo().getIdTipo() == 1 && ruta.vehiculo.getIdVehiculo()==0 && minimo.isAfter(ruta.plazoEntrega)){
-//                for(Ruta rutaTipo1:listaRutasTipo1){
-//
-//                }
-//            }
-//
-//        }
-
 
 
         if (cantVehiculoTipo2>0) {
