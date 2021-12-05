@@ -1,8 +1,11 @@
 package com.back.route4d.helper;
 
 import com.back.route4d.model.CallesBloqueadas;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -88,5 +91,24 @@ public class Helper {
         }
 
         return false;
+    }
+
+    /**
+     * Convierte un archivo MultipartFile a un archivo File
+     *
+     * @param   mpFile  archivo MultipartFile a convertir
+     *
+     * @return  el archivo convertido a File
+     */
+    public static File convertMultipartFileToFile(MultipartFile mpFile) {
+        File file = new File(mpFile.getOriginalFilename());
+
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(mpFile.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return file;
     }
 }

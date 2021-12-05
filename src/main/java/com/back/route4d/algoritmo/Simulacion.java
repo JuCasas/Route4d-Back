@@ -31,13 +31,14 @@ public class Simulacion {
     public List<Pedido> listaPedidosTotales;
     public List<Pedido> listaPedidosEnCola;
     public List<Pedido> listaPedidosEnRuta;
-    public List<Cluster> clusterResult;
-    public List<CallesBloqueadas> listaCallesBloqueadas;
-    public List<Ruta> listaRutas;
     public List<RutaFront> listaRutasEnRecorrido;
+    public List<Ruta> listaRutas;
+    public List<CallesBloqueadas> listaCallesBloqueadas;
+
     public Dijkstra dijkstraAlgorithm;
     public Kmeans kmeans;
 
+    public List<Cluster> clusterResult;
     public Integer cantClusterVehiculoTipo1 = 0;
     public Integer cantClusterVehiculoTipo2 = 0;
     public Integer cantClusterVehiculoTipo3 = 0;
@@ -48,7 +49,6 @@ public class Simulacion {
     public Integer cantVehiculoTipo4 = 0;
 
     public Integer demandaTotal = 0;
-
     public double constantePenalidad = 1;
 
     public FileWriter archivo;
@@ -56,18 +56,19 @@ public class Simulacion {
 //    @Autowired
 //    private FirebaseInitializer firebase;
 
-    // VARIABLES QUE SE ENVIARAN A FIRESTORE PARA LA SIMULACION
+    // Variables a enviarse a Firestore
 
     public Integer tiempoEnMinutosActual = 0;
 
-    public Integer autosDisponibles = 0;
-    public Integer motosDisponibles = 0;
+    public Integer vehiculoTipo1Disp = 0;
+    public Integer vehiculoTipo2Disp = 0;
+    public Integer vehiculoTipo3Disp = 0;
+    public Integer vehiculoTipo4Disp = 0;
 
     public Integer vehiculosDisponiblesTipo1 = 0;
     public Integer vehiculosDisponiblesTipo2 = 0;
     public Integer vehiculosDisponiblesTipo3 = 0;
     public Integer vehiculosDisponiblesTipo4 = 0;
-
 
     public double ganancia = 0.0;
     public Integer numPenalidades = 0;
@@ -75,18 +76,18 @@ public class Simulacion {
     public Integer numPedidoEntregados = 0;
     public double costoMantenimiento = 0;
 
-    public List<Pedido> getPedidos(){
+    public List<Pedido> getOrders(){
         return listaPedidosTotales;
     }
 
-    public List<CallesBloqueadas> getListaCallesBloqueadas(){
+    public List<CallesBloqueadas> getClosedRoads() {
         return listaCallesBloqueadas;
     }
 
-    public String subirArchivoPedidos(MultipartFile file){
+    public String uploadOrdersFile(MultipartFile file) {
         try {
-            File fileObj = convertMultiPartFileToFile(file);
-            getAllPedidos(fileObj);
+            File fileObj = Helper.convertMultipartFileToFile(file);
+            uploadAllOrders(fileObj);
             fileObj.delete();
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-M-d H:m:s");
             return listaPedidosTotales.get(listaPedidosTotales.size()-1).getFechaPedido().format(dtf);
@@ -96,24 +97,26 @@ public class Simulacion {
         }
     }
 
-    private File convertMultiPartFileToFile(MultipartFile file){
-        File convertedFile = new File(file.getOriginalFilename());
-        try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
-            fos.write(file.getBytes());
-        } catch (IOException e) {
-            log.error("Error converting multipartFile to File", e);
+    public String uploadClosedRoadsFile(MultipartFile file) {
+        try {
+            File fileObj = Helper.convertMultipartFileToFile(file);
+            uploadAllClosedRoads(fileObj);
+            fileObj.delete();
+            return "Done!";
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
         }
-        return convertedFile;
     }
 
-    private void getAllPedidos(File fileObj) throws FileNotFoundException {
+    private void uploadAllOrders(File fileObj) throws FileNotFoundException {
         Scanner sc = new Scanner(fileObj);
         String strYearMonth = Helper.getOrdersDateFromName(fileObj.getName());
         int id = 1;
         listaPedidosTotales = new ArrayList<>();
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
-            Pedido pedido = getPedidoFromLine(line, strYearMonth);
+            Pedido pedido = getOrderFromLine(line, strYearMonth);
             pedido.setId(id);
             listaPedidosTotales.add(pedido);
             id++;
@@ -123,8 +126,24 @@ public class Simulacion {
         sc.close();
     }
 
-    private Pedido getPedidoFromLine(String line, String strYearMonth){
+    private void uploadAllClosedRoads(File fileObj) throws FileNotFoundException {
+        Scanner sc = new Scanner(fileObj);
+        String strYearMonth = Helper.getLockedNodesDateFromName(fileObj.getName());
+        int id = 1;
+        listaCallesBloqueadas = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
 
+        while (sc.hasNextLine()) {
+            String line = sc.nextLine();
+            CallesBloqueadas calleBloqueada = getClosedRoadFromLine(line, strYearMonth, formatter);
+            calleBloqueada.setId(id);
+            listaCallesBloqueadas.add(calleBloqueada);
+            id++;
+        }
+        sc.close();
+    }
+
+    private Pedido getOrderFromLine(String line, String strYearMonth){
         int day = getIntFromLine(line,":");
         line = line.substring( line.indexOf(':') + 1 );
         int hour = getIntFromLine(line,":");
@@ -154,7 +173,7 @@ public class Simulacion {
         return pedido;
     }
 
-    private CallesBloqueadas getCalleBloqueadaFromLine(String line, String strYearMonth, DateTimeFormatter formatter) {
+    private CallesBloqueadas getClosedRoadFromLine(String line, String strYearMonth, DateTimeFormatter formatter) {
         final String[] tokens = line.trim().split(",");
         final String[] plazo = tokens[0].trim().split("-");
         final String[] inicio = plazo[0].trim().split(":");
@@ -206,38 +225,10 @@ public class Simulacion {
         return calleBloqueada;
     }
 
+    // TODO: simplificar lectura de pedidos
     private Integer getIntFromLine(String line, String c){
         int indexChar = line.indexOf(c);
         return Integer.parseInt( line.substring( 0, indexChar ) );
-    }
-
-    public String subirArchivoCallesBloqueadas (MultipartFile file) {
-        try {
-            File fileObj = convertMultiPartFileToFile(file);
-            getCallesBloqueadas(fileObj);
-            fileObj.delete();
-            return "Done!";
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private void getCallesBloqueadas(File fileObj) throws FileNotFoundException {
-        Scanner sc = new Scanner(fileObj);
-        String strYearMonth = Helper.getLockedNodesDateFromName(fileObj.getName());
-        int id = 1;
-        listaCallesBloqueadas = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
-
-        while (sc.hasNextLine()) {
-            String line = sc.nextLine();
-            CallesBloqueadas calleBloqueada = getCalleBloqueadaFromLine(line, strYearMonth, formatter);
-            calleBloqueada.setId(id);
-            listaCallesBloqueadas.add(calleBloqueada);
-            id++;
-        }
-        sc.close();
     }
 
     public void inicializar(){
@@ -258,19 +249,20 @@ public class Simulacion {
         simular();
     }
 
-    public void configurarParametros(int numeroAutos, int numeroMotos, double constPenalidad){
-        autosDisponibles = numeroAutos;
-        motosDisponibles = numeroMotos;
+    public void configurarParametros(int numVehiculoTipo1, int numVehiculoTipo2, int numVehiculoTipo3,
+                                     int numVehiculoTipo4, double constPenalidad) {
+        vehiculoTipo1Disp = numVehiculoTipo1;
+        vehiculoTipo2Disp = numVehiculoTipo2;
+        vehiculoTipo3Disp = numVehiculoTipo3;
+        vehiculoTipo4Disp = numVehiculoTipo4;
         constantePenalidad = constPenalidad;
     }
 
-
-//
-//    // SECCION RELACIONADA NETAMENTE CON LA SIMULACION DE ENTREGA DE PEDIDOS
-//
+    // SECCION RELACIONADA NETAMENTE CON LA SIMULACION DE ENTREGA DE PEDIDOS
     public void simular(){
-        //TODO INICIO DATA FIRESTORE
+        // TODO: enviar data Firestore
 //        enviarDataFirestore();
+
         while(true) {
             int caso = obtenerCasoSimulacion();
             if(caso == 0) break;
@@ -282,7 +274,8 @@ public class Simulacion {
             cantVehiculoTipo3 = vehiculosDisponiblesTipo3;
             cantVehiculoTipo4 = vehiculosDisponiblesTipo4;
         }
-        //TODO FIN DATA FIRESTORE
+
+        // TODO: enviar data Firestore fin
 //        enviarDataFirestoreFin();
     }
 
@@ -450,8 +443,10 @@ public class Simulacion {
 //        try {
 //            archivo.write("-----------------------------------------" + "\n");
 //            archivo.write("tiempo:               " + tiempoEnMinutosActual + "\n");
-//            archivo.write("autosDisponibles:     " + autosDisponibles + "\n");
-//            archivo.write("motosDisponibles:     " + motosDisponibles + "\n");
+//            archivo.write("vehiculoTipo1Disp:    " + vehiculoTipo1Disp + "\n");
+//            archivo.write("vehiculoTipo2Disp:    " + vehiculoTipo2Disp + "\n");
+//            archivo.write("vehiculoTipo3Disp:    " + vehiculoTipo3Disp + "\n");
+//            archivo.write("vehiculoTipo4Disp:    " + vehiculoTipo4Disp + "\n");
 //            archivo.write("NumPedidosCola:       " + listaPedidosEnCola.size() + "\n");
 //            archivo.write("NumPedidosFaltantes:  " + listaPedidosTotales.size() + "\n");
 //            archivo.write("NumPedidosEntregados: " + numPedidoEntregados + "\n");
@@ -466,8 +461,10 @@ public class Simulacion {
 //        }
 //        System.out.println("-----------------------------------------");
 //        System.out.println("tiempo:               " + tiempoEnMinutosActual);
-//        System.out.println("autosDisponibles:     " + autosDisponibles);
-//        System.out.println("motosDisponibles:     " + motosDisponibles);
+//        System.out.println("vehiculoTipo1Disp:    " + vehiculoTipo1Disp);
+//        System.out.println("vehiculoTipo2Disp:    " + vehiculoTipo2Disp);
+//        System.out.println("vehiculoTipo3Disp:    " + vehiculoTipo3Disp);
+//        System.out.println("vehiculoTipo4Disp:    " + vehiculoTipo4Disp);
 //        System.out.println("NumPedidosCola:       " + listaPedidosEnCola.size());
 //        System.out.println("NumPedidosFaltantes:  " + listaPedidosTotales.size());
 //        System.out.println("NumPedidosEntregados: " + numPedidoEntregados);
@@ -478,8 +475,10 @@ public class Simulacion {
 //        System.out.println("-----------------------------------------");
 //
 //        Map<String, Object> respuesta = new HashMap<>();
-//        respuesta.put("autosDisponibles", autosDisponibles);
-//        respuesta.put("motosDisponibles", motosDisponibles);
+//        respuesta.put("vehiculoTipo1Disp", vehiculoTipo1Disp);
+//        respuesta.put("vehiculoTipo2Disp", vehiculoTipo2Disp);
+//        respuesta.put("vehiculoTipo3Disp", vehiculoTipo3Disp);
+//        respuesta.put("vehiculoTipo4Disp", vehiculoTipo4Disp);
 //        respuesta.put("NumPedidosCola", listaPedidosEnCola.size());
 //        respuesta.put("NumPedidosFaltantes", listaPedidosTotales.size());
 //        respuesta.put("NumPedidosEntregados", numPedidoEntregados);
@@ -500,8 +499,10 @@ public class Simulacion {
 //
 //    private void enviarDataFirestoreFin(){
 //        Map<String, Object> respuesta = new HashMap<>();
-//        respuesta.put("autosDisponibles", autosDisponibles);
-//        respuesta.put("motosDisponibles", motosDisponibles);
+//        respuesta.put("vehiculoTipo1Disp", vehiculoTipo1Disp);
+//        respuesta.put("vehiculoTipo2Disp", vehiculoTipo2Disp);
+//        respuesta.put("vehiculoTipo3Disp", vehiculoTipo3Disp);
+//        respuesta.put("vehiculoTipo4Disp", vehiculoTipo4Disp);
 //        respuesta.put("NumPedidosCola", listaPedidosEnCola.size());
 //        respuesta.put("NumPedidosFaltantes", listaPedidosTotales.size());
 //        respuesta.put("NumPedidosEntregados", numPedidoEntregados);
@@ -678,7 +679,7 @@ public class Simulacion {
                 Pedido pedido = cluster.firstPedido;
                 ruta.addPedido(pedido);
 
-                boolean estaBloqueada = estaBloqueada(tiempoMinutos, origen);
+                boolean estaBloqueada = Helper.isBlocked(tiempoMinutos, origen, listaCallesBloqueadas);
 
                 if(estaBloqueada){
                     origen = ultimoViable;
@@ -718,7 +719,7 @@ public class Simulacion {
                 //verificamos si nos encontramos en un nodo bloqueado
                 //esto puede ocurrir ya que hemos entregado un pedido en un nodo bloqueado
                 //o si el almancén es un nodo bloqueado
-                boolean estaBloqueada = estaBloqueada(tiempoMinutos, origen);
+                boolean estaBloqueada = Helper.isBlocked(tiempoMinutos, origen, listaCallesBloqueadas);
 
                 if(estaBloqueada){
                     origen = ultimoViable;
@@ -765,7 +766,7 @@ public class Simulacion {
             if(cluster.firstPedido != null){
                 // System.out.println("Ruta recorrido: " + ruta.recorrido);
                 origen = ruta.recorrido.get(ruta.recorrido.size() - 1);
-                boolean estaBloqueada = estaBloqueada(tiempoMinutos, origen);
+                boolean estaBloqueada = Helper.isBlocked(tiempoMinutos, origen, listaCallesBloqueadas);
 
                 if(estaBloqueada){
                     origen = ultimoViable;
@@ -863,28 +864,24 @@ public class Simulacion {
         Collections.sort(listaRutasEnRecorrido);
     }
 
-    private boolean estaBloqueada(int tiempoMinutos, int nodoId){
-        for( CallesBloqueadas par : listaCallesBloqueadas ){
-            if( ( tiempoMinutos >= par.getMinutosInicio() ) && ( tiempoMinutos < par.getMinutosFin() ) ){
-                return par.estaNodo(nodoId);
-            }
-        }
-        return false;
-    }
-//
-//
 //    public void reiniciarSimulacion(){
 ////        CollectionReference collection = firebase.getFirestore().collection("datosgenerales");
 ////        firebase.getFirestore().recursiveDelete(collection);
 ////        firebase.getFirestore().recursiveDelete(collection);
-//        cantClusterMotos = 0;
-//        cantClusterAutos = 0;
-//        cantAutos = 0;
-//        cantMotos = 0;
-//        cantidadProductos = 0;
+//        cantClusterVehiculoTipo1 = 0;
+//        cantClusterVehiculoTipo2 = 0;
+//        cantClusterVehiculoTipo3 = 0;
+//        cantClusterVehiculoTipo4 = 0;
+//        cantVehiculoTipo1 = 0;
+//        cantVehiculoTipo2 = 0;
+//        cantVehiculoTipo3 = 0;
+//        cantVehiculoTipo4 = 0;
+//        demandaTotal = 0;
 //        tiempoEnMinutosActual = 0;
-//        autosDisponibles = 0;
-//        motosDisponibles = 0;
+//        vehiculoTipo1Disp = 0;
+//        vehiculoTipo2Disp = 0;
+//        vehiculoTipo3Disp = 0;
+//        vehiculoTipo4Disp = 0;
 //        ganancia = 0.0;
 //        numPenalidades = 0;
 //        montoPenalidades = 0.0;
