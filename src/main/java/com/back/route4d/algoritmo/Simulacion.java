@@ -60,11 +60,6 @@ public class Simulacion {
 
     public Integer tiempoEnMinutosActual = 0;
 
-    public Integer vehiculoTipo1Disp = 0;
-    public Integer vehiculoTipo2Disp = 0;
-    public Integer vehiculoTipo3Disp = 0;
-    public Integer vehiculoTipo4Disp = 0;
-
     public Integer vehiculosDisponiblesTipo1 = 0;
     public Integer vehiculosDisponiblesTipo2 = 0;
     public Integer vehiculosDisponiblesTipo3 = 0;
@@ -76,6 +71,7 @@ public class Simulacion {
     public Integer numPedidoEntregados = 0;
     public double costoMantenimiento = 0;
 
+    // Funciones para cargar y devolver pedidos y calles bloqueadas
     public List<Pedido> getOrders(){
         return listaPedidosTotales;
     }
@@ -231,7 +227,8 @@ public class Simulacion {
         return Integer.parseInt( line.substring( 0, indexChar ) );
     }
 
-    public void inicializar(){
+    // Funciones para simulación
+    public void inicializar() {
         try {
             archivo = new FileWriter("firestore.txt");
         } catch (IOException e) {
@@ -251,10 +248,10 @@ public class Simulacion {
 
     public void configurarParametros(int numVehiculoTipo1, int numVehiculoTipo2, int numVehiculoTipo3,
                                      int numVehiculoTipo4, double constPenalidad) {
-        vehiculoTipo1Disp = numVehiculoTipo1;
-        vehiculoTipo2Disp = numVehiculoTipo2;
-        vehiculoTipo3Disp = numVehiculoTipo3;
-        vehiculoTipo4Disp = numVehiculoTipo4;
+        vehiculosDisponiblesTipo1 = numVehiculoTipo1;
+        vehiculosDisponiblesTipo2 = numVehiculoTipo2;
+        vehiculosDisponiblesTipo3 = numVehiculoTipo3;
+        vehiculosDisponiblesTipo4 = numVehiculoTipo4;
         constantePenalidad = constPenalidad;
     }
 
@@ -442,43 +439,43 @@ public class Simulacion {
 //
 //        try {
 //            archivo.write("-----------------------------------------" + "\n");
-//            archivo.write("tiempo:               " + tiempoEnMinutosActual + "\n");
-//            archivo.write("vehiculoTipo1Disp:    " + vehiculoTipo1Disp + "\n");
-//            archivo.write("vehiculoTipo2Disp:    " + vehiculoTipo2Disp + "\n");
-//            archivo.write("vehiculoTipo3Disp:    " + vehiculoTipo3Disp + "\n");
-//            archivo.write("vehiculoTipo4Disp:    " + vehiculoTipo4Disp + "\n");
-//            archivo.write("NumPedidosCola:       " + listaPedidosEnCola.size() + "\n");
-//            archivo.write("NumPedidosFaltantes:  " + listaPedidosTotales.size() + "\n");
-//            archivo.write("NumPedidosEntregados: " + numPedidoEntregados + "\n");
-//            archivo.write("ganancia:             " + ganancia + "\n");
-//            archivo.write("numPenalidades:       " + numPenalidades + "\n");
-//            archivo.write("montoPenalidades:     " + montoPenalidades + "\n");
-//            archivo.write("costoMantenimiento:   " + costoMantenimiento + "\n");
+//            archivo.write("tiempo:                       " + tiempoEnMinutosActual + "\n");
+//            archivo.write("vehiculosDisponiblesTipo1:    " + vehiculosDisponiblesTipo1 + "\n");
+//            archivo.write("vehiculosDisponiblesTipo2:    " + vehiculosDisponiblesTipo2 + "\n");
+//            archivo.write("vehiculosDisponiblesTipo3:    " + vehiculosDisponiblesTipo3 + "\n");
+//            archivo.write("vehiculosDisponiblesTipo4:    " + vehiculosDisponiblesTipo4 + "\n");
+//            archivo.write("NumPedidosCola:               " + listaPedidosEnCola.size() + "\n");
+//            archivo.write("NumPedidosFaltantes:          " + listaPedidosTotales.size() + "\n");
+//            archivo.write("NumPedidosEntregados:         " + numPedidoEntregados + "\n");
+//            archivo.write("ganancia:                     " + ganancia + "\n");
+//            archivo.write("numPenalidades:               " + numPenalidades + "\n");
+//            archivo.write("montoPenalidades:             " + montoPenalidades + "\n");
+//            archivo.write("costoMantenimiento:           " + costoMantenimiento + "\n");
 //            archivo.write("-----------------------------------------" + "\n");
 //        } catch (IOException e) {
 //            System.out.println("An error occurred.");
 //            e.printStackTrace();
 //        }
 //        System.out.println("-----------------------------------------");
-//        System.out.println("tiempo:               " + tiempoEnMinutosActual);
-//        System.out.println("vehiculoTipo1Disp:    " + vehiculoTipo1Disp);
-//        System.out.println("vehiculoTipo2Disp:    " + vehiculoTipo2Disp);
-//        System.out.println("vehiculoTipo3Disp:    " + vehiculoTipo3Disp);
-//        System.out.println("vehiculoTipo4Disp:    " + vehiculoTipo4Disp);
-//        System.out.println("NumPedidosCola:       " + listaPedidosEnCola.size());
-//        System.out.println("NumPedidosFaltantes:  " + listaPedidosTotales.size());
-//        System.out.println("NumPedidosEntregados: " + numPedidoEntregados);
-//        System.out.println("ganancia:             " + ganancia);
-//        System.out.println("numPenalidades:       " + numPenalidades);
-//        System.out.println("montoPenalidades:     " + montoPenalidades);
-//        System.out.println("costoMantenimiento:   " + costoMantenimiento);
+//        System.out.println("tiempo:                       " + tiempoEnMinutosActual);
+//        System.out.println("vehiculosDisponiblesTipo1:    " + vehiculosDisponiblesTipo1);
+//        System.out.println("vehiculosDisponiblesTipo2:    " + vehiculosDisponiblesTipo2);
+//        System.out.println("vehiculosDisponiblesTipo3:    " + vehiculosDisponiblesTipo3);
+//        System.out.println("vehiculosDisponiblesTipo4:    " + vehiculosDisponiblesTipo4);
+//        System.out.println("NumPedidosCola:               " + listaPedidosEnCola.size());
+//        System.out.println("NumPedidosFaltantes:          " + listaPedidosTotales.size());
+//        System.out.println("NumPedidosEntregados:         " + numPedidoEntregados);
+//        System.out.println("ganancia:                     " + ganancia);
+//        System.out.println("numPenalidades:               " + numPenalidades);
+//        System.out.println("montoPenalidades:             " + montoPenalidades);
+//        System.out.println("costoMantenimiento:           " + costoMantenimiento);
 //        System.out.println("-----------------------------------------");
 //
 //        Map<String, Object> respuesta = new HashMap<>();
-//        respuesta.put("vehiculoTipo1Disp", vehiculoTipo1Disp);
-//        respuesta.put("vehiculoTipo2Disp", vehiculoTipo2Disp);
-//        respuesta.put("vehiculoTipo3Disp", vehiculoTipo3Disp);
-//        respuesta.put("vehiculoTipo4Disp", vehiculoTipo4Disp);
+//        respuesta.put("vehiculosDisponiblesTipo1", vehiculosDisponiblesTipo1);
+//        respuesta.put("vehiculosDisponiblesTipo2", vehiculosDisponiblesTipo2);
+//        respuesta.put("vehiculosDisponiblesTipo3", vehiculosDisponiblesTipo3);
+//        respuesta.put("vehiculosDisponiblesTipo4", vehiculosDisponiblesTipo4);
 //        respuesta.put("NumPedidosCola", listaPedidosEnCola.size());
 //        respuesta.put("NumPedidosFaltantes", listaPedidosTotales.size());
 //        respuesta.put("NumPedidosEntregados", numPedidoEntregados);
@@ -499,10 +496,10 @@ public class Simulacion {
 //
 //    private void enviarDataFirestoreFin(){
 //        Map<String, Object> respuesta = new HashMap<>();
-//        respuesta.put("vehiculoTipo1Disp", vehiculoTipo1Disp);
-//        respuesta.put("vehiculoTipo2Disp", vehiculoTipo2Disp);
-//        respuesta.put("vehiculoTipo3Disp", vehiculoTipo3Disp);
-//        respuesta.put("vehiculoTipo4Disp", vehiculoTipo4Disp);
+//        respuesta.put("vehiculosDisponiblesTipo1", vehiculosDisponiblesTipo1);
+//        respuesta.put("vehiculosDisponiblesTipo2", vehiculosDisponiblesTipo2);
+//        respuesta.put("vehiculosDisponiblesTipo3", vehiculosDisponiblesTipo3);
+//        respuesta.put("vehiculosDisponiblesTipo4", vehiculosDisponiblesTipo4);
 //        respuesta.put("NumPedidosCola", listaPedidosEnCola.size());
 //        respuesta.put("NumPedidosFaltantes", listaPedidosTotales.size());
 //        respuesta.put("NumPedidosEntregados", numPedidoEntregados);
@@ -878,10 +875,10 @@ public class Simulacion {
 //        cantVehiculoTipo4 = 0;
 //        demandaTotal = 0;
 //        tiempoEnMinutosActual = 0;
-//        vehiculoTipo1Disp = 0;
-//        vehiculoTipo2Disp = 0;
-//        vehiculoTipo3Disp = 0;
-//        vehiculoTipo4Disp = 0;
+//        vehiculosDisponiblesTipo1 = 0;
+//        vehiculosDisponiblesTipo2 = 0;
+//        vehiculosDisponiblesTipo3 = 0;
+//        vehiculosDisponiblesTipo4 = 0;
 //        ganancia = 0.0;
 //        numPenalidades = 0;
 //        montoPenalidades = 0.0;
