@@ -28,6 +28,7 @@ public class Pedido implements Comparable<Pedido> {
     private int tiempoEntrega;
     private LocalDateTime fechaEntrega;
     private int tipoPedido;
+    private double consumoPetroleo;
 
     @ManyToOne
     @JoinColumn(name="idRuta", nullable=true)
@@ -48,6 +49,7 @@ public class Pedido implements Comparable<Pedido> {
         this.x = x;
         this.y = y;
         this.cantidad = cantidad;
+        this.consumoPetroleo = 0;
         this.minFaltantes = minFaltantes;
     }
 
@@ -56,6 +58,7 @@ public class Pedido implements Comparable<Pedido> {
         this.x = x;
         this.y = y;
         this.cantidad = cantidad;
+        this.consumoPetroleo = 0;
         this.fechaLimite = fechaLimite;
         this.minFaltantes = minFaltantes;
         this.fechaPedido = fechaPedido;

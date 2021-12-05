@@ -535,6 +535,10 @@ public class Algoritmo {
                 Pedido pedido = cluster.firstPedido;
                 ruta.addPedido(pedido);
 
+                double pesoCarga = 0;
+                for(Pedido pedidoUnitario:cluster.pedidos){
+                    pesoCarga+=pedidoUnitario.getCantidad();
+                }
                 System.out.println("x:  " + pedido.getX() + "   y: " + pedido.getY() + "   z: " + pedido.getMinFaltantes()
                         + "   cant: " + pedido.getCantidad() + "   idNodo: " + pedido.getNodoId());
 
@@ -565,6 +569,7 @@ public class Algoritmo {
 
                 //TODO actualizar
                 pedido.setFechaEntrega(LocalDateTime.now().plus(tiempoEnLlegar,ChronoUnit.MINUTES));
+                pedido.setConsumoPetroleo(cluster.vehiculo.getTipo().getPesoBruto()+(pesoCarga)*ruta.recorrido.size()/150);
 
                 tiempoMinutos += tiempoEnLlegar;
 
@@ -578,6 +583,10 @@ public class Algoritmo {
             // ordenados por distancia manhattan al almacén
             while (!cluster.pedidos.isEmpty()) {
 
+                double pesoCarga = 0;
+                for(Pedido pedidoUnitario:cluster.pedidos){
+                    pesoCarga+=pedidoUnitario.getCantidad();
+                }
                 // extraemos un pedido del cluster
                 Pedido pedido = cluster.pedidos.poll();
                 ruta.addPedido(pedido);
@@ -623,6 +632,7 @@ public class Algoritmo {
 
                 //TODO actualizar
                 pedido.setFechaEntrega(LocalDateTime.now().plus(tiempoEnLlegar,ChronoUnit.MINUTES));
+                pedido.setConsumoPetroleo(cluster.vehiculo.getTipo().getPesoBruto()+(pesoCarga)*ruta.recorrido.size()/150);
 
                 // calculamos el nuevo tiempo en el que nos encontramos
                 tiempoMinutos += tiempoEnLlegar;
