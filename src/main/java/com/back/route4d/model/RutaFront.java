@@ -14,13 +14,16 @@ public class RutaFront implements Comparable<RutaFront>{
     public Vehicle vehiculo;
     public Integer tiempoMin;
     public int capacidad;
+    public int consumoPetroleo;
 
+    //TODO cambiar el consumo de petroleo a Real
     public RutaFront(){
         this.recorrido = new ArrayList<>();
         this.retorno = new ArrayList<>();
         this.pedidos = new ArrayList<>();
         this.tiempoMin = Integer.MAX_VALUE;
         this.capacidad = 0;
+        this.consumoPetroleo = 20;
         this.vehiculo = new Vehicle();
     }
 
@@ -30,6 +33,7 @@ public class RutaFront implements Comparable<RutaFront>{
         this.pedidos = new ArrayList<>();
         this.tiempoMin = Integer.MAX_VALUE;
         this.capacidad = capacidad;
+        this.consumoPetroleo = 20;
         this.vehiculo = new Vehicle();
         this.vehiculo = vehiculo;
     }

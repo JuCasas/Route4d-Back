@@ -56,7 +56,8 @@ public class AlgoritmoServiceImpl implements AlgoritmoService {
 //        LocalDateTime finalDate = LocalDateTime.of(2022, Month.DECEMBER, 3, 0, 33, 0);
         Algoritmo algoritmo = new Algoritmo(pedidoRepository,vehicleRepository,rutaRepository);
         LocalDateTime finalDate = LocalDateTime.now();
-        algoritmo.listaPedidos = pedidoRepository.findLessThanDate(finalDate,0);
+        //TODO cambiar estado
+        algoritmo.listaPedidos = pedidoRepository.findLessThanDate(finalDate,1);
         String message = algoritmo.inicializar();
         if (message=="correcto"){
             HashMap list = algoritmo.resolver();

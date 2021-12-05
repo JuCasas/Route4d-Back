@@ -16,7 +16,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle,Integer> {
     @Query(value = "select p.* from route4d.vehicle as p, route4d.ruta as r\n" +
             "where p.id_vehiculo = r.id_vehiculo and not(\n" +
             "r.fecha_inicio_recorrido < ?1 \n" +
-            "and r.fecha_fin_retorno > ?1 and \n" +
-            "p.id_tipo = ?2;",nativeQuery = true)
+            "and r.fecha_fin_retorno > ?1) and \n" +
+            "p.id_tipo = ?2",nativeQuery = true)
     List<Vehicle> getAvailableByType(LocalDateTime tiempo, int tipoId);
 }

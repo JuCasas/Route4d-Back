@@ -26,6 +26,7 @@ public class Pedido implements Comparable<Pedido> {
     private LocalDateTime fechaPedido;
     private LocalDateTime fechaLimite;
     private int tiempoEntrega;
+    private LocalDateTime fechaEntrega;
     private int tipoPedido;
 
     @ManyToOne

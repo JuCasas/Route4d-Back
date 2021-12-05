@@ -77,7 +77,7 @@ public class Algoritmo {
 
         generarRutas();
 
-        rutaRepository.saveAll(listaRutas);
+//        rutaRepository.saveAll(listaRutas);
 
         listaRutasFront = new ArrayList<RutaFront>();
 
@@ -158,10 +158,15 @@ public class Algoritmo {
     public String inicializar() {
         // Inicializando listas de vehículos
         LocalDateTime tiempoAhora = LocalDateTime.now();
-        listaVehiculoTipo1 = vehicleService.getAvailableByType(tiempoAhora,1);
-        listaVehiculoTipo2 = vehicleService.getAvailableByType(tiempoAhora,2);
-        listaVehiculoTipo3 = vehicleService.getAvailableByType(tiempoAhora,3);
-        listaVehiculoTipo4 = vehicleService.getAvailableByType(tiempoAhora,4);
+//        listaVehiculoTipo1 = vehicleService.getAvailableByType(tiempoAhora,1);
+//        listaVehiculoTipo2 = vehicleService.getAvailableByType(tiempoAhora,2);
+//        listaVehiculoTipo3 = vehicleService.getAvailableByType(tiempoAhora,3);
+//        listaVehiculoTipo4 = vehicleService.getAvailableByType(tiempoAhora,4);
+
+        listaVehiculoTipo1 = vehicleService.getAllByType(1);
+        listaVehiculoTipo2 = vehicleService.getAllByType(2);
+        listaVehiculoTipo3 = vehicleService.getAllByType(3);
+        listaVehiculoTipo4 = vehicleService.getAllByType(4);
 
 //        listaRutasTipo1 = rutaRepository.getRoutesByTypeId(1);
 //        listaRutasTipo2 = rutaRepository.getRoutesByTypeId(2);
@@ -558,6 +563,9 @@ public class Algoritmo {
                 System.out.println("Nodos recorridos: " + (tamanoFin - tamanoIni - 1) + "   Tiempo llegada en minutos: "
                         + tiempoEnLlegar + " minutos");
 
+                //TODO actualizar
+                pedido.setFechaEntrega(LocalDateTime.now().plus(tiempoEnLlegar,ChronoUnit.MINUTES));
+
                 tiempoMinutos += tiempoEnLlegar;
 
                 origen = pedido.getNodoId();
@@ -612,6 +620,9 @@ public class Algoritmo {
                         / ((int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
                 System.out.println("Nodos recorridos: " + (tamanoFin - tamanoIni - 1) + "   Tiempo llegada en minutos: "
                         + tiempoEnLlegar + " minutos");
+
+                //TODO actualizar
+                pedido.setFechaEntrega(LocalDateTime.now().plus(tiempoEnLlegar,ChronoUnit.MINUTES));
 
                 // calculamos el nuevo tiempo en el que nos encontramos
                 tiempoMinutos += tiempoEnLlegar;
