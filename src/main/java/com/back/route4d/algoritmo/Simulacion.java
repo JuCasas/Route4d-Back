@@ -2,18 +2,16 @@ package com.back.route4d.algoritmo;
 
 import com.back.route4d.algoritmo.dijkstra.Dijkstra;
 import com.back.route4d.algoritmo.kmeans.Kmeans;
-//import com.google.api.core.ApiFuture;
-//import com.google.cloud.firestore.CollectionReference;
-//import com.google.cloud.firestore.QueryDocumentSnapshot;
-//import com.google.cloud.firestore.QuerySnapshot;
-//import com.google.cloud.firestore.WriteResult;
-//import com.paqhoy.algoritmoAlgorutas.algoritmo.dijkstra.Dijkstra;
-//import com.paqhoy.algoritmoAlgorutas.algoritmo.kmeans.Kmeans;
-//import com.paqhoy.algoritmoAlgorutas.firebase.FirebaseInitializer;
-//import com.paqhoy.algoritmoAlgorutas.model.*;
+import com.back.route4d.firebase.FirebaseInitializer;
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.WriteResult;
 import com.back.route4d.helper.Helper;
 import com.back.route4d.model.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @Slf4j
@@ -53,10 +52,8 @@ public class Simulacion {
 
     public FileWriter archivo;
 
-//    @Autowired
-//    private FirebaseInitializer firebase;
-
-    // Variables a enviarse a Firestore
+    @Autowired
+    private FirebaseInitializer firebase;
 
     public Integer tiempoEnMinutosActual = 0;
 
@@ -258,7 +255,7 @@ public class Simulacion {
     // SECCION RELACIONADA NETAMENTE CON LA SIMULACION DE ENTREGA DE PEDIDOS
     public void simular(){
         // TODO: enviar data Firestore
-//        enviarDataFirestore();
+        enviarDataFirestore();
 
         while(true) {
             int caso = obtenerCasoSimulacion();
@@ -273,7 +270,7 @@ public class Simulacion {
         }
 
         // TODO: enviar data Firestore fin
-//        enviarDataFirestoreFin();
+        enviarDataFirestoreFin();
     }
 
     public Integer obtenerCasoSimulacion(){
@@ -322,7 +319,7 @@ public class Simulacion {
             e.printStackTrace();
         }
 
-        //enviarDataFirestore();
+        enviarDataFirestore();
 
         //vemos si hay vehiculos disponibles
         if((vehiculosDisponiblesTipo1+vehiculosDisponiblesTipo2+vehiculosDisponiblesTipo3+vehiculosDisponiblesTipo4) > 0){
@@ -333,7 +330,7 @@ public class Simulacion {
                 e.printStackTrace();
             }
 
-            //enviarDataFirestore();
+            enviarDataFirestore();
         }
     }
 
@@ -355,7 +352,7 @@ public class Simulacion {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        enviarDataFirestore();
+        enviarDataFirestore();
     }
 
     public void casoTerminoRuta(){
@@ -413,7 +410,7 @@ public class Simulacion {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        enviarDataFirestore();
+        enviarDataFirestore();
 
         //vemos si hay vehiculos disponibles
         if(listaPedidosEnCola.size() > 0){
@@ -425,7 +422,7 @@ public class Simulacion {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-//            enviarDataFirestore();
+            enviarDataFirestore();
         }
     }
 
@@ -435,88 +432,88 @@ public class Simulacion {
         return Math.toIntExact(ChronoUnit.MINUTES.between(tiempoInicio, ldt));
     }
 
-//    public void enviarDataFirestore(){
-//
-//        try {
-//            archivo.write("-----------------------------------------" + "\n");
-//            archivo.write("tiempo:                       " + tiempoEnMinutosActual + "\n");
-//            archivo.write("vehiculosDisponiblesTipo1:    " + vehiculosDisponiblesTipo1 + "\n");
-//            archivo.write("vehiculosDisponiblesTipo2:    " + vehiculosDisponiblesTipo2 + "\n");
-//            archivo.write("vehiculosDisponiblesTipo3:    " + vehiculosDisponiblesTipo3 + "\n");
-//            archivo.write("vehiculosDisponiblesTipo4:    " + vehiculosDisponiblesTipo4 + "\n");
-//            archivo.write("NumPedidosCola:               " + listaPedidosEnCola.size() + "\n");
-//            archivo.write("NumPedidosFaltantes:          " + listaPedidosTotales.size() + "\n");
-//            archivo.write("NumPedidosEntregados:         " + numPedidoEntregados + "\n");
-//            archivo.write("ganancia:                     " + ganancia + "\n");
-//            archivo.write("numPenalidades:               " + numPenalidades + "\n");
-//            archivo.write("montoPenalidades:             " + montoPenalidades + "\n");
-//            archivo.write("costoMantenimiento:           " + costoMantenimiento + "\n");
-//            archivo.write("-----------------------------------------" + "\n");
-//        } catch (IOException e) {
-//            System.out.println("An error occurred.");
-//            e.printStackTrace();
-//        }
-//        System.out.println("-----------------------------------------");
-//        System.out.println("tiempo:                       " + tiempoEnMinutosActual);
-//        System.out.println("vehiculosDisponiblesTipo1:    " + vehiculosDisponiblesTipo1);
-//        System.out.println("vehiculosDisponiblesTipo2:    " + vehiculosDisponiblesTipo2);
-//        System.out.println("vehiculosDisponiblesTipo3:    " + vehiculosDisponiblesTipo3);
-//        System.out.println("vehiculosDisponiblesTipo4:    " + vehiculosDisponiblesTipo4);
-//        System.out.println("NumPedidosCola:               " + listaPedidosEnCola.size());
-//        System.out.println("NumPedidosFaltantes:          " + listaPedidosTotales.size());
-//        System.out.println("NumPedidosEntregados:         " + numPedidoEntregados);
-//        System.out.println("ganancia:                     " + ganancia);
-//        System.out.println("numPenalidades:               " + numPenalidades);
-//        System.out.println("montoPenalidades:             " + montoPenalidades);
-//        System.out.println("costoMantenimiento:           " + costoMantenimiento);
-//        System.out.println("-----------------------------------------");
-//
-//        Map<String, Object> respuesta = new HashMap<>();
-//        respuesta.put("vehiculosDisponiblesTipo1", vehiculosDisponiblesTipo1);
-//        respuesta.put("vehiculosDisponiblesTipo2", vehiculosDisponiblesTipo2);
-//        respuesta.put("vehiculosDisponiblesTipo3", vehiculosDisponiblesTipo3);
-//        respuesta.put("vehiculosDisponiblesTipo4", vehiculosDisponiblesTipo4);
-//        respuesta.put("NumPedidosCola", listaPedidosEnCola.size());
-//        respuesta.put("NumPedidosFaltantes", listaPedidosTotales.size());
-//        respuesta.put("NumPedidosEntregados", numPedidoEntregados);
-//        respuesta.put("ganancia", ganancia);
-//        respuesta.put("numPenalidades", numPenalidades);
-//        respuesta.put("montoPenalidades", montoPenalidades);
-//        respuesta.put("costoMantenimiento", costoMantenimiento);
-//        respuesta.put("tiempo", tiempoEnMinutosActual);
-//
-//        CollectionReference respuestas = firebase.getFirestore().collection("datosgenerales");
-//        ApiFuture<WriteResult> writeResultApiFuture = respuestas.document().create(respuesta);
-//        try {
-//            writeResultApiFuture.get();
-//        } catch (InterruptedException | ExecutionException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private void enviarDataFirestoreFin(){
-//        Map<String, Object> respuesta = new HashMap<>();
-//        respuesta.put("vehiculosDisponiblesTipo1", vehiculosDisponiblesTipo1);
-//        respuesta.put("vehiculosDisponiblesTipo2", vehiculosDisponiblesTipo2);
-//        respuesta.put("vehiculosDisponiblesTipo3", vehiculosDisponiblesTipo3);
-//        respuesta.put("vehiculosDisponiblesTipo4", vehiculosDisponiblesTipo4);
-//        respuesta.put("NumPedidosCola", listaPedidosEnCola.size());
-//        respuesta.put("NumPedidosFaltantes", listaPedidosTotales.size());
-//        respuesta.put("NumPedidosEntregados", numPedidoEntregados);
-//        respuesta.put("ganancia", ganancia);
-//        respuesta.put("numPenalidades", numPenalidades);
-//        respuesta.put("montoPenalidades", montoPenalidades);
-//        respuesta.put("costoMantenimiento", costoMantenimiento);
-//        respuesta.put("tiempo", 1000000);
-//        CollectionReference respuestas = firebase.getFirestore().collection("datosgenerales");
-//        ApiFuture<WriteResult> writeResultApiFuture = respuestas.document().create(respuesta);
-//        try {
-//            writeResultApiFuture.get();
-//        } catch (InterruptedException | ExecutionException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
+    public void enviarDataFirestore(){
+
+        try {
+            archivo.write("-----------------------------------------" + "\n");
+            archivo.write("tiempo:                       " + tiempoEnMinutosActual + "\n");
+            archivo.write("vehiculosDisponiblesTipo1:    " + vehiculosDisponiblesTipo1 + "\n");
+            archivo.write("vehiculosDisponiblesTipo2:    " + vehiculosDisponiblesTipo2 + "\n");
+            archivo.write("vehiculosDisponiblesTipo3:    " + vehiculosDisponiblesTipo3 + "\n");
+            archivo.write("vehiculosDisponiblesTipo4:    " + vehiculosDisponiblesTipo4 + "\n");
+            archivo.write("NumPedidosCola:               " + listaPedidosEnCola.size() + "\n");
+            archivo.write("NumPedidosFaltantes:          " + listaPedidosTotales.size() + "\n");
+            archivo.write("NumPedidosEntregados:         " + numPedidoEntregados + "\n");
+            archivo.write("ganancia:                     " + ganancia + "\n");
+            archivo.write("numPenalidades:               " + numPenalidades + "\n");
+            archivo.write("montoPenalidades:             " + montoPenalidades + "\n");
+            archivo.write("costoMantenimiento:           " + costoMantenimiento + "\n");
+            archivo.write("-----------------------------------------" + "\n");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        System.out.println("-----------------------------------------");
+        System.out.println("tiempo:                       " + tiempoEnMinutosActual);
+        System.out.println("vehiculosDisponiblesTipo1:    " + vehiculosDisponiblesTipo1);
+        System.out.println("vehiculosDisponiblesTipo2:    " + vehiculosDisponiblesTipo2);
+        System.out.println("vehiculosDisponiblesTipo3:    " + vehiculosDisponiblesTipo3);
+        System.out.println("vehiculosDisponiblesTipo4:    " + vehiculosDisponiblesTipo4);
+        System.out.println("NumPedidosCola:               " + listaPedidosEnCola.size());
+        System.out.println("NumPedidosFaltantes:          " + listaPedidosTotales.size());
+        System.out.println("NumPedidosEntregados:         " + numPedidoEntregados);
+        System.out.println("ganancia:                     " + ganancia);
+        System.out.println("numPenalidades:               " + numPenalidades);
+        System.out.println("montoPenalidades:             " + montoPenalidades);
+        System.out.println("costoMantenimiento:           " + costoMantenimiento);
+        System.out.println("-----------------------------------------");
+
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("vehiculosDisponiblesTipo1", vehiculosDisponiblesTipo1);
+        respuesta.put("vehiculosDisponiblesTipo2", vehiculosDisponiblesTipo2);
+        respuesta.put("vehiculosDisponiblesTipo3", vehiculosDisponiblesTipo3);
+        respuesta.put("vehiculosDisponiblesTipo4", vehiculosDisponiblesTipo4);
+        respuesta.put("NumPedidosCola", listaPedidosEnCola.size());
+        respuesta.put("NumPedidosFaltantes", listaPedidosTotales.size());
+        respuesta.put("NumPedidosEntregados", numPedidoEntregados);
+        respuesta.put("ganancia", ganancia);
+        respuesta.put("numPenalidades", numPenalidades);
+        respuesta.put("montoPenalidades", montoPenalidades);
+        respuesta.put("costoMantenimiento", costoMantenimiento);
+        respuesta.put("tiempo", tiempoEnMinutosActual);
+
+        CollectionReference respuestas = firebase.getFirestore().collection("datosgenerales");
+        ApiFuture<WriteResult> writeResultApiFuture = respuestas.document().create(respuesta);
+        try {
+            writeResultApiFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void enviarDataFirestoreFin(){
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("vehiculosDisponiblesTipo1", vehiculosDisponiblesTipo1);
+        respuesta.put("vehiculosDisponiblesTipo2", vehiculosDisponiblesTipo2);
+        respuesta.put("vehiculosDisponiblesTipo3", vehiculosDisponiblesTipo3);
+        respuesta.put("vehiculosDisponiblesTipo4", vehiculosDisponiblesTipo4);
+        respuesta.put("NumPedidosCola", listaPedidosEnCola.size());
+        respuesta.put("NumPedidosFaltantes", listaPedidosTotales.size());
+        respuesta.put("NumPedidosEntregados", numPedidoEntregados);
+        respuesta.put("ganancia", ganancia);
+        respuesta.put("numPenalidades", numPenalidades);
+        respuesta.put("montoPenalidades", montoPenalidades);
+        respuesta.put("costoMantenimiento", costoMantenimiento);
+        respuesta.put("tiempo", 1000000);
+        CollectionReference respuestas = firebase.getFirestore().collection("datosgenerales");
+        ApiFuture<WriteResult> writeResultApiFuture = respuestas.document().create(respuesta);
+        try {
+            writeResultApiFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     public void obtenerListaAdyacente(){
@@ -861,29 +858,29 @@ public class Simulacion {
         Collections.sort(listaRutasEnRecorrido);
     }
 
-//    public void reiniciarSimulacion(){
-////        CollectionReference collection = firebase.getFirestore().collection("datosgenerales");
-////        firebase.getFirestore().recursiveDelete(collection);
-////        firebase.getFirestore().recursiveDelete(collection);
-//        cantClusterVehiculoTipo1 = 0;
-//        cantClusterVehiculoTipo2 = 0;
-//        cantClusterVehiculoTipo3 = 0;
-//        cantClusterVehiculoTipo4 = 0;
-//        cantVehiculoTipo1 = 0;
-//        cantVehiculoTipo2 = 0;
-//        cantVehiculoTipo3 = 0;
-//        cantVehiculoTipo4 = 0;
-//        demandaTotal = 0;
-//        tiempoEnMinutosActual = 0;
-//        vehiculosDisponiblesTipo1 = 0;
-//        vehiculosDisponiblesTipo2 = 0;
-//        vehiculosDisponiblesTipo3 = 0;
-//        vehiculosDisponiblesTipo4 = 0;
-//        ganancia = 0.0;
-//        numPenalidades = 0;
-//        montoPenalidades = 0.0;
-//        numPedidoEntregados = 0;
-//        costoMantenimiento = 0;
-//        constantePenalidad = 1;
-//    }
+    public void reiniciarSimulacion(){
+        CollectionReference collection = firebase.getFirestore().collection("datosgenerales");
+        firebase.getFirestore().recursiveDelete(collection);
+        firebase.getFirestore().recursiveDelete(collection);
+        cantClusterVehiculoTipo1 = 0;
+        cantClusterVehiculoTipo2 = 0;
+        cantClusterVehiculoTipo3 = 0;
+        cantClusterVehiculoTipo4 = 0;
+        cantVehiculoTipo1 = 0;
+        cantVehiculoTipo2 = 0;
+        cantVehiculoTipo3 = 0;
+        cantVehiculoTipo4 = 0;
+        demandaTotal = 0;
+        tiempoEnMinutosActual = 0;
+        vehiculosDisponiblesTipo1 = 0;
+        vehiculosDisponiblesTipo2 = 0;
+        vehiculosDisponiblesTipo3 = 0;
+        vehiculosDisponiblesTipo4 = 0;
+        ganancia = 0.0;
+        numPenalidades = 0;
+        montoPenalidades = 0.0;
+        numPedidoEntregados = 0;
+        costoMantenimiento = 0;
+        constantePenalidad = 1;
+    }
 }
