@@ -69,20 +69,38 @@ public class Simulacion {
     public double costoMantenimiento = 0;
 
     // Funciones para cargar y devolver pedidos y calles bloqueadas
-    public List<Pedido> getOrders(){
+
+    /**
+     * Devuelve la lista de pedidos
+     *
+     * @return  la lista de pedidos
+     */
+    public List<Pedido> getOrders() {
         return listaPedidosTotales;
     }
 
+    /**
+     * Devuelve la lista de calles bloqueadas
+     *
+     * @return  la lista de calles bloqueadas
+     */
     public List<CallesBloqueadas> getClosedRoads() {
         return listaCallesBloqueadas;
     }
 
-    public String uploadOrdersFile(MultipartFile file) {
+    /**
+     * Carga un archivo de pedidos
+     *
+     * @param   mpFile  archivo de pedidos
+     *
+     * @return  una cadena indicando la fecha y hora del último pedido cargado
+     */
+    public String uploadOrdersFile(MultipartFile mpFile) {
         try {
-            File fileObj = Helper.convertMultipartFileToFile(file);
-            uploadAllOrders(fileObj);
-            fileObj.delete();
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-M-d H:m:s");
+            File file = Helper.convertMultipartFileToFile(mpFile);
+            uploadAllOrders(file);
+            file.delete();
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-M-d HH:mm:ss");
             return listaPedidosTotales.get(listaPedidosTotales.size()-1).getFechaPedido().format(dtf);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -90,11 +108,18 @@ public class Simulacion {
         }
     }
 
-    public String uploadClosedRoadsFile(MultipartFile file) {
+    /**
+     * Carga un archivo de calles bloqueadas
+     *
+     * @param   mpFile  archivo de calles bloqueadas
+     *
+     * @return  una cadena indicando si el proceso fue exitoso
+     */
+    public String uploadClosedRoadsFile(MultipartFile mpFile) {
         try {
-            File fileObj = Helper.convertMultipartFileToFile(file);
-            uploadAllClosedRoads(fileObj);
-            fileObj.delete();
+            File file = Helper.convertMultipartFileToFile(mpFile);
+            uploadAllClosedRoads(file);
+            file.delete();
             return "Done!";
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -102,26 +127,39 @@ public class Simulacion {
         }
     }
 
-    private void uploadAllOrders(File fileObj) throws FileNotFoundException {
-        Scanner sc = new Scanner(fileObj);
-        String strYearMonth = Helper.getOrdersDateFromName(fileObj.getName());
+    /**
+     * Carga los contenidos del archivo de pedidos
+     *
+     * @param   file  archivo de pedidos
+     */
+    private void uploadAllOrders(File file) throws FileNotFoundException {
+        Scanner sc = new Scanner(file);
+        String strYearMonth = Helper.getOrdersDateFromName(file.getName());
         int id = 1;
         listaPedidosTotales = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
+
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
-            Pedido pedido = getOrderFromLine(line, strYearMonth);
+            Pedido pedido = getOrderFromLine(line, strYearMonth, formatter);
             pedido.setId(id);
             listaPedidosTotales.add(pedido);
             id++;
         }
+
         Collections.sort(listaPedidosTotales,
                 (p1,p2) -> (int)ChronoUnit.MINUTES.between(p2.getFechaPedido(), p1.getFechaPedido()));
         sc.close();
     }
 
-    private void uploadAllClosedRoads(File fileObj) throws FileNotFoundException {
-        Scanner sc = new Scanner(fileObj);
-        String strYearMonth = Helper.getLockedNodesDateFromName(fileObj.getName());
+    /**
+     * Carga los contenidos del archivo de calles bloqueadas
+     *
+     * @param   file  archivo de calles bloqueadas
+     */
+    private void uploadAllClosedRoads(File file) throws FileNotFoundException {
+        Scanner sc = new Scanner(file);
+        String strYearMonth = Helper.getLockedNodesDateFromName(file.getName());
         int id = 1;
         listaCallesBloqueadas = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
@@ -133,25 +171,29 @@ public class Simulacion {
             listaCallesBloqueadas.add(calleBloqueada);
             id++;
         }
+
         sc.close();
     }
 
-    private Pedido getOrderFromLine(String line, String strYearMonth){
-        int day = getIntFromLine(line,":");
-        line = line.substring( line.indexOf(':') + 1 );
-        int hour = getIntFromLine(line,":");
-        line = line.substring( line.indexOf(':') + 1 );
-        int min = getIntFromLine(line, ",");
-        line = line.substring( line.indexOf(',') + 1 );
-        int x = getIntFromLine(line, ",");
-        line = line.substring( line.indexOf(',') + 1 );
-        int y = getIntFromLine(line, ",");
-        line = line.substring( line.indexOf(',') + 1 );
-        int demand = getIntFromLine(line, ",");
-        line = line.substring( line.indexOf(',') + 1 );
-        int remaining = Integer.parseInt(line);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
+    /**
+     * Obtiene un pedido a partir de una línea del archivo
+     *
+     * @param   line          línea del archivo
+     * @param   strYearMonth  cadena que contiene el año y mes del archivo
+     * @param   formatter     formato para la fecha de la línea
+     *
+     * @return  el pedido de la línea
+     */
+    private Pedido getOrderFromLine(String line, String strYearMonth, DateTimeFormatter formatter) {
+        final String[] tokens = line.trim().split(",");
+        final String[] date = tokens[0].trim().split(":");
+        final int day = Integer.parseInt(date[0]);
+        final int hour = Integer.parseInt(date[1]);
+        final int min = Integer.parseInt(date[2]);
+        final int x = Integer.parseInt(tokens[1]);
+        final int y = Integer.parseInt(tokens[2]);
+        final int demand = Integer.parseInt(tokens[3]);
+        final int remaining = Integer.parseInt(tokens[4]);
 
         String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
         LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
@@ -166,6 +208,15 @@ public class Simulacion {
         return pedido;
     }
 
+    /**
+     * Obtiene una calle bloqueada a partir de una línea del archivo
+     *
+     * @param   line          línea del archivo
+     * @param   strYearMonth  cadena que contiene el año y mes del archivo
+     * @param   formatter     formato para la fecha de la línea
+     *
+     * @return  la calle bloqueada de la línea
+     */
     private CallesBloqueadas getClosedRoadFromLine(String line, String strYearMonth, DateTimeFormatter formatter) {
         final String[] tokens = line.trim().split(",");
         final String[] plazo = tokens[0].trim().split("-");
@@ -216,12 +267,6 @@ public class Simulacion {
         }
 
         return calleBloqueada;
-    }
-
-    // TODO: simplificar lectura de pedidos
-    private Integer getIntFromLine(String line, String c){
-        int indexChar = line.indexOf(c);
-        return Integer.parseInt( line.substring( 0, indexChar ) );
     }
 
     // Funciones para simulación
@@ -847,8 +892,7 @@ public class Simulacion {
 
     }
 
-    public void asignarRutas(){
-
+    public void asignarRutas() {
         asignarRutaTipo(1,cantClusterVehiculoTipo1);
         asignarRutaTipo(2,cantClusterVehiculoTipo2);
         asignarRutaTipo(3,cantClusterVehiculoTipo3);
