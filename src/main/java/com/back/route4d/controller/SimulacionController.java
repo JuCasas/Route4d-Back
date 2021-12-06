@@ -39,13 +39,13 @@ public class SimulacionController {
         return new ResponseEntity<>(simulacion.getClosedRoads(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/empezarSimulacion")
+    @PostMapping(value = "/empezar")
     public ResponseEntity<String> empezarSimulacion(){
         simulacion.inicializar();
         return new ResponseEntity<>("Simulando", HttpStatus.OK);
     }
 
-    @PostMapping(value = "/reiniciarSimulacion")
+    @PostMapping(value = "/reiniciar")
     public ResponseEntity<String> reiniciarSimulacion(){
         simulacion.reiniciarSimulacion();
         return new ResponseEntity<>("Reiniciado", HttpStatus.OK);
