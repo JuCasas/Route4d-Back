@@ -355,9 +355,9 @@ public class Simulacion {
         //añadir todos los pedidos entrantes a la lista de pedidos en cola
         //TODO CAMBIAR
         for(int i = 0; i< listaPedidosTotales.size(); i++){
-            if((int)getMinutesFromLocalDateTime(listaPedidosTotales.get(0).getFechaPedido()) == (tiempoEnMinutosActual)){
-                listaPedidosEnCola.add(listaPedidosTotales.get(0));
-                listaPedidosTotales.remove(0);
+            if((int)getMinutesFromLocalDateTime(listaPedidosTotales.get(i).getFechaPedido()) == (tiempoEnMinutosActual)){
+                listaPedidosEnCola.add(listaPedidosTotales.get(i));
+                listaPedidosTotales.remove(i);
             }
             else break;
         }
@@ -532,13 +532,13 @@ public class Simulacion {
         respuesta.put("costoMantenimiento", costoMantenimiento);
         respuesta.put("tiempo", tiempoEnMinutosActual);
 
-        CollectionReference respuestas = firebase.getFirestore().collection("datosgenerales");
-        ApiFuture<WriteResult> writeResultApiFuture = respuestas.document().create(respuesta);
-        try {
-            writeResultApiFuture.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+//        CollectionReference respuestas = firebase.getFirestore().collection("datosgenerales");
+//        ApiFuture<WriteResult> writeResultApiFuture = respuestas.document().create(respuesta);
+//        try {
+//            writeResultApiFuture.get();
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void enviarDataFirestoreFin(){
@@ -555,13 +555,13 @@ public class Simulacion {
         respuesta.put("montoPenalidades", montoPenalidades);
         respuesta.put("costoMantenimiento", costoMantenimiento);
         respuesta.put("tiempo", 1000000);
-        CollectionReference respuestas = firebase.getFirestore().collection("datosgenerales");
-        ApiFuture<WriteResult> writeResultApiFuture = respuestas.document().create(respuesta);
-        try {
-            writeResultApiFuture.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+//        CollectionReference respuestas = firebase.getFirestore().collection("datosgenerales");
+//        ApiFuture<WriteResult> writeResultApiFuture = respuestas.document().create(respuesta);
+//        try {
+//            writeResultApiFuture.get();
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
     }
 
 
