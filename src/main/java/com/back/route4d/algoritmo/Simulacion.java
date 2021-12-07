@@ -3,11 +3,7 @@ package com.back.route4d.algoritmo;
 import com.back.route4d.algoritmo.dijkstra.Dijkstra;
 import com.back.route4d.algoritmo.kmeans.Kmeans;
 import com.back.route4d.firebase.FirebaseInitializer;
-import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.cloud.firestore.QuerySnapshot;
-import com.google.cloud.firestore.WriteResult;
 import com.back.route4d.helper.Helper;
 import com.back.route4d.model.*;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +17,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 @Service
 @Slf4j
@@ -29,6 +24,7 @@ public class Simulacion {
 
     public List<Pedido> listaPedidosTotales;
     public List<Pedido> listaPedidosEnCola;
+    public List<Pedido> listaPedidosSinCumplir;
     public List<Pedido> listaPedidosEnRuta;
     public List<RutaFront> listaRutasEnRecorrido;
     public List<Ruta> listaRutas;
@@ -137,6 +133,9 @@ public class Simulacion {
         String strYearMonth = Helper.getOrdersDateFromName(file.getName());
         int id = 1;
         listaPedidosTotales = new ArrayList<>();
+
+        listaPedidosSinCumplir = new ArrayList<>();
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
 
         while (sc.hasNextLine()) {
@@ -329,7 +328,7 @@ public class Simulacion {
 
         if(listaPedidosTotales.size() != 0) minutosNuevoPedido = getMinutesFromLocalDateTime(listaPedidosTotales.get(0).getFechaPedido());
         if(listaPedidosEnRuta.size() != 0) minutosPedidoEntregado = listaPedidosEnRuta.get(0).getTiempoEntrega();
-        if(listaRutasEnRecorrido.size() != 0) minutosTerminoRuta = listaRutasEnRecorrido.get(0).getTiempoMin();
+        if(listaRutasEnRecorrido.size() != 0) minutosTerminoRuta = listaRutasEnRecorrido.get(0).getTiempoFin();
 
         if(montoPenalidades >= constantePenalidad) {
             return 0;
@@ -391,6 +390,7 @@ public class Simulacion {
                 numPedidoEntregados++;
                 if(getMinutesFromLocalDateTime(pedido.getFechaLimite()) < pedido.getTiempoEntrega()){
                     //TODO Enviar info de colapso logistico
+                    listaPedidosSinCumplir.add(pedido);
                 }
                 listaPedidosEnRuta.remove(0);
             }
@@ -408,7 +408,7 @@ public class Simulacion {
     public void casoTerminoRuta(){
         for(int i=0; i<listaRutasEnRecorrido.size(); i++){
             RutaFront rutaFront = listaRutasEnRecorrido.get(0);
-            if(rutaFront.tiempoMin.equals(tiempoEnMinutosActual)){
+            if(rutaFront.tiempoFin.equals(tiempoEnMinutosActual)){
                 try {
                     archivo.write("Tipo vehiculo que retorna: " + rutaFront.vehiculo.getTipo().getIdTipo() + "\n");
                 } catch (IOException e) {
@@ -870,11 +870,11 @@ public class Simulacion {
                 retornoEnviar.add(map);
             }
 
-            rutaFront.setTiempoMin(getMinutesFromLocalDateTime(ruta.plazoEntrega));
+            rutaFront.setTiempoFin(getMinutesFromLocalDateTime(ruta.plazoEntrega));
             rutaFront.pedidos.addAll(ruta.pedidos);
             rutaFront.recorrido.addAll(recorridoEnviar);
             rutaFront.retorno.addAll(retornoEnviar);
-            rutaFront.tiempoMin = getMinutesFromLocalDateTime(ruta.plazoEntrega);
+            rutaFront.tiempoFin = getMinutesFromLocalDateTime(ruta.plazoEntrega);
 
 
             listaRutas.remove(ruta);

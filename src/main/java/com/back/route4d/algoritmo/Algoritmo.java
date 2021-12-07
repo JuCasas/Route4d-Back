@@ -104,7 +104,7 @@ public class Algoritmo {
 
             RutaFront rutaFront = new RutaFront(ruta.vehiculo,ruta.capacidad);
             //TODO FIX
-            rutaFront.setTiempoMin(ruta.getPlazoEntrega().getMinute());
+            rutaFront.setTiempoFin(ruta.getPlazoEntrega().getMinute());
             rutaFront.pedidos.addAll(ruta.pedidos);
             rutaFront.recorrido.addAll(recorridoEnviar);
             rutaFront.retorno.addAll(retornoEnviar);

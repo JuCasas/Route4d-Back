@@ -12,7 +12,7 @@ public class RutaFront implements Comparable<RutaFront>{
     public List<Map<String,Integer>>  retorno;
     public List<Pedido> pedidos;
     public Vehicle vehiculo;
-    public Integer tiempoMin;
+    public Integer tiempoFin;
     public int capacidad;
     public int consumoPetroleo;
 
@@ -21,7 +21,7 @@ public class RutaFront implements Comparable<RutaFront>{
         this.recorrido = new ArrayList<>();
         this.retorno = new ArrayList<>();
         this.pedidos = new ArrayList<>();
-        this.tiempoMin = Integer.MAX_VALUE;
+        this.tiempoFin = Integer.MAX_VALUE;
         this.capacidad = 0;
         this.consumoPetroleo = 20;
         this.vehiculo = new Vehicle();
@@ -31,7 +31,7 @@ public class RutaFront implements Comparable<RutaFront>{
         this.recorrido = new ArrayList<>();
         this.retorno = new ArrayList<>();
         this.pedidos = new ArrayList<>();
-        this.tiempoMin = Integer.MAX_VALUE;
+        this.tiempoFin = Integer.MAX_VALUE;
         this.capacidad = capacidad;
         this.consumoPetroleo = 20;
         this.vehiculo = new Vehicle();
@@ -40,7 +40,7 @@ public class RutaFront implements Comparable<RutaFront>{
 
     @Override
     public int compareTo(RutaFront ruta) {
-        return this.tiempoMin.compareTo(ruta.tiempoMin);
+        return this.tiempoFin.compareTo(ruta.tiempoFin);
     }
 
 

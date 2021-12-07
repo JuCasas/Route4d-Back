@@ -57,4 +57,9 @@ public class SimulacionController {
         return new ResponseEntity<>(simulacion.listaRutasEnRecorrido,HttpStatus.OK);
     }
 
+
+    @GetMapping(value = "/no")
+    public ResponseEntity<List<Pedido>> pedidosSin(){
+        return new ResponseEntity<>(simulacion.listaPedidosSinCumplir,HttpStatus.OK);
+    }
 }
