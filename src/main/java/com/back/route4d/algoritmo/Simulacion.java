@@ -29,6 +29,12 @@ public class Simulacion {
     public List<RutaFront> listaRutasEnRecorrido;
     public List<Ruta> listaRutas;
     public List<CallesBloqueadas> listaCallesBloqueadas;
+    public List<Vehicle> listaVehiculoTipo1;
+    public List<Vehicle> listaVehiculoTipo2;
+    public List<Vehicle> listaVehiculoTipo3;
+    public List<Vehicle> listaVehiculoTipo4;
+
+    public volatile boolean collect = false;
 
     public Dijkstra dijkstraAlgorithm;
     public Kmeans kmeans;
@@ -287,6 +293,64 @@ public class Simulacion {
         vehiculosDisponiblesTipo3 = 4;
         vehiculosDisponiblesTipo4 = 10;
 
+        listaVehiculoTipo1 = new ArrayList<>();
+        listaVehiculoTipo2 = new ArrayList<>();
+        listaVehiculoTipo3 = new ArrayList<>();
+        listaVehiculoTipo4 = new ArrayList<>();
+
+        for (int i = 0; i < vehiculosDisponiblesTipo1; i++) {
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            vehiculo.setPlaca("A"+Integer.toString(i));
+            tipo.setIdTipo(1);
+            tipo.setCapacidad(25.0);
+            tipo.setPesoBruto(2.5);
+            tipo.setVelocidad(50.0);
+            vehiculo.setTipo(tipo);
+            vehiculo.setEstado(0);
+            vehiculo.setIdVehiculo(i);
+            listaVehiculoTipo1.add(vehiculo);
+        }
+        for (int i = 0; i < vehiculosDisponiblesTipo2; i++) {
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            vehiculo.setPlaca("B"+Integer.toString(i));
+            tipo.setIdTipo(2);
+            tipo.setCapacidad(20.0);
+            tipo.setPesoBruto(2.0);
+            tipo.setVelocidad(50.0);
+            vehiculo.setTipo(tipo);
+            vehiculo.setEstado(0);
+            vehiculo.setIdVehiculo(i);
+            listaVehiculoTipo2.add(vehiculo);
+        }
+        for (int i = 0; i < vehiculosDisponiblesTipo3; i++) {
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            vehiculo.setPlaca("C"+Integer.toString(i));
+            tipo.setIdTipo(3);
+            tipo.setCapacidad(15.0);
+            tipo.setPesoBruto(1.5);
+            tipo.setVelocidad(50.0);
+            vehiculo.setTipo(tipo);
+            vehiculo.setEstado(0);
+            vehiculo.setIdVehiculo(i);
+            listaVehiculoTipo3.add(vehiculo);
+        }
+        for (int i = 0; i < vehiculosDisponiblesTipo4; i++) {
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            vehiculo.setPlaca("D"+Integer.toString(i));
+            tipo.setIdTipo(4);
+            tipo.setCapacidad(10.0);
+            tipo.setPesoBruto(1.0);
+            tipo.setVelocidad(50.0);
+            vehiculo.setTipo(tipo);
+            vehiculo.setEstado(0);
+            vehiculo.setIdVehiculo(i);
+            listaVehiculoTipo4.add(vehiculo);
+        }
+
         obtenerListaAdyacente();
         simular();
     }
@@ -416,6 +480,7 @@ public class Simulacion {
                 }
                 if(rutaFront.getVehiculo().getTipo().getIdTipo() == 1){
                     try {
+                        listaVehiculoTipo1.get(rutaFront.vehiculo.getIdVehiculo()).setEstado(0);
                         archivo.write("Terminó un vehiculo tipo 1\n");
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -425,6 +490,7 @@ public class Simulacion {
                 }
                 else if (rutaFront.getVehiculo().getTipo().getIdTipo() == 2){
                     try {
+                        listaVehiculoTipo2.get(rutaFront.vehiculo.getIdVehiculo()).setEstado(0);
                         archivo.write("Terminó un vehiculo tipo 2\n");
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -434,6 +500,7 @@ public class Simulacion {
                 }
                 else if (rutaFront.getVehiculo().getTipo().getIdTipo() == 3){
                     try {
+                        listaVehiculoTipo3.get(rutaFront.vehiculo.getIdVehiculo()).setEstado(0);
                         archivo.write("Terminó un vehiculo tipo 3\n");
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -443,12 +510,16 @@ public class Simulacion {
                 }
                 else{
                     try {
+                        listaVehiculoTipo4.get(rutaFront.vehiculo.getIdVehiculo()).setEstado(0);
                         archivo.write("Terminó un vehiculo tipo 4\n");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     vehiculosDisponiblesTipo4++;
                 }
+
+                collect = false;
+                while (!collect);
                 listaRutasEnRecorrido.remove(0);
             }
             else break;
@@ -847,8 +918,54 @@ public class Simulacion {
                 listaPedidosEnCola.remove(pedido);
             }
 
+            Vehicle vehicleAsignar = new Vehicle();
+            switch (idTipo){
+                case 1:
+                    for (Vehicle vehicle:listaVehiculoTipo1){
+                        if(vehicle.getEstado()==0){
+                            vehicle.setEstado(1);
+                            vehicleAsignar = vehicle;
+                            break;
+                        }
+                    }
+                    vehiculosDisponiblesTipo1--;
+                    break;
+                case 2:
+                    for (Vehicle vehicle:listaVehiculoTipo2){
+                        if(vehicle.getEstado()==0){
+                            vehicle.setEstado(1);
+                            vehicleAsignar = vehicle;
+                            break;
+                        }
+                    }
+                    vehiculosDisponiblesTipo2--;
+                    break;
+                case 3:
+                    for (Vehicle vehicle:listaVehiculoTipo3){
+                        if(vehicle.getEstado()==0){
+                            vehicle.setEstado(1);
+                            vehicleAsignar = vehicle;
+                            break;
+                        }
+                    }
+                    vehiculosDisponiblesTipo3--;
+                    break;
+                case 4:
+                    for (Vehicle vehicle:listaVehiculoTipo4){
+                        if(vehicle.getEstado()==0){
+                            vehicle.setEstado(1);
+                            vehicleAsignar = vehicle;
+                            break;
+                        }
+                    }
+                    vehiculosDisponiblesTipo4--;
+                    break;
+            }
+
+
+
             Ruta ruta = listaRutas.get(minCont);
-            RutaFront rutaFront = new RutaFront(ruta.vehiculo,ruta.capacidad);
+            RutaFront rutaFront = new RutaFront(vehicleAsignar,ruta.capacidad);
 
             List<Map<String,Integer>> recorridoEnviar = new ArrayList<>();
             List<Map<String,Integer>> retornoEnviar = new ArrayList<>();
@@ -880,20 +997,20 @@ public class Simulacion {
             listaRutas.remove(ruta);
             listaRutasEnRecorrido.add(rutaFront);
 
-            switch (idTipo){
-                case 1:
-                    vehiculosDisponiblesTipo1--;
-                    break;
-                case 2:
-                    vehiculosDisponiblesTipo2--;
-                    break;
-                case 3:
-                    vehiculosDisponiblesTipo3--;
-                    break;
-                case 4:
-                    vehiculosDisponiblesTipo4--;
-                    break;
-            }
+//            switch (idTipo){
+//                case 1:
+//                    vehiculosDisponiblesTipo1--;
+//                    break;
+//                case 2:
+//                    vehiculosDisponiblesTipo2--;
+//                    break;
+//                case 3:
+//                    vehiculosDisponiblesTipo3--;
+//                    break;
+//                case 4:
+//                    vehiculosDisponiblesTipo4--;
+//                    break;
+//            }
 
         }
 
@@ -910,9 +1027,9 @@ public class Simulacion {
     }
 
     public void reiniciarSimulacion(){
-        CollectionReference collection = firebase.getFirestore().collection("datosgenerales");
-        firebase.getFirestore().recursiveDelete(collection);
-        firebase.getFirestore().recursiveDelete(collection);
+//        CollectionReference collection = firebase.getFirestore().collection("datosgenerales");
+//        firebase.getFirestore().recursiveDelete(collection);
+//        firebase.getFirestore().recursiveDelete(collection);
         cantClusterVehiculoTipo1 = 0;
         cantClusterVehiculoTipo2 = 0;
         cantClusterVehiculoTipo3 = 0;
