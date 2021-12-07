@@ -14,4 +14,5 @@ public interface VehicleService {
     Vehicle mapPersistenceModelToRestModel(Vehicle vehicle);
     Vehicle updateVehicle(Vehicle vehicle, int id);
     void deleteVehicle(int id);
+    void averiarVehicle(int id);
 }

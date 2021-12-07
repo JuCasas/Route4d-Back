@@ -12,4 +12,5 @@ public interface PedidoService {
     Pedido updatePedido(Pedido pedido, int id);
     List<Pedido> findByDate(LocalDateTime inicio, LocalDateTime fin);
     void deletePedido(int id);
+    void desasignarPedido(int id);
 }

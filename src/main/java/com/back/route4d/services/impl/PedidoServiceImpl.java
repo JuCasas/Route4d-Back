@@ -37,7 +37,6 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public Pedido updatePedido(Pedido pedido, int id) {
-        //Vehicle exists?
         Pedido existingPedido = pedidoRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Pedido","Id",id));
 
@@ -50,7 +49,6 @@ public class PedidoServiceImpl implements PedidoService {
         existingPedido.setFechaLimite(pedido.getFechaLimite());
         existingPedido.setTiempoEntrega(pedido.getTiempoEntrega());
 
-        //Save vehicle to DB
         pedidoRepository.save(existingPedido);
         return existingPedido;
     }
@@ -67,5 +65,15 @@ public class PedidoServiceImpl implements PedidoService {
                 ()-> new ResourceNotFoundException("Pedido","Id",id));
 
         pedidoRepository.deleteById(id);
+    }
+
+    @Override
+    public void desasignarPedido(int id) {
+        Pedido existingPedido = pedidoRepository.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException("Pedido","Id",id));
+
+        existingPedido.setEstado(0);
+
+        pedidoRepository.save(existingPedido);
     }
 }

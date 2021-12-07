@@ -1,6 +1,7 @@
 package com.back.route4d.controller;
-import com.back.route4d.model.Usuario;
+import com.back.route4d.message.ResponseMessage;
 import com.back.route4d.model.Vehicle;
+import com.back.route4d.services.PedidoService;
 import com.back.route4d.services.VehicleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +16,12 @@ import java.util.Map;
 public class VehicleController {
 
     private VehicleService vehicleService;
+    private PedidoService pedidoService;
 
-    public VehicleController(VehicleService vehicleService) {
+    public VehicleController(VehicleService vehicleService, PedidoService pedidoService) {
         super();
         this.vehicleService = vehicleService;
+        this.pedidoService = pedidoService;
     }
 
     //Build create vehicle REST API
@@ -64,5 +67,20 @@ public class VehicleController {
     public ResponseEntity<String> deleteVehicle(@PathVariable("id") int vehicleId){
         vehicleService.deleteVehicle(vehicleId);
         return new ResponseEntity<String>("Vehiculo eliminado correctamente!",HttpStatus.OK);
+    }
+
+    @PostMapping("/averia")
+    public ResponseEntity<ResponseMessage> registrarAveria(@RequestBody Map<String, Object> json) {
+        String message = "";
+        int idVehiculo = (int)json.get("idVehiculo");
+        List<Integer> pedidos = (List<Integer>)json.get("pedidos");
+
+        vehicleService.averiarVehicle(idVehiculo);
+        for (Integer idPedido : pedidos) {
+            pedidoService.desasignarPedido(idPedido);
+        }
+
+        message = "done!";
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
     }
 }

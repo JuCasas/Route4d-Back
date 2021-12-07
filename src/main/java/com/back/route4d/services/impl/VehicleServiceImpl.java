@@ -142,4 +142,13 @@ public class VehicleServiceImpl implements VehicleService {
 
         vehicleRepository.deleteById(id);
     }
+
+    @Override
+    public void averiarVehicle(int id) {
+        Vehicle existingVehicle = vehicleRepository.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException("Vehicle","Id",id));
+
+        existingVehicle.setEstado(0);
+        vehicleRepository.save(existingVehicle);
+    }
 }
