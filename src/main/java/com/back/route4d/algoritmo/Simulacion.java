@@ -824,8 +824,8 @@ public class Simulacion {
         // System.out.println("Número de rutas: " + listaRutas.size());
     }
 
-    public void asignarRutaTipo(int idTipo, int cantClusterVehiculoTipo){
-        for(int i=0; i<cantClusterVehiculoTipo; i++){
+    public void asignarRutaTipo(int idTipo, int cantVehiculos){
+        for(int i=0; i<cantVehiculos; i++){
             int minimo = Integer.MAX_VALUE;
             int contador = 0;
             int minCont = -1;
@@ -871,6 +871,8 @@ public class Simulacion {
             rutaFront.retorno.addAll(retornoEnviar);
             rutaFront.tiempoMin = getMinutesFromLocalDateTime(ruta.plazoEntrega);
 
+
+            listaRutas.remove(ruta);
             listaRutasEnRecorrido.add(rutaFront);
 
             switch (idTipo){
@@ -893,10 +895,10 @@ public class Simulacion {
     }
 
     public void asignarRutas() {
-        asignarRutaTipo(1,cantClusterVehiculoTipo1);
-        asignarRutaTipo(2,cantClusterVehiculoTipo2);
-        asignarRutaTipo(3,cantClusterVehiculoTipo3);
-        asignarRutaTipo(4,cantClusterVehiculoTipo4);
+        asignarRutaTipo(1,cantVehiculoTipo1);
+        asignarRutaTipo(2,cantVehiculoTipo2);
+        asignarRutaTipo(3,cantVehiculoTipo3);
+        asignarRutaTipo(4,cantVehiculoTipo4);
 
         Collections.sort(listaPedidosEnCola);
         Collections.sort(listaRutasEnRecorrido);
