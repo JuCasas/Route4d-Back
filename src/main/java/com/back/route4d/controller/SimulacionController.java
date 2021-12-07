@@ -3,6 +3,7 @@ package com.back.route4d.controller;
 import com.back.route4d.algoritmo.Simulacion;
 import com.back.route4d.model.CallesBloqueadas;
 import com.back.route4d.model.Pedido;
+import com.back.route4d.model.RutaFront;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,11 @@ public class SimulacionController {
     public ResponseEntity<String> reiniciarSimulacion(){
         simulacion.reiniciarSimulacion();
         return new ResponseEntity<>("Reiniciado", HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/rutas")
+    public ResponseEntity<List<RutaFront>> rutaTraer(){
+        return new ResponseEntity<>(simulacion.listaRutasEnRecorrido,HttpStatus.OK);
     }
 
 }

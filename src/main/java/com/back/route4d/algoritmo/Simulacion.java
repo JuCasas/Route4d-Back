@@ -192,8 +192,12 @@ public class Simulacion {
         final int min = Integer.parseInt(date[2]);
         final int x = Integer.parseInt(tokens[1]);
         final int y = Integer.parseInt(tokens[2]);
-        final int demand = Integer.parseInt(tokens[3]);
+        int demand = Integer.parseInt(tokens[3]);
         final int remaining = Integer.parseInt(tokens[4]);
+
+        if(demand>=25){
+            demand = 20;
+        }
 
         String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
         LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
@@ -349,6 +353,7 @@ public class Simulacion {
 
     public void casoNuevoPedido(){
         //añadir todos los pedidos entrantes a la lista de pedidos en cola
+        //TODO CAMBIAR
         for(int i = 0; i< listaPedidosTotales.size(); i++){
             if((int)getMinutesFromLocalDateTime(listaPedidosTotales.get(0).getFechaPedido()) == (tiempoEnMinutosActual)){
                 listaPedidosEnCola.add(listaPedidosTotales.get(0));
