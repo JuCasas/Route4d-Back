@@ -33,13 +33,13 @@ public class Simulacion {
     public List<Vehicle> listaVehiculoTipo2;
     public List<Vehicle> listaVehiculoTipo3;
     public List<Vehicle> listaVehiculoTipo4;
+    public List<Cluster> clusterResult;
 
-    public volatile boolean collect = false;
+    public volatile boolean collect = true;
 
     public Dijkstra dijkstraAlgorithm;
     public Kmeans kmeans;
 
-    public List<Cluster> clusterResult;
     public Integer cantClusterVehiculoTipo1 = 0;
     public Integer cantClusterVehiculoTipo2 = 0;
     public Integer cantClusterVehiculoTipo3 = 0;
@@ -148,6 +148,8 @@ public class Simulacion {
             String line = sc.nextLine();
             Pedido pedido = getOrderFromLine(line, strYearMonth, formatter);
             pedido.setId(id);
+            //TODO 3 dias
+//            if (pedido.getFechaPedido().getDayOfMonth()>3)break;
             listaPedidosTotales.add(pedido);
             id++;
         }
@@ -418,7 +420,7 @@ public class Simulacion {
         //añadir todos los pedidos entrantes a la lista de pedidos en cola
         //TODO CAMBIAR
         for(int i = 0; i< listaPedidosTotales.size(); i++){
-            if((int)getMinutesFromLocalDateTime(listaPedidosTotales.get(i).getFechaPedido()) == (tiempoEnMinutosActual)){
+            if((int)getMinutesFromLocalDateTime(listaPedidosTotales.get(i).getFechaPedido()) <= (tiempoEnMinutosActual)){
                 listaPedidosEnCola.add(listaPedidosTotales.get(i));
                 listaPedidosTotales.remove(i);
             }
@@ -470,6 +472,11 @@ public class Simulacion {
     }
 
     public void casoTerminoRuta(){
+        //TODO PARADA PARA RECOGER INFO
+        if(listaRutasEnRecorrido.get(0).tiempoFin.equals(tiempoEnMinutosActual)) collect = false;
+
+        while (!collect);
+
         for(int i=0; i<listaRutasEnRecorrido.size(); i++){
             RutaFront rutaFront = listaRutasEnRecorrido.get(0);
             if(rutaFront.tiempoFin.equals(tiempoEnMinutosActual)){
@@ -518,8 +525,6 @@ public class Simulacion {
                     vehiculosDisponiblesTipo4++;
                 }
 
-                collect = false;
-                while (!collect);
                 listaRutasEnRecorrido.remove(0);
             }
             else break;
@@ -987,11 +992,11 @@ public class Simulacion {
                 retornoEnviar.add(map);
             }
 
-            rutaFront.setTiempoFin(getMinutesFromLocalDateTime(ruta.plazoEntrega));
+//            (tamanoFin - tamanoIni-1) * 60 / ((int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
+            rutaFront.setTiempoFin((int) (tiempoEnMinutosActual+((ruta.recorrido.size()+ruta.retorno.size()-1)*60/ruta.vehiculo.getTipo().getVelocidad())));
             rutaFront.pedidos.addAll(ruta.pedidos);
             rutaFront.recorrido.addAll(recorridoEnviar);
             rutaFront.retorno.addAll(retornoEnviar);
-            rutaFront.tiempoFin = getMinutesFromLocalDateTime(ruta.plazoEntrega);
 
 
             listaRutas.remove(ruta);
@@ -1030,6 +1035,20 @@ public class Simulacion {
 //        CollectionReference collection = firebase.getFirestore().collection("datosgenerales");
 //        firebase.getFirestore().recursiveDelete(collection);
 //        firebase.getFirestore().recursiveDelete(collection);
+
+        listaPedidosTotales = new ArrayList<>();
+        listaPedidosEnCola = new ArrayList<>();
+        listaPedidosSinCumplir= new ArrayList<>();
+        listaPedidosEnRuta= new ArrayList<>();
+        listaRutasEnRecorrido= new ArrayList<>();
+        listaRutas= new ArrayList<>();
+        listaCallesBloqueadas= new ArrayList<>();
+        listaVehiculoTipo1= new ArrayList<>();
+        listaVehiculoTipo2= new ArrayList<>();
+        listaVehiculoTipo3= new ArrayList<>();
+        listaVehiculoTipo4= new ArrayList<>();
+        clusterResult= new ArrayList<>();
+
         cantClusterVehiculoTipo1 = 0;
         cantClusterVehiculoTipo2 = 0;
         cantClusterVehiculoTipo3 = 0;

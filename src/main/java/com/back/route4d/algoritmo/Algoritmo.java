@@ -248,10 +248,13 @@ public class Algoritmo {
                     final int x = Integer.parseInt(tokens[1]);
                     final int y = Integer.parseInt(tokens[2]);
                     final int demand = Integer.parseInt(tokens[3]);
-                    final int remaining = Integer.parseInt(tokens[4]);
+                    int remaining = Integer.parseInt(tokens[4]);
                     String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
                     LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
                     LocalDateTime limitDate = orderDate.plus(Duration.of(remaining, ChronoUnit.HOURS));
+
+                    remaining = Helper.convertLocalDateTimeToMinutes(limitDate);
+
                     Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate, limitDate, 0);
                     listaPedidos.add(pedido);
                 }

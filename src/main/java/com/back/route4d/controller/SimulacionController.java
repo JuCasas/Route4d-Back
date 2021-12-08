@@ -1,10 +1,7 @@
 package com.back.route4d.controller;
 
 import com.back.route4d.algoritmo.Simulacion;
-import com.back.route4d.model.CallesBloqueadas;
-import com.back.route4d.model.Pedido;
-import com.back.route4d.model.Ruta;
-import com.back.route4d.model.RutaFront;
+import com.back.route4d.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +21,11 @@ public class SimulacionController {
     private Simulacion simulacion;
 //    private volatile boolean collect = false;
     private LinkedHashMap<String,RutaFront> rutasEnviar = new LinkedHashMap<String,RutaFront>();
+    private int cantVehiculos1 = 2;
+    private int cantVehiculos2 = 4;
+    private int cantVehiculos3 = 4;
+    private int cantVehiculos4 = 10;
+
 
     @PostMapping(value = "/uploadPedidos")
     public ResponseEntity<String> uploadPedidos(@RequestParam(value = "file") MultipartFile file){
@@ -47,6 +49,19 @@ public class SimulacionController {
 
     @PostMapping(value = "/empezar")
     public ResponseEntity<String> empezarSimulacion(){
+        RutaFront rutaVacia = new RutaFront();
+        for (int i = 0; i < cantVehiculos1; i++) {
+            rutasEnviar.put("A"+Integer.toString(i),rutaVacia);
+        }
+        for (int i = 0; i < cantVehiculos2; i++) {
+            rutasEnviar.put("B"+Integer.toString(i),rutaVacia);
+        }
+        for (int i = 0; i < cantVehiculos3; i++) {
+            rutasEnviar.put("C"+Integer.toString(i),rutaVacia);
+        }
+        for (int i = 0; i < cantVehiculos4; i++) {
+            rutasEnviar.put("D"+Integer.toString(i),rutaVacia);
+        }
         simulacion.inicializar();
         return new ResponseEntity<>("Simulando", HttpStatus.OK);
     }
@@ -60,6 +75,21 @@ public class SimulacionController {
     @GetMapping(value = "/rutas")
     public  ResponseEntity<LinkedHashMap<String,RutaFront>> rutaTraer() throws InterruptedException {
         List<RutaFront> listaRutas = simulacion.listaRutasEnRecorrido;
+
+        RutaFront rutaVacia = new RutaFront();
+        for (int i = 0; i < cantVehiculos1; i++) {
+            rutasEnviar.put("A"+Integer.toString(i),rutaVacia);
+        }
+        for (int i = 0; i < cantVehiculos2; i++) {
+            rutasEnviar.put("B"+Integer.toString(i),rutaVacia);
+        }
+        for (int i = 0; i < cantVehiculos3; i++) {
+            rutasEnviar.put("C"+Integer.toString(i),rutaVacia);
+        }
+        for (int i = 0; i < cantVehiculos4; i++) {
+            rutasEnviar.put("D"+Integer.toString(i),rutaVacia);
+        }
+
 
         for (int i=0;i<listaRutas.size();i++){
             rutasEnviar.put(listaRutas.get(i).getVehiculo().getPlaca(),listaRutas.get(i));
