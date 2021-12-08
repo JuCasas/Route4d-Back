@@ -23,19 +23,17 @@ public class AlgoritmoController {
         this.algoritmoService = algoritmoService;
     }
 
-
-    //Build get vehicle by ID
     @GetMapping
-    public HashMap getRoutes(){
+    public HashMap getRoutes() {
         return algoritmoService.enviarRutas();
     }
 
     @PostMapping("/operacion")
-    public HashMap operacion(@RequestBody Map<String, String> json){
+    public HashMap operacion(@RequestBody Map<String, String> json) {
         String k = json.get("k");
         String Sa = json.get("sa");
 
-        return algoritmoService.enviarRutasOperacion(k,Sa);
+        return algoritmoService.enviarRutasOperacion(k, Sa);
     }
 
 }

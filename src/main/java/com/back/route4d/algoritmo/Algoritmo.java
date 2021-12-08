@@ -15,6 +15,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import javax.transaction.Transactional;
 
+import com.back.route4d.repository.CallesBloqueadasRepository;
 import com.back.route4d.repository.PedidoRepository;
 import com.back.route4d.repository.RutaRepository;
 import com.back.route4d.repository.VehicleRepository;
@@ -66,11 +67,15 @@ public class Algoritmo {
     private PedidoRepository pedidoRepository;
     @Autowired
     private RutaRepository rutaRepository;
+    @Autowired
+    private CallesBloqueadasRepository callesBloqueadasRepository;
 
-    public Algoritmo(PedidoRepository pedidoRepository, VehicleRepository vehicleRepository, RutaRepository rutaRepository) {
+    public Algoritmo(PedidoRepository pedidoRepository, VehicleRepository vehicleRepository,
+                     RutaRepository rutaRepository, CallesBloqueadasRepository callesBloqueadasRepository) {
         this.pedidoRepository = pedidoRepository;
         this.vehicleService = vehicleRepository;
         this.rutaRepository = rutaRepository;
+        this.callesBloqueadasRepository = callesBloqueadasRepository;
     }
 
     public HashMap resolver(){
@@ -227,7 +232,7 @@ public class Algoritmo {
     public void obtenerListaPedidos() {
         try {
             // Para lectura del archivo
-            String fileName = "/ventas202212.txt";
+            String fileName = "/ventas202112.txt";
             final BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
             String strYearMonth = Helper.getOrdersDateFromName(fileName); // datos del nombre del archivo
             String line; // línea del archivo
@@ -274,7 +279,7 @@ public class Algoritmo {
      */
     public void obtenerCallesBloqueadas() {
         try {
-            String fileName = "/202209bloqueadas.txt";
+            String fileName = "/202112bloqueadas.txt";
             final BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
             String strYearMonth = Helper.getLockedNodesDateFromName(fileName);
             String line;
@@ -289,57 +294,50 @@ public class Algoritmo {
                 final String[] fin = plazo[1].trim().split(":");
                 final int diaIni = Integer.parseInt(inicio[0]);
                 final int diaFin = Integer.parseInt(fin[0]);
+                final int horaIni = Integer.parseInt(inicio[1]);
+                final int horaFin = Integer.parseInt(fin[1]);
+                final int minIni = Integer.parseInt(inicio[2]);
+                final int minFin = Integer.parseInt(fin[2]);
+                String strDateIni = strYearMonth + "-" + diaIni + " " + horaIni + ":" + minIni + ":0";
+                String strDateFin = strYearMonth + "-" + diaFin + " " + horaFin + ":" + minFin + ":0";
+                LocalDateTime dateIni = LocalDateTime.parse(strDateIni, formatter);
+                LocalDateTime dateFin = LocalDateTime.parse(strDateFin, formatter);
 
-                boolean diaIniEnRango = diaIni >= diaInfSimulacion && diaIni <= diaSupSimulacion;
-                boolean diaFinEnRango = diaFin >= diaInfSimulacion && diaFin <= diaSupSimulacion;
-                boolean bloqueoEnRango = diaIni <= diaInfSimulacion && diaFin >= diaSupSimulacion;
+                final int len = tokens.length - 1;
+                final String[] strCoords = Arrays.copyOfRange(tokens, 1, len + 1);
+                final int[] coords = new int[len];
 
-                if (diaIniEnRango || diaFinEnRango || bloqueoEnRango) {
-                    final int horaIni = Integer.parseInt(inicio[1]);
-                    final int horaFin = Integer.parseInt(fin[1]);
-                    final int minIni = Integer.parseInt(inicio[2]);
-                    final int minFin = Integer.parseInt(fin[2]);
-                    String strDateIni = strYearMonth + "-" + diaIni + " " + horaIni + ":" + minIni + ":0";
-                    String strDateFin = strYearMonth + "-" + diaFin + " " + horaFin + ":" + minFin + ":0";
-                    LocalDateTime dateIni = LocalDateTime.parse(strDateIni, formatter);
-                    LocalDateTime dateFin = LocalDateTime.parse(strDateFin, formatter);
+                for (int i = 0; i < len; i++) {
+                    coords[i] = Integer.parseInt(strCoords[i]); // pasando a enteros
+                }
 
-                    final int len = tokens.length - 1;
-                    final String[] strCoords = Arrays.copyOfRange(tokens, 1, len + 1);
-                    final int[] coords = new int[len];
+                CallesBloqueadas calleBloqueada = new CallesBloqueadas(id++, Helper.convertLocalDateTimeToMinutes(dateIni),
+                        Helper.convertLocalDateTimeToMinutes(dateFin));
 
-                    for (int i = 0; i < len; i++) {
-                        coords[i] = Integer.parseInt(strCoords[i]); // pasando a enteros
-                    }
+                // Agregando el identificador del nodo a la calle bloqueada
 
-                    CallesBloqueadas calleBloqueada = new CallesBloqueadas(id++, Helper.convertLocalDateTimeToMinutes(dateIni),
-                            Helper.convertLocalDateTimeToMinutes(dateFin));
+                for (int i = 0; i < len - 2; i += 2) {
+                    int x = coords[i];
+                    int y = coords[i + 1];
 
-                    // Agregando el identificador del nodo a la calle bloqueada
+                    int x2 = coords[i + 2];
+                    int y2 = coords[i + 3];
 
-                    for (int i = 0; i < len - 2; i += 2) {
-                        int x = coords[i];
-                        int y = coords[i + 1];
-
-                        int x2 = coords[i + 2];
-                        int y2 = coords[i + 3];
-
-                        if (y2 - y == 0) {
-                            for (int j = x; j <= x2; j++) {
-                                calleBloqueada.addNode(j + 71 * y + 1);
-                            }
-                        } else {
-                            if (x2 - x == 0) {
-                                for (int k = y; k <= y2; k++) {
-                                    calleBloqueada.addNode(x + 71 * k + 1);
-                                }
+                    if (y2 - y == 0) {
+                        for (int j = x; j <= x2; j++) {
+                            calleBloqueada.addNode(j + 71 * y + 1);
+                        }
+                    } else {
+                        if (x2 - x == 0) {
+                            for (int k = y; k <= y2; k++) {
+                                calleBloqueada.addNode(x + 71 * k + 1);
                             }
                         }
                     }
-                    listaCallesBloqueadas.add(calleBloqueada);
                 }
-
+                listaCallesBloqueadas.add(calleBloqueada);
             }
+//            callesBloqueadasRepository.saveAll(listaCallesBloqueadas);
 
             br.close();
 

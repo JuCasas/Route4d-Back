@@ -1,6 +1,7 @@
 package com.back.route4d.services.impl;
 
 import com.back.route4d.algoritmo.Algoritmo;
+import com.back.route4d.repository.CallesBloqueadasRepository;
 import com.back.route4d.repository.PedidoRepository;
 import com.back.route4d.repository.RutaRepository;
 import com.back.route4d.repository.VehicleRepository;
@@ -29,19 +30,21 @@ public class AlgoritmoServiceImpl implements AlgoritmoService {
     PedidoRepository pedidoRepository;
     VehicleRepository vehicleRepository;
     RutaRepository rutaRepository;
+    CallesBloqueadasRepository callesBloqueadasRepository;
 
-    public AlgoritmoServiceImpl(PedidoRepository pedidoRepository,VehicleRepository vehicleRepository, RutaRepository rutaRepository) {
+    public AlgoritmoServiceImpl(PedidoRepository pedidoRepository, VehicleRepository vehicleRepository,
+                                RutaRepository rutaRepository, CallesBloqueadasRepository callesBloqueadasRepository) {
         super();
         this.pedidoRepository = pedidoRepository;
         this.vehicleRepository = vehicleRepository;
         this.rutaRepository = rutaRepository;
+        this.callesBloqueadasRepository = callesBloqueadasRepository;
     }
-
-
 
     @Override
     public HashMap enviarRutas() {
-        Algoritmo algoritmo = new Algoritmo(pedidoRepository,vehicleRepository,rutaRepository);
+        Algoritmo algoritmo = new Algoritmo(pedidoRepository, vehicleRepository,
+                rutaRepository, callesBloqueadasRepository);
         algoritmo.obtenerListaPedidos();
         algoritmo.inicializar();
         HashMap list = algoritmo.resolver();
@@ -54,7 +57,8 @@ public class AlgoritmoServiceImpl implements AlgoritmoService {
 //        LocalDateTime initialDate = LocalDateTime.of(2022, Month.DECEMBER, 02, 0, 0, 0);
 //        LocalDateTime finalDate = initialDate.plus(Duration.of(Integer.parseInt(k)*Integer.parseInt(sa), ChronoUnit.MINUTES));
 //        LocalDateTime finalDate = LocalDateTime.of(2022, Month.DECEMBER, 3, 0, 33, 0);
-        Algoritmo algoritmo = new Algoritmo(pedidoRepository,vehicleRepository,rutaRepository);
+        Algoritmo algoritmo = new Algoritmo(pedidoRepository, vehicleRepository,
+                rutaRepository, callesBloqueadasRepository);
         LocalDateTime finalDate = LocalDateTime.now();
         //TODO cambiar estado
         algoritmo.listaPedidos = pedidoRepository.findLessThanDate(finalDate,1);
