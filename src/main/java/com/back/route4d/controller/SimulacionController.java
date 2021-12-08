@@ -95,7 +95,6 @@ public class SimulacionController {
             rutasEnviar.put(listaRutas.get(i).getVehiculo().getPlaca(),listaRutas.get(i));
         }
 
-        Thread.sleep(300);
         simulacion.collect = true;
         return new ResponseEntity<>(rutasEnviar,HttpStatus.OK);
     }
