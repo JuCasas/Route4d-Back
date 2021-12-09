@@ -48,7 +48,7 @@ public class SimulacionController {
     }
 
     @PostMapping(value = "/empezar")
-    public ResponseEntity<String> empezarSimulacion(){
+    public ResponseEntity<Integer> empezarSimulacion(){
         RutaFront rutaVacia = new RutaFront();
         for (int i = 0; i < cantVehiculos1; i++) {
             rutasEnviar.put("A"+Integer.toString(i),rutaVacia);
@@ -63,7 +63,9 @@ public class SimulacionController {
             rutasEnviar.put("D"+Integer.toString(i),rutaVacia);
         }
         simulacion.inicializar();
-        return new ResponseEntity<>("Simulando", HttpStatus.OK);
+
+        if(simulacion.listaPedidosSinCumplir.size() != 0 ) return new ResponseEntity<>(0, HttpStatus.OK);
+        else return new ResponseEntity<>(1,HttpStatus.OK);
     }
 
     @PostMapping(value = "/reiniciar")
