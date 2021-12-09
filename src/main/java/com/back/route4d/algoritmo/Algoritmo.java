@@ -247,12 +247,13 @@ public class Algoritmo {
                 final int day = Integer.parseInt(date[0]);
 
                 // Para simulación de 3 días
-                if (day >= diaInfSimulacion && day <= diaSupSimulacion) {
+//                if (day >= diaInfSimulacion && day <= diaSupSimulacion) {
+
                     final int hour = Integer.parseInt(date[1]);
                     final int min = Integer.parseInt(date[2]);
                     final int x = Integer.parseInt(tokens[1]);
                     final int y = Integer.parseInt(tokens[2]);
-                    final int demand = Integer.parseInt(tokens[3]);
+                    int demand = Integer.parseInt(tokens[3]);
                     int remaining = Integer.parseInt(tokens[4]);
                     String strDate = strYearMonth + "-" + day + " " + hour + ":" + min + ":0";
                     LocalDateTime orderDate = LocalDateTime.parse(strDate, formatter);
@@ -262,10 +263,10 @@ public class Algoritmo {
 
                     Pedido pedido = new Pedido(id++, x, y, demand, remaining, orderDate, limitDate, 0);
                     listaPedidos.add(pedido);
-                }
-                else if (day > diaSupSimulacion) {
-                    break;
-                }
+//                }
+//                else if (day > diaSupSimulacion) {
+//                    break;
+//                }
             }
 
             br.close();

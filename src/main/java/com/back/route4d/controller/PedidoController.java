@@ -1,5 +1,6 @@
 package com.back.route4d.controller;
 
+import com.back.route4d.helper.Helper;
 import com.back.route4d.message.ResponseMessage;
 import com.back.route4d.model.Pedido;
 import com.back.route4d.services.PedidoService;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @RestController
@@ -25,6 +27,9 @@ public class PedidoController {
     //Build create pedido REST API
     @PostMapping("/")
     public ResponseEntity<Pedido> savePedido(@RequestBody Pedido pedido){
+        pedido.setFechaPedido(LocalDateTime.now());
+        pedido.setFechaLimite(pedido.getFechaPedido().plus(pedido.getMinFaltantes(), ChronoUnit.HOURS));
+        pedido.setMinFaltantes(Helper.convertLocalDateTimeToMinutes(pedido.getFechaLimite()));
         return new ResponseEntity<Pedido>(pedidoService.savePedido(pedido), HttpStatus.CREATED);
     }
 
