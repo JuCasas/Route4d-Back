@@ -326,6 +326,7 @@ public class Algoritmo {
                     if (y2 - y == 0) {
                         for (int j = x; j <= x2; j++) {
                             calleBloqueada.addNode(j + 71 * y + 1);
+
                         }
                     } else {
                         if (x2 - x == 0) {
@@ -336,6 +337,7 @@ public class Algoritmo {
                     }
                 }
                 listaCallesBloqueadas.add(calleBloqueada);
+
             }
 //            callesBloqueadasRepository.saveAll(listaCallesBloqueadas);
 

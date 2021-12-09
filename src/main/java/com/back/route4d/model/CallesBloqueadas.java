@@ -17,9 +17,12 @@ public class CallesBloqueadas {
     private int minutosFin;
 
     @Transient
-    private final HashSet<Integer> conjuntoNodos;
+    private HashSet<Integer> conjuntoNodos;
 
-    private final String nodos;
+    private String nodos;
+
+    public CallesBloqueadas() {
+    }
 
     public CallesBloqueadas(int id, int minutosInicio, int minutosFin) {
         this.id = id;
@@ -31,6 +34,10 @@ public class CallesBloqueadas {
 
     public void addNode(int nodoId) {
         conjuntoNodos.add(nodoId);
+    }
+
+    public void addNodeToString(int nodoId) {
+        nodos += nodoId + ",";
     }
 
     public boolean estaNodo(int nodoId) {
