@@ -30,6 +30,27 @@ public class PedidoController {
         pedido.setFechaPedido(LocalDateTime.now());
         pedido.setFechaLimite(pedido.getFechaPedido().plus(pedido.getMinFaltantes(), ChronoUnit.HOURS));
         pedido.setMinFaltantes(Helper.convertLocalDateTimeToMinutes(pedido.getFechaLimite()));
+
+        if(pedido.getCantidad()>25){
+            int cociente = pedido.getCantidad()/5;
+            int residuo = pedido.getCantidad()%5;
+
+            for (int i=0;i<cociente;i++){
+                Pedido pedido1 = new Pedido(pedido.getNodoId(),pedido.getX(),pedido.getY(),
+                        5,pedido.getMinFaltantes(),pedido.getFechaPedido(),
+                        pedido.getFechaLimite(),pedido.getTipoPedido());
+
+                pedidoService.savePedido(pedido1);
+            }
+            if(residuo>0){
+                Pedido pedido2 = new Pedido(pedido.getNodoId(),pedido.getX(),pedido.getY(),
+                        residuo,pedido.getMinFaltantes(),pedido.getFechaPedido(),
+                        pedido.getFechaLimite(),pedido.getTipoPedido());
+                pedidoService.savePedido(pedido2);
+            }
+            return new ResponseEntity<Pedido>(pedido, HttpStatus.CREATED);
+        }
+
         return new ResponseEntity<Pedido>(pedidoService.savePedido(pedido), HttpStatus.CREATED);
     }
 
