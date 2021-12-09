@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -111,7 +112,7 @@ public class SimulacionController {
     }
 
     @PostMapping(value = "/tipoSimulacion")
-    public ResponseEntity<String> tipo(@RequestBody int tipo){
-        return new ResponseEntity<>(simulacion.updateSimulacionTipo(tipo),HttpStatus.OK);
+    public ResponseEntity<String> tipo(@RequestBody Map<String,Integer> json){
+        return new ResponseEntity<>(simulacion.updateSimulacionTipo((int)json.get("tipo")),HttpStatus.OK);
     }
 }
