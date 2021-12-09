@@ -301,6 +301,51 @@ public class Simulacion {
         listaVehiculoTipo3 = new ArrayList<>();
         listaVehiculoTipo4 = new ArrayList<>();
 
+        for (int i = 0; i < vehiculosDisponiblesTipo4; i++) {
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            vehiculo.setPlaca("D"+Integer.toString(i));
+            tipo.setIdTipo(4);
+            tipo.setCapacidad(5.0);
+            tipo.setPesoBruto(1.0);
+            tipo.setVelocidad(50.0);
+            tipo.setNombre("Tipo D");
+            vehiculo.setTipo(tipo);
+            vehiculo.setEstado(0);
+            vehiculo.setIdVehiculo(i);
+            listaVehiculoTipo4.add(vehiculo);
+        }
+
+        for (int i = 0; i < vehiculosDisponiblesTipo3; i++) {
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            vehiculo.setPlaca("C"+Integer.toString(i));
+            tipo.setIdTipo(3);
+            tipo.setCapacidad(10.0);
+            tipo.setPesoBruto(1.5);
+            tipo.setVelocidad(50.0);
+            tipo.setNombre("Tipo C");
+            vehiculo.setTipo(tipo);
+            vehiculo.setEstado(0);
+            vehiculo.setIdVehiculo(i);
+            listaVehiculoTipo3.add(vehiculo);
+        }
+
+        for (int i = 0; i < vehiculosDisponiblesTipo2; i++) {
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            vehiculo.setPlaca("B"+Integer.toString(i));
+            tipo.setIdTipo(2);
+            tipo.setCapacidad(15.0);
+            tipo.setPesoBruto(2.0);
+            tipo.setVelocidad(50.0);
+            tipo.setNombre("Tipo B");
+            vehiculo.setTipo(tipo);
+            vehiculo.setEstado(0);
+            vehiculo.setIdVehiculo(i);
+            listaVehiculoTipo2.add(vehiculo);
+        }
+
         for (int i = 0; i < vehiculosDisponiblesTipo1; i++) {
             Vehicle vehiculo = new Vehicle();
             TipoVehiculo tipo = new TipoVehiculo();
@@ -315,49 +360,6 @@ public class Simulacion {
             vehiculo.setIdVehiculo(i);
             listaVehiculoTipo1.add(vehiculo);
         }
-        for (int i = 0; i < vehiculosDisponiblesTipo2; i++) {
-            Vehicle vehiculo = new Vehicle();
-            TipoVehiculo tipo = new TipoVehiculo();
-            vehiculo.setPlaca("B"+Integer.toString(i));
-            tipo.setIdTipo(2);
-            tipo.setCapacidad(20.0);
-            tipo.setPesoBruto(2.0);
-            tipo.setVelocidad(50.0);
-            tipo.setNombre("Tipo B");
-            vehiculo.setTipo(tipo);
-            vehiculo.setEstado(0);
-            vehiculo.setIdVehiculo(i);
-            listaVehiculoTipo2.add(vehiculo);
-        }
-        for (int i = 0; i < vehiculosDisponiblesTipo3; i++) {
-            Vehicle vehiculo = new Vehicle();
-            TipoVehiculo tipo = new TipoVehiculo();
-            vehiculo.setPlaca("C"+Integer.toString(i));
-            tipo.setIdTipo(3);
-            tipo.setCapacidad(15.0);
-            tipo.setPesoBruto(1.5);
-            tipo.setVelocidad(50.0);
-            tipo.setNombre("Tipo C");
-            vehiculo.setTipo(tipo);
-            vehiculo.setEstado(0);
-            vehiculo.setIdVehiculo(i);
-            listaVehiculoTipo3.add(vehiculo);
-        }
-        for (int i = 0; i < vehiculosDisponiblesTipo4; i++) {
-            Vehicle vehiculo = new Vehicle();
-            TipoVehiculo tipo = new TipoVehiculo();
-            vehiculo.setPlaca("D"+Integer.toString(i));
-            tipo.setIdTipo(4);
-            tipo.setCapacidad(10.0);
-            tipo.setPesoBruto(1.0);
-            tipo.setVelocidad(50.0);
-            tipo.setNombre("Tipo D");
-            vehiculo.setTipo(tipo);
-            vehiculo.setEstado(0);
-            vehiculo.setIdVehiculo(i);
-            listaVehiculoTipo4.add(vehiculo);
-        }
-
         obtenerListaAdyacente();
         simular();
     }
@@ -688,7 +690,7 @@ public class Simulacion {
     }
 
     public void obtenerPedidosClusterizados(){
-        int cantClusters = cantClusterVehiculoTipo1+cantVehiculoTipo2+cantVehiculoTipo3+cantVehiculoTipo4;
+        int cantClusters = cantClusterVehiculoTipo1+cantClusterVehiculoTipo2+cantClusterVehiculoTipo3+cantClusterVehiculoTipo4;
         List<Vehicle> vehiculos = inicializarVehiculos();
 
         List<Cluster> clustersList = inicializarClusters(vehiculos);
@@ -705,7 +707,7 @@ public class Simulacion {
             Vehicle vehiculo = new Vehicle();
             TipoVehiculo tipo = new TipoVehiculo();
             tipo.setIdTipo(4);
-            tipo.setCapacidad(10.0);
+            tipo.setCapacidad(5.0);
             tipo.setPesoBruto(1.0);
             tipo.setVelocidad(50.0);
             tipo.setNombre("Tipo D");
@@ -717,7 +719,7 @@ public class Simulacion {
             Vehicle vehiculo = new Vehicle();
             TipoVehiculo tipo = new TipoVehiculo();
             tipo.setIdTipo(3);
-            tipo.setCapacidad(15.0);
+            tipo.setCapacidad(10.0);
             tipo.setPesoBruto(1.5);
             tipo.setVelocidad(50.0);
             tipo.setNombre("Tipo C");
@@ -729,7 +731,7 @@ public class Simulacion {
             Vehicle vehiculo = new Vehicle();
             TipoVehiculo tipo = new TipoVehiculo();
             tipo.setIdTipo(2);
-            tipo.setCapacidad(20.0);
+            tipo.setCapacidad(15.0);
             tipo.setPesoBruto(2.0);
             tipo.setVelocidad(50.0);
             tipo.setNombre("Tipo B");
