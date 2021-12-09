@@ -178,6 +178,7 @@ public class Algoritmo {
 //        listaRutasTipo3 = rutaRepository.getRoutesByTypeId(3);
 //        listaRutasTipo4 = rutaRepository.getRoutesByTypeId(4);
 
+        listaPedidos = pedidoRepository.findLessThanDate(LocalDateTime.now(),0);
         // Sin vehículos
         if (listaVehiculoTipo1.size() == 0 && listaVehiculoTipo2.size() == 0 &&
                 listaVehiculoTipo3.size() == 0 && listaVehiculoTipo4.size() == 0) {
@@ -434,22 +435,12 @@ public class Algoritmo {
     public List<Vehicle> inicializarVehiculos() {
         List<Vehicle> lista = new ArrayList<>();
 
-        for (int i = 0; i < cantClusterVehiculoTipo1; i++) {
+        for (int i = 0; i < cantClusterVehiculoTipo4; i++) {
             Vehicle vehiculo = new Vehicle();
             TipoVehiculo tipo = new TipoVehiculo();
-            tipo.setIdTipo(1);
-            tipo.setCapacidad(25.0);
-            tipo.setPesoBruto(2.5);
-            tipo.setVelocidad(50.0);
-            vehiculo.setTipo(tipo);
-            lista.add(vehiculo);
-        }
-        for (int i = 0; i < cantClusterVehiculoTipo2; i++) {
-            Vehicle vehiculo = new Vehicle();
-            TipoVehiculo tipo = new TipoVehiculo();
-            tipo.setIdTipo(2);
-            tipo.setCapacidad(20.0);
-            tipo.setPesoBruto(2.0);
+            tipo.setIdTipo(4);
+            tipo.setCapacidad(5.0);
+            tipo.setPesoBruto(1.0);
             tipo.setVelocidad(50.0);
             vehiculo.setTipo(tipo);
             lista.add(vehiculo);
@@ -458,18 +449,28 @@ public class Algoritmo {
             Vehicle vehiculo = new Vehicle();
             TipoVehiculo tipo = new TipoVehiculo();
             tipo.setIdTipo(3);
-            tipo.setCapacidad(15.0);
+            tipo.setCapacidad(10.0);
             tipo.setPesoBruto(1.5);
             tipo.setVelocidad(50.0);
             vehiculo.setTipo(tipo);
             lista.add(vehiculo);
         }
-        for (int i = 0; i < cantClusterVehiculoTipo4; i++) {
+        for (int i = 0; i < cantClusterVehiculoTipo2; i++) {
             Vehicle vehiculo = new Vehicle();
             TipoVehiculo tipo = new TipoVehiculo();
-            tipo.setIdTipo(4);
-            tipo.setCapacidad(10.0);
-            tipo.setPesoBruto(1.0);
+            tipo.setIdTipo(2);
+            tipo.setCapacidad(15.0);
+            tipo.setPesoBruto(2.0);
+            tipo.setVelocidad(50.0);
+            vehiculo.setTipo(tipo);
+            lista.add(vehiculo);
+        }
+        for (int i = 0; i < cantClusterVehiculoTipo1; i++) {
+            Vehicle vehiculo = new Vehicle();
+            TipoVehiculo tipo = new TipoVehiculo();
+            tipo.setIdTipo(1);
+            tipo.setCapacidad(25.0);
+            tipo.setPesoBruto(2.5);
             tipo.setVelocidad(50.0);
             vehiculo.setTipo(tipo);
             lista.add(vehiculo);

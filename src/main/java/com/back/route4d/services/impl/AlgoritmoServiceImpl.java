@@ -45,7 +45,7 @@ public class AlgoritmoServiceImpl implements AlgoritmoService {
     public HashMap enviarRutas() {
         Algoritmo algoritmo = new Algoritmo(pedidoRepository, vehicleRepository,
                 rutaRepository, callesBloqueadasRepository);
-        algoritmo.obtenerListaPedidos();
+//        algoritmo.obtenerListaPedidos();
         algoritmo.inicializar();
         HashMap list = algoritmo.resolver();
         return list;
