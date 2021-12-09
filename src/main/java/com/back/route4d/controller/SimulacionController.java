@@ -19,7 +19,6 @@ public class SimulacionController {
 
     @Autowired
     private Simulacion simulacion;
-//    private volatile boolean collect = false;
     private LinkedHashMap<String,RutaFront> rutasEnviar = new LinkedHashMap<String,RutaFront>();
     private int cantVehiculos1 = 2;
     private int cantVehiculos2 = 4;
@@ -106,8 +105,13 @@ public class SimulacionController {
         return new ResponseEntity<>(rutasEnviar,HttpStatus.OK);
     }
 
-    @GetMapping(value = "/no")
+    @GetMapping(value = "/incumplimiento")
     public ResponseEntity<List<Pedido>> pedidosSin(){
         return new ResponseEntity<>(simulacion.listaPedidosSinCumplir,HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/tipoSimulacion")
+    public ResponseEntity<String> tipo(@RequestBody int tipo){
+        return new ResponseEntity<>(simulacion.updateSimulacionTipo(tipo),HttpStatus.OK);
     }
 }

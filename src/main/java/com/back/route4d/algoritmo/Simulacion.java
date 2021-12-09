@@ -35,6 +35,9 @@ public class Simulacion {
     public List<Vehicle> listaVehiculoTipo3;
     public List<Vehicle> listaVehiculoTipo4;
     public List<Cluster> clusterResult;
+    //0 -> colapso
+    //1 -> 3 dias
+    public int tipoSimulacion = 1;
 
     public volatile boolean collect = true;
 
@@ -112,6 +115,20 @@ public class Simulacion {
     }
 
     /**
+     * Cambiar tipo de simulacion
+     *
+     * @param   tipo indicara el tipo simulacion
+     *
+     * @return  mensaje de confirmacion
+     */
+    public String updateSimulacionTipo(int tipo) {
+        tipoSimulacion = tipo;
+        if(tipo==1) return "Simulacion 3 dias";
+        return "Simulacion hasta el colapso";
+    }
+
+
+    /**
      * Carga un archivo de calles bloqueadas
      *
      * @param   mpFile  archivo de calles bloqueadas
@@ -150,7 +167,7 @@ public class Simulacion {
             Pedido pedido = getOrderFromLine(line, strYearMonth, formatter);
             pedido.setId(id);
             //TODO 3 dias
-//            if (pedido.getFechaPedido().getDayOfMonth()>3)break;
+            if (tipoSimulacion == 1 && pedido.getFechaPedido().getDayOfMonth()>3)break;
             listaPedidosTotales.add(pedido);
             id++;
         }
