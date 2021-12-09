@@ -72,7 +72,12 @@ public class SimulacionController {
         return new ResponseEntity<>("Reiniciado", HttpStatus.OK);
     }
 
-    @GetMapping(value = "/rutas")
+    @GetMapping(value = "/rutasSin")
+    public  ResponseEntity<List<RutaFront>> rutaSinActualizar() {
+        return new ResponseEntity<>(simulacion.listaRutasEnRecorrido,HttpStatus.OK);
+    }
+
+        @GetMapping(value = "/rutas")
     public  ResponseEntity<LinkedHashMap<String,RutaFront>> rutaTraer() throws InterruptedException {
         List<RutaFront> listaRutas = simulacion.listaRutasEnRecorrido;
 
