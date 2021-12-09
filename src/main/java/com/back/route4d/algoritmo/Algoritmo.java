@@ -323,14 +323,30 @@ public class Algoritmo {
                     int x2 = coords[i + 2];
                     int y2 = coords[i + 3];
 
+                    int minimo = 0;
+                    int mayor = 0;
                     if (y2 - y == 0) {
-                        for (int j = x; j <= x2; j++) {
+                        if (x<x2) {
+                            minimo = x;
+                            mayor = x2;
+                        }else {
+                            minimo =x2;
+                            mayor = x;
+                        }
+                        for (int j = minimo; j <= mayor; j++) {
                             calleBloqueada.addNode(j + 71 * y + 1);
 
                         }
                     } else {
                         if (x2 - x == 0) {
-                            for (int k = y; k <= y2; k++) {
+                            if (y<y2) {
+                                minimo = y;
+                                mayor = y2;
+                            }else {
+                                minimo =y2;
+                                mayor = y;
+                            }
+                            for (int k = minimo; k <= mayor; k++) {
                                 calleBloqueada.addNode(x + 71 * k + 1);
                             }
                         }
