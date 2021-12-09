@@ -47,7 +47,7 @@ public class SimulacionController {
         return new ResponseEntity<>(simulacion.getClosedRoads(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/empezar")
+    @GetMapping(value = "/empezar")
     public ResponseEntity<Integer> empezarSimulacion(){
         RutaFront rutaVacia = new RutaFront();
         for (int i = 0; i < cantVehiculos1; i++) {
