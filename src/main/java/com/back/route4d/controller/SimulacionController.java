@@ -68,7 +68,7 @@ public class SimulacionController {
         else return new ResponseEntity<>(1,HttpStatus.OK);
     }
 
-    @PostMapping(value = "/reiniciar")
+    @GetMapping(value = "/reiniciar")
     public ResponseEntity<String> reiniciarSimulacion(){
         simulacion.reiniciarSimulacion();
         return new ResponseEntity<>("Reiniciado", HttpStatus.OK);
