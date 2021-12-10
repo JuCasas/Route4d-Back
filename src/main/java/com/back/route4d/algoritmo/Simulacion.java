@@ -444,7 +444,7 @@ public class Simulacion {
         //añadir todos los pedidos entrantes a la lista de pedidos en cola
         //TODO CAMBIAR
         for(int i = 0; i< listaPedidosTotales.size(); i++){
-            if((int)getMinutesFromLocalDateTime(listaPedidosTotales.get(i).getFechaPedido()) <= (tiempoEnMinutosActual)){
+            if((int)getMinutesFromLocalDateTime(listaPedidosTotales.get(i).getFechaPedido()) <= (tiempoEnMinutosActual+60*2)){
                 listaPedidosEnCola.add(listaPedidosTotales.get(i));
                 listaPedidosTotales.remove(i);
             }

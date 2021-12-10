@@ -4,8 +4,6 @@ import com.back.route4d.algoritmo.dijkstra.Dijkstra;
 import com.back.route4d.algoritmo.kmeans.Kmeans;
 import com.back.route4d.helper.Helper;
 import com.back.route4d.model.*;
-// import com.back.route4d.repository.AlgoritmoRepository;
-// import com.back.route4d.repository.UsuarioRepository;
 import java.io.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -13,6 +11,7 @@ import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import com.back.route4d.repository.CallesBloqueadasRepository;
@@ -20,6 +19,7 @@ import com.back.route4d.repository.PedidoRepository;
 import com.back.route4d.repository.RutaRepository;
 import com.back.route4d.repository.VehicleRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +29,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class Algoritmo {
     public List<Pedido> listaPedidos;
+
+    public List<Vehicle> listaVehiculoDB;
 
     public List<Vehicle> listaVehiculoTipo1;
     public List<Vehicle> listaVehiculoTipo2;
@@ -82,75 +84,78 @@ public class Algoritmo {
 
         generarRutas();
 
-//        rutaRepository.saveAll(listaRutas);
+        for(Ruta ruta:listaRutas){
+            ruta.setRecorridoString(ruta.recorrido.stream().map(Object::toString)
+                    .collect(Collectors.joining(",")));
+            ruta.setRetornoString(ruta.retorno.stream().map(Object::toString)
+                    .collect(Collectors.joining(",")));
+        }
+
+        rutaRepository.saveAll(listaRutas);
+
+        System.out.println("RUTAS EN REPOSITORIO");
 
         listaRutasFront = new ArrayList<RutaFront>();
 
-        for (Ruta ruta:listaRutas){
-            List<Map<String,Integer>> recorridoEnviar = new ArrayList<>();
-            List<Map<String,Integer>> retornoEnviar = new ArrayList<>();
-            for (int nodoRecorrido:ruta.recorrido){
-                int x = (nodoRecorrido - 1) % 71;
-                int y = (nodoRecorrido - 1) / 71;
-                Map<String ,Integer> map=new HashMap<String,Integer>();
-                map.put("x",x);
-                map.put("y",y);
-                recorridoEnviar.add(map);
-            }
+//        for (Ruta ruta:listaRutas){
+//            List<Map<String,Integer>> recorridoEnviar = new ArrayList<>();
+//            List<Map<String,Integer>> retornoEnviar = new ArrayList<>();
+//            for (int nodoRecorrido:ruta.recorrido){
+//                int x = (nodoRecorrido - 1) % 71;
+//                int y = (nodoRecorrido - 1) / 71;
+//                Map<String ,Integer> map=new HashMap<String,Integer>();
+//                map.put("x",x);
+//                map.put("y",y);
+//                recorridoEnviar.add(map);
+//            }
+//
+//            for (int nodoRetorno: ruta.retorno){
+//                int x = (nodoRetorno - 1) % 71;
+//                int y = (nodoRetorno - 1) / 71;
+//                Map<String ,Integer> map=new HashMap<String,Integer>();
+//                map.put("x",x);
+//                map.put("y",y);
+//                retornoEnviar.add(map);
+//            }
+//
+//            RutaFront rutaFront = new RutaFront(ruta.vehiculo,ruta.capacidad);
+//            //TODO FIX
+//            rutaFront.setTiempoFin(ruta.getPlazoEntrega().getMinute());
+//            rutaFront.pedidos.addAll(ruta.pedidos);
+//            rutaFront.recorrido.addAll(recorridoEnviar);
+//            rutaFront.retorno.addAll(retornoEnviar);
+//
+//            listaRutasFront.add(rutaFront);
+//        }
+//
+//        String nodos = callesBloqueadas.getNodos();
+//        List<String> listaNodos = new ArrayList<String>(Arrays.asList(nodos.split(",")));
+//
+//        for (String s : listaNodos) {
+//            int nodo = Integer.valueOf(s);
+//
+//            int x = (nodo - 1) % 71;
+//            int y = (nodo - 1) / 71;
+//
+//            boolean encontrado = false;
+//            for (CallesBloqueadasFront bloqueoRevisar : listaCallesBloqueadasFront) {
+//                if (bloqueoRevisar.esBloqueo(x,y)){
+//                    bloqueoRevisar.addTime(fechaInicio,fechaFin);
+//                    encontrado = true;
+//                    break;
+//                }
+//            }
+//
+//            if(!encontrado) {
+//                CallesBloqueadasFront calleFront = new CallesBloqueadasFront(x,y);
+//                calleFront.addTime(fechaInicio,fechaFin);
+//                listaCallesBloqueadasFront.add(calleFront);
+//            }
+//        }
 
-            for (int nodoRetorno: ruta.retorno){
-                int x = (nodoRetorno - 1) % 71;
-                int y = (nodoRetorno - 1) / 71;
-                Map<String ,Integer> map=new HashMap<String,Integer>();
-                map.put("x",x);
-                map.put("y",y);
-                retornoEnviar.add(map);
-            }
-
-            RutaFront rutaFront = new RutaFront(ruta.vehiculo,ruta.capacidad);
-            //TODO FIX
-            rutaFront.setTiempoFin(ruta.getPlazoEntrega().getMinute());
-            rutaFront.pedidos.addAll(ruta.pedidos);
-            rutaFront.recorrido.addAll(recorridoEnviar);
-            rutaFront.retorno.addAll(retornoEnviar);
-
-            listaRutasFront.add(rutaFront);
-        }
-
-        listaCallesBloqueadasFront = new ArrayList<CallesBloqueadasFront>();
-        for (CallesBloqueadas callesBloqueadas:listaCallesBloqueadas){
-
-            Integer minutosInicio = callesBloqueadas.getMinutosInicio();
-            Integer minutosFin = callesBloqueadas.getMinutosFin();
-            LocalDateTime fechaInicio = Helper.convertMinutesToLocalDateTime(minutosInicio);
-            LocalDateTime fechaFin = Helper.convertMinutesToLocalDateTime(minutosFin);
-
-            for (Integer nodo:callesBloqueadas.getConjuntoNodos()){
-
-                int x = (nodo - 1) % 71;
-                int y = (nodo - 1) / 71;
-
-                boolean encontrado = false;
-                for (CallesBloqueadasFront bloqueoRevisar:listaCallesBloqueadasFront){
-                    if (bloqueoRevisar.esBloqueo(x,y)){
-                        bloqueoRevisar.addTime(fechaInicio,fechaFin);
-                        encontrado = true;
-                        break;
-                    }
-                }
-
-                if(!encontrado){
-                    CallesBloqueadasFront calleFront = new CallesBloqueadasFront(x,y);
-                    calleFront.addTime(fechaInicio,fechaFin);
-                    listaCallesBloqueadasFront.add(calleFront);
-                }
-
-            }
-        }
         HashMap<String,Object> enviar;
         enviar = new HashMap<>();
         enviar.put("Rutas",listaRutasFront);
-        enviar.put("Bloqueos",listaCallesBloqueadasFront);
 
         return (HashMap) enviar;
     }
@@ -163,27 +168,38 @@ public class Algoritmo {
     public String inicializar() {
         // Inicializando listas de vehículos
         LocalDateTime tiempoAhora = LocalDateTime.now();
-//        listaVehiculoTipo1 = vehicleService.getAvailableByType(tiempoAhora,1);
-//        listaVehiculoTipo2 = vehicleService.getAvailableByType(tiempoAhora,2);
-//        listaVehiculoTipo3 = vehicleService.getAvailableByType(tiempoAhora,3);
-//        listaVehiculoTipo4 = vehicleService.getAvailableByType(tiempoAhora,4);
+        listaVehiculoDB = vehicleService.getAvailableByType(tiempoAhora);
 
-        listaVehiculoTipo1 = vehicleService.getAllByType(1);
-        listaVehiculoTipo2 = vehicleService.getAllByType(2);
-        listaVehiculoTipo3 = vehicleService.getAllByType(3);
-        listaVehiculoTipo4 = vehicleService.getAllByType(4);
+        listaVehiculoTipo1 = new ArrayList<>();
+        listaVehiculoTipo2 = new ArrayList<>();
+        listaVehiculoTipo3 = new ArrayList<>();
+        listaVehiculoTipo4 = new ArrayList<>();
 
-//        listaRutasTipo1 = rutaRepository.getRoutesByTypeId(1);
-//        listaRutasTipo2 = rutaRepository.getRoutesByTypeId(2);
-//        listaRutasTipo3 = rutaRepository.getRoutesByTypeId(3);
-//        listaRutasTipo4 = rutaRepository.getRoutesByTypeId(4);
+        for(Vehicle vehicle:listaVehiculoDB){
+            switch (vehicle.getTipo().getIdTipo()){
+                case 1:
+                    listaVehiculoTipo1.add(vehicle);
+                    break;
+                case 2:
+                    listaVehiculoTipo2.add(vehicle);
+                    break;
+                case 3:
+                    listaVehiculoTipo3.add(vehicle);
+                    break;
+                case 4:
+                    listaVehiculoTipo4.add(vehicle);
+                    break;
+            }
+        }
 
-        listaPedidos = pedidoRepository.findLessThanDate(LocalDateTime.now(),0);
         // Sin vehículos
+
         if (listaVehiculoTipo1.size() == 0 && listaVehiculoTipo2.size() == 0 &&
                 listaVehiculoTipo3.size() == 0 && listaVehiculoTipo4.size() == 0) {
             return "No hay vehículos disponibles para las rutas";
         }
+
+        listaPedidos = pedidoRepository.findLessThanDate(LocalDateTime.now(),0);
 
         // Sin pedidos
         if (listaPedidos.size() == 0) {
@@ -533,6 +549,9 @@ public class Algoritmo {
         for (Cluster cluster : clusterResult) {
             // asignamos el tiempo en minutos en que iniciamos a correr el algoritmo
             int tiempoMinutos = tiempoMinutosInicio;
+            int duracionRecorrido = 0;
+            int duracionRetorno = 0;
+
             if (cluster.firstPedido == null)
                 continue;
             // imprimos en forma de reporte la información relacionada a la ruta
@@ -545,7 +564,7 @@ public class Algoritmo {
             // incializamos la ruta
             Ruta ruta = new Ruta(cluster.vehiculo, cluster.capacidad);
 
-            // seteamos el origen a nuestro almacén
+            // TODO cambiar a posicion del actual vehiculo seteamos el origen a nuestro almacén
             int origen = Configuraciones.almacen;
 
             // nos servirá para hallar un ruta si estamos en un nodo bloqueado
@@ -587,6 +606,8 @@ public class Algoritmo {
                         / ((int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
                 System.out.println("Nodos recorridos: " + (tamanoFin - tamanoIni - 1) + "   Tiempo llegada en minutos: "
                         + tiempoEnLlegar + " minutos");
+
+                duracionRecorrido += tiempoEnLlegar;
 
                 //TODO actualizar
                 pedido.setFechaEntrega(LocalDateTime.now().plus(tiempoEnLlegar,ChronoUnit.MINUTES));
@@ -651,6 +672,7 @@ public class Algoritmo {
                 System.out.println("Nodos recorridos: " + (tamanoFin - tamanoIni - 1) + "   Tiempo llegada en minutos: "
                         + tiempoEnLlegar + " minutos");
 
+                duracionRecorrido += tiempoEnLlegar;
                 //TODO actualizar
                 pedido.setFechaEntrega(LocalDateTime.now().plus(tiempoEnLlegar,ChronoUnit.MINUTES));
                 pedido.setConsumoPetroleo(cluster.vehiculo.getTipo().getPesoBruto()+(pesoCarga)*ruta.recorrido.size()/150);
@@ -693,10 +715,25 @@ public class Algoritmo {
                 int tamanoIni = ruta.retorno.size(); // FALTA ENTENDER EL TAMANOINI AQUI
 
                 dijkstraAlgorithm.addNodesToPath(almacenAIr(origen), ruta, 2);
+
+                // tamano luego de la nueva parte de la ruta
+                int tamanoFin = ruta.retorno.size();
+
+                // calculamos el tiempo que tomó en llegar
+                int tiempoEnLlegar = (tamanoFin - tamanoIni - 1) * 60
+                        / ((int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
+                System.out.println("Nodos recorridos: " + (tamanoFin - tamanoIni - 1) + "   Tiempo llegada de retorno en minutos: "
+                        + tiempoEnLlegar + " minutos");
+
+                duracionRetorno += tiempoEnLlegar;
+
             }
 
             System.out.println();
             System.out.println();
+            ruta.setDuracionMinutosRecorrido(duracionRecorrido);
+            ruta.setDuracionMinutosRetorno(duracionRetorno);
+            ruta.setDuracion_minutos(duracionRecorrido+duracionRetorno);
             listaRutas.add(ruta);
         }
         System.out.println("Máximo tiempo de entrega: " + maximoTiempo + " minutos");
@@ -724,131 +761,59 @@ public class Algoritmo {
         return idEnviar;
     }
 
+    public void asignarRutaTipo(int idTipo,int cantVehiculos){
+        for (int i = 0; i < cantVehiculos; i++) {
+            LocalDateTime minimo = LocalDateTime.of(2034,12,30,12,12);
+            int contador = 0;
+            int minCont = -1;
+            for(Ruta ruta: listaRutas){
+                if(ruta.vehiculo.getTipo().getIdTipo() == idTipo && ruta.vehiculo.getIdVehiculo()==0 && minimo.isAfter(ruta.plazoEntrega)){
+                    minimo = ruta.plazoEntrega;
+                    minCont = contador;
+                }
+                contador++;
+            }
+            if(minCont == -1) break;
+
+            Vehicle vehicleAsignar = new Vehicle();
+            switch (idTipo){
+                case 1:
+                    vehicleAsignar = listaVehiculoTipo1.get(i);
+                    break;
+                case 2:
+                    vehicleAsignar = listaVehiculoTipo2.get(i);
+                    break;
+                case 3:
+                    vehicleAsignar = listaVehiculoTipo3.get(i);
+                    break;
+                case 4:
+                    vehicleAsignar = listaVehiculoTipo4.get(i);
+                    break;
+            }
+
+            listaRutas.get(minCont).setVehiculo(vehicleAsignar);
+
+            LocalDateTime timeNow = LocalDateTime.now();
+            listaRutas.get(minCont).setFechaInicioRecorrido(timeNow);
+            listaRutas.get(minCont).setFechaInicioRetorno(timeNow.plus(listaRutas.get(minCont).duracionMinutosRecorrido,ChronoUnit.MINUTES));
+            listaRutas.get(minCont).setFechaFinRetorno(timeNow.plus(listaRutas.get(minCont).duracionMinutosRecorrido +
+                    listaRutas.get(minCont).duracionMinutosRetorno ,ChronoUnit.MINUTES));
+
+            for (Pedido pedidoActualizar:listaRutas.get(minCont).pedidos){
+                pedidoActualizar.setVehicle(vehicleAsignar);
+                pedidoActualizar.setEstado(1);
+                pedidoRepository.save(pedidoActualizar);
+            }
+        }
+    }
+
     /**
      * Asigna las rutas
      */
     public void asignarRutas() {
-        log.info("Asignar rutas: ");
-        log.info("cantVehiculoTipo1: " + cantVehiculoTipo1);
-        log.info("cantVehiculoTipo2: " + cantVehiculoTipo2);
-        log.info("cantVehiculoTipo3: " + cantVehiculoTipo3);
-        log.info("cantVehiculoTipo4: " + cantVehiculoTipo4);
-
-        if (cantVehiculoTipo1>0){
-            for (int i = 0; i < cantVehiculoTipo1; i++) {
-                LocalDateTime minimo = LocalDateTime.of(2034,12,30,12,12);
-                int contador = 0;
-                int minCont = -1;
-                for(Ruta ruta: listaRutas){
-                    if(ruta.vehiculo.getTipo().getIdTipo() == 1 && ruta.vehiculo.getIdVehiculo()==0 && minimo.isAfter(ruta.plazoEntrega)){
-                        minimo = ruta.plazoEntrega;
-                        minCont = contador;
-                    }
-                    contador++;
-                }
-                if(minCont == -1) break;
-
-                listaRutas.get(minCont).setVehiculo(listaVehiculoTipo1.get(i));
-                LocalDateTime timeNow = LocalDateTime.now();
-                listaRutas.get(minCont).setFechaInicioRecorrido(timeNow);
-                listaRutas.get(minCont).setFechaInicioRetorno(timeNow.plus(listaRutas.get(minCont).duracionMinutosRecorrido,ChronoUnit.MINUTES));
-                listaRutas.get(minCont).setFechaFinRetorno(timeNow.plus(listaRutas.get(minCont).duracionMinutosRecorrido +
-                        listaRutas.get(minCont).duracionMinutosRetorno ,ChronoUnit.MINUTES));
-
-                for (Pedido pedidoActualizar:listaRutas.get(minCont).pedidos){
-                    pedidoActualizar.setVehicle(listaVehiculoTipo1.get(i));
-                    pedidoActualizar.setEstado(1);
-                    pedidoRepository.save(pedidoActualizar);
-                }
-//            listaRutasEnRecorrido.add(sRuta);
-//            disponiblesTipo1--;
-            }
-        }
-
-
-        if (cantVehiculoTipo2>0) {
-            for (int i = 0; i < cantVehiculoTipo2; i++) {
-                LocalDateTime minimo = LocalDateTime.of(2034, 12, 30, 12, 12);
-                int contador = 0;
-                int minCont = -1;
-                for (Ruta ruta : listaRutas) {
-                    if (ruta.vehiculo.getTipo().getIdTipo() == 2 && ruta.vehiculo.getIdVehiculo() == 0 && minimo.isAfter(ruta.plazoEntrega)) {
-                        minimo = ruta.plazoEntrega;
-                        minCont = contador;
-                    }
-                    contador++;
-                }
-                if (minCont == -1) break;
-
-                listaRutas.get(minCont).setVehiculo(listaVehiculoTipo2.get(i));
-
-                for (Pedido pedidoActualizar : listaRutas.get(minCont).pedidos) {
-                    pedidoActualizar.setVehicle(listaVehiculoTipo2.get(i));
-                    pedidoActualizar.setEstado(1);
-                    pedidoRepository.save(pedidoActualizar);
-                }
-
-//            listaRutasEnRecorrido.add(sRuta);
-//            disponiblesTipo2--;
-            }
-        }
-
-
-
-        if (cantVehiculoTipo3>0) {
-            for (int i = 0; i < cantVehiculoTipo3; i++) {
-                LocalDateTime minimo = LocalDateTime.of(2034, 12, 30, 12, 12);
-                int contador = 0;
-                int minCont = -1;
-                for (Ruta ruta : listaRutas) {
-                    if (ruta.vehiculo.getTipo().getIdTipo() == 3 && ruta.vehiculo.getIdVehiculo() == 0 && minimo.isAfter(ruta.plazoEntrega)) {
-                        minimo = ruta.plazoEntrega;
-                        minCont = contador;
-                    }
-                    contador++;
-                }
-                if (minCont == -1) break;
-
-                listaRutas.get(minCont).setVehiculo(listaVehiculoTipo3.get(i));
-
-                for (Pedido pedidoActualizar : listaRutas.get(minCont).pedidos) {
-                    pedidoActualizar.setVehicle(listaVehiculoTipo3.get(i));
-                    pedidoActualizar.setEstado(1);
-                    pedidoRepository.save(pedidoActualizar);
-                }
-
-//            listaRutasEnRecorrido.add(sRuta);
-//            disponiblesTipo3--;
-            }
-        }
-
-        if (cantVehiculoTipo4>0) {
-            for (int i = 0; i < cantVehiculoTipo4; i++) {
-                LocalDateTime minimo = LocalDateTime.of(2034, 12, 30, 12, 12);
-                int contador = 0;
-                int minCont = -1;
-                for (Ruta ruta : listaRutas) {
-                    if (ruta.vehiculo.getTipo().getIdTipo() == 4 && ruta.vehiculo.getIdVehiculo() == 0 && minimo.isAfter(ruta.plazoEntrega)) {
-                        minimo = ruta.plazoEntrega;
-                        minCont = contador;
-                    }
-                    contador++;
-                }
-                if (minCont == -1) break;
-
-                listaRutas.get(minCont).setVehiculo(listaVehiculoTipo4.get(i));
-
-                for (Pedido pedidoActualizar : listaRutas.get(minCont).pedidos) {
-                    pedidoActualizar.setVehicle(listaVehiculoTipo4.get(i));
-                    pedidoActualizar.setEstado(1);
-                    pedidoRepository.save(pedidoActualizar);
-                }
-
-//            listaRutasEnRecorrido.add(sRuta);
-//            disponiblesTipo4--;
-            }
-        }
-//        Collections.sort(listaPedidosEnCola);
-//        Collections.sort(listaRutasEnRecorrido);
+        asignarRutaTipo(1,cantVehiculoTipo1);
+        asignarRutaTipo(2,cantVehiculoTipo2);
+        asignarRutaTipo(3,cantVehiculoTipo3);
+        asignarRutaTipo(4,cantVehiculoTipo4);
     }
 }

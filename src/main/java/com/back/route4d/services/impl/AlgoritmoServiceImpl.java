@@ -26,7 +26,6 @@ import java.util.List;
 public class AlgoritmoServiceImpl implements AlgoritmoService {
 
     @Autowired
-    Algoritmo algoritmo;
     PedidoRepository pedidoRepository;
     VehicleRepository vehicleRepository;
     RutaRepository rutaRepository;
@@ -41,15 +40,20 @@ public class AlgoritmoServiceImpl implements AlgoritmoService {
         this.callesBloqueadasRepository = callesBloqueadasRepository;
     }
 
+
     @Override
-    public HashMap enviarRutas() {
+    public void generarRutasBBDD() {
         Algoritmo algoritmo = new Algoritmo(pedidoRepository, vehicleRepository,
                 rutaRepository, callesBloqueadasRepository);
-//        algoritmo.obtenerListaPedidos();
-        algoritmo.inicializar();
-        HashMap list = algoritmo.resolver();
-        return list;
+        String message = algoritmo.inicializar();
+        if (message=="correcto"){
+            HashMap list = algoritmo.resolver();
+            System.out.println("Rutas generadas...");
+        }else {
+            System.out.println(message);
+        }
     }
+
 
     @Override
     public HashMap enviarRutasOperacion(String k, String sa) {

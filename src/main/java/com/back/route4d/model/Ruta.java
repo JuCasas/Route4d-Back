@@ -24,6 +24,11 @@ public class Ruta {
     @Transient
     public List<Integer> retorno;
 
+    @Column(nullable = true)
+    public String recorridoString;
+    @Column(nullable = true)
+    private String retornoString;
+
     @OneToMany(mappedBy="ruta")
     public List<Pedido> pedidos;
 
@@ -33,6 +38,7 @@ public class Ruta {
 
     public int duracionMinutosRecorrido;
     public int duracionMinutosRetorno;
+    public int duracion_minutos;
     public int tipoRuta;
     public int capacidad;
     public LocalDateTime plazoEntrega; // plazo entrega

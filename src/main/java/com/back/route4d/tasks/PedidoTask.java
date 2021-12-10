@@ -5,18 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 public class PedidoTask {
 
     @Autowired
     private AlgoritmoService algoritmoService;
 
-//    @Scheduled(fixedRate = 40000, initialDelay = 40000)
+    @Scheduled(fixedRate = 300000, initialDelay = 60000)
     public void run() {
         try {
 
             System.out.println("Estoy corriendo...");
-            algoritmoService.enviarRutasOperacion("s","s");
+            algoritmoService.generarRutasBBDD();
             System.out.println("Estoy terminando...");
 
         } catch (Exception e) {
