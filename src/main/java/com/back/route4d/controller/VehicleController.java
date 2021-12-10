@@ -1,12 +1,15 @@
 package com.back.route4d.controller;
-import com.back.route4d.message.ResponseMessage;
+import com.back.route4d.model.Averia;
 import com.back.route4d.model.Vehicle;
+import com.back.route4d.services.AveriaService;
 import com.back.route4d.services.PedidoService;
 import com.back.route4d.services.VehicleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -17,11 +20,13 @@ public class VehicleController {
 
     private VehicleService vehicleService;
     private PedidoService pedidoService;
+    private AveriaService averiaService;
 
-    public VehicleController(VehicleService vehicleService, PedidoService pedidoService) {
+    public VehicleController(VehicleService vehicleService, PedidoService pedidoService, AveriaService averiaService) {
         super();
         this.vehicleService = vehicleService;
         this.pedidoService = pedidoService;
+        this.averiaService = averiaService;
     }
 
     //Build create vehicle REST API
@@ -70,17 +75,24 @@ public class VehicleController {
     }
 
     @PostMapping("/averia")
-    public ResponseEntity<ResponseMessage> registrarAveria(@RequestBody Map<String, Object> json) {
+    public ResponseEntity<Averia> registrarAveria(@RequestBody Map<String, Object> json) {
         String message = "";
         int idVehiculo = (int)json.get("idVehiculo");
         List<Integer> pedidos = (List<Integer>)json.get("pedidos");
 
+        // averiando vehículo y desasignando pedidos
         vehicleService.averiarVehicle(idVehiculo);
         for (Integer idPedido : pedidos) {
             pedidoService.desasignarPedido(idPedido);
         }
 
-        message = "done!";
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+        // creando avería
+        Averia averia = new Averia();
+        Vehicle vehicle = vehicleService.getVehicleById(idVehiculo);
+        averia.setVehicle(vehicle);
+        averia.setFechaAveria(LocalDateTime.now());
+        averiaService.saveAveria(averia);
+
+        return new ResponseEntity<Averia>(averia, HttpStatus.CREATED);
     }
 }
