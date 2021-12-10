@@ -8,6 +8,7 @@ import java.util.Map;
 
 @Data
 public class RutaFront implements Comparable<RutaFront>{
+    public int id;
     public List<Map<String,Integer>>  recorrido;
     public List<Map<String,Integer>>  retorno;
     public List<Pedido> pedidos;
@@ -18,6 +19,7 @@ public class RutaFront implements Comparable<RutaFront>{
 
     //TODO cambiar el consumo de petroleo a Real
     public RutaFront(){
+        this.id = 0;
         this.recorrido = new ArrayList<>();
         this.retorno = new ArrayList<>();
         this.pedidos = new ArrayList<>();
@@ -28,6 +30,7 @@ public class RutaFront implements Comparable<RutaFront>{
     }
 
     public RutaFront(Vehicle vehiculo, int capacidad){
+        this.id = 0;
         this.recorrido = new ArrayList<>();
         this.retorno = new ArrayList<>();
         this.pedidos = new ArrayList<>();
