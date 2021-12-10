@@ -48,7 +48,10 @@ public class SimulacionController {
 
     @GetMapping(value = "/ruta/{placa}")
     public ResponseEntity<RutaFront> rutaIndividual(@PathVariable String placa){
-        return new ResponseEntity<>(simulacion.rutasEnviar.get(placa).remove(0),HttpStatus.OK);
+        if(simulacion.rutasEnviar.get(placa).size()>0){
+            return new ResponseEntity<>(simulacion.rutasEnviar.get(placa).remove(0),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null,HttpStatus.OK);
     }
 
 
