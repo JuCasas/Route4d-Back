@@ -38,6 +38,7 @@ public class Simulacion {
     //0 -> colapso
     //1 -> 3 dias
     public int tipoSimulacion = 1;
+    public int idRutaContador = 0;
 
     public volatile boolean collect = true;
 
@@ -1049,6 +1050,7 @@ public class Simulacion {
 
 
             listaRutas.remove(ruta);
+            rutaFront.setId(idRutaContador++);
             listaRutasEnRecorrido.add(rutaFront);
 
 //            switch (idTipo){
