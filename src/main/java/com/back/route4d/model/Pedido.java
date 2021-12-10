@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "Pedido")
 public class Pedido implements Comparable<Pedido> {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Transient
@@ -30,9 +29,9 @@ public class Pedido implements Comparable<Pedido> {
     private int tipoPedido;
     private double consumoPetroleo;
 
-    @ManyToOne
-    @JoinColumn(name="idRuta", nullable=true)
-    private Ruta ruta;
+//    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+//    @JoinColumn(name="idRuta", nullable=true)
+//    private Ruta ruta;
 
     @ManyToOne
     @JoinColumn(name="idVehiculo",nullable = true)

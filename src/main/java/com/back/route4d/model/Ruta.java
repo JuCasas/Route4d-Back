@@ -29,7 +29,7 @@ public class Ruta {
     @Column(nullable = true)
     private String retornoString;
 
-    @OneToMany(mappedBy="ruta")
+    @OneToMany
     public List<Pedido> pedidos;
 
     @ManyToOne
