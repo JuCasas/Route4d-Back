@@ -8,10 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -21,6 +18,7 @@ public class SimulacionController {
     @Autowired
     private Simulacion simulacion;
     private LinkedHashMap<String,RutaFront> rutasEnviar = new LinkedHashMap<String,RutaFront>();
+    private LinkedHashMap<String,List<RutaFront>> rutasIndividuales = new LinkedHashMap<String,List<RutaFront>>();
     private int cantVehiculos1 = 2;
     private int cantVehiculos2 = 4;
     private int cantVehiculos3 = 4;
@@ -47,6 +45,13 @@ public class SimulacionController {
         return new ResponseEntity<>(simulacion.getClosedRoads(), HttpStatus.OK);
     }
 
+
+    @GetMapping(value = "/ruta/{placa}")
+    public ResponseEntity<RutaFront> rutaIndividual(@PathVariable String placa){
+        return new ResponseEntity<>(simulacion.rutasEnviar.get(placa).remove(0),HttpStatus.OK);
+    }
+
+
     @GetMapping(value = "/empezar")
     public ResponseEntity<Integer> empezarSimulacion(){
         RutaFront rutaVacia = new RutaFront();
@@ -62,6 +67,26 @@ public class SimulacionController {
         for (int i = 0; i < cantVehiculos4; i++) {
             rutasEnviar.put("D"+Integer.toString(i),rutaVacia);
         }
+
+        //PEIDDO MOMO
+        for (int i = 0; i < cantVehiculos1; i++) {
+            List<RutaFront> listaRuta = new ArrayList<>();
+            rutasIndividuales.put("A"+Integer.toString(i),listaRuta);
+        }
+        for (int i = 0; i < cantVehiculos2; i++) {
+            List<RutaFront> listaRuta = new ArrayList<>();
+            rutasIndividuales.put("B"+Integer.toString(i),listaRuta);
+        }
+        for (int i = 0; i < cantVehiculos3; i++) {
+            List<RutaFront> listaRuta = new ArrayList<>();
+            rutasIndividuales.put("C"+Integer.toString(i),listaRuta);
+        }
+        for (int i = 0; i < cantVehiculos4; i++) {
+            List<RutaFront> listaRuta = new ArrayList<>();
+            rutasIndividuales.put("D"+Integer.toString(i),listaRuta);
+        }
+
+        simulacion.rutasEnviar = rutasIndividuales;
         simulacion.inicializar();
 
         if(simulacion.listaPedidosSinCumplir.size() != 0 ) return new ResponseEntity<>(0, HttpStatus.OK);

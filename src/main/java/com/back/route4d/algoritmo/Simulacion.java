@@ -23,6 +23,7 @@ import java.util.*;
 @Slf4j
 public class Simulacion {
 
+    public LinkedHashMap<String,List<RutaFront>> rutasEnviar;
     public List<Pedido> listaPedidosTotales;
     public List<Pedido> listaPedidosEnCola;
     public List<Pedido> listaPedidosSinCumplir;
@@ -306,6 +307,7 @@ public class Simulacion {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         listaRutasEnRecorrido = new ArrayList<>();
         listaPedidosEnCola = new ArrayList<>();
         listaPedidosEnRuta = new ArrayList<>();
@@ -498,9 +500,9 @@ public class Simulacion {
 
     public void casoTerminoRuta(){
         //TODO PARADA PARA RECOGER INFO
-        if(listaRutasEnRecorrido.get(0).tiempoFin.equals(tiempoEnMinutosActual)) collect = false;
-
-        while (!collect);
+//        if(listaRutasEnRecorrido.get(0).tiempoFin.equals(tiempoEnMinutosActual)) collect = false;
+//
+//        while (!collect);
 
         for(int i=0; i<listaRutasEnRecorrido.size(); i++){
             RutaFront rutaFront = listaRutasEnRecorrido.get(0);
@@ -549,7 +551,7 @@ public class Simulacion {
                     }
                     vehiculosDisponiblesTipo4++;
                 }
-
+                rutasEnviar.get(rutaFront.vehiculo.getPlaca()).add(rutaFront);
                 listaRutasEnRecorrido.remove(0);
             }
             else break;
