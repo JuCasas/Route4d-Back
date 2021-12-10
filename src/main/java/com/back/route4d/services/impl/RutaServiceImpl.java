@@ -6,6 +6,7 @@ import com.back.route4d.repository.RutaRepository;
 import com.back.route4d.services.RutaService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -25,7 +26,7 @@ public class RutaServiceImpl implements RutaService {
 
     @Override
     public HashMap enviarRutas() {
-        List<Ruta> listaRutas = rutaRepository.findAll();
+        List<Ruta> listaRutas = rutaRepository.getRutasActuales(LocalDateTime.now());
 
         List<RutaFront> listaRutasFront = new ArrayList<>();
 

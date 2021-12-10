@@ -4,6 +4,7 @@ import com.back.route4d.model.Ruta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface RutaRepository extends JpaRepository<Ruta, Integer> {
@@ -15,4 +16,9 @@ public interface RutaRepository extends JpaRepository<Ruta, Integer> {
             "JOIN route4d.vehicle v ON v.id_vehiculo = r.id_vehiculo\n" +
             "GROUP BY r.id_vehiculo);",nativeQuery = true)
     List<Ruta> getRoutesByTypeId(int tipoId);
+
+    @Query(value = "select * from route4d.ruta\n" +
+            "where ruta.fecha_inicio_recorrido<?1 and\n" +
+            "ruta.fecha_fin_retorno>?1",nativeQuery = true)
+    List<Ruta> getRutasActuales(LocalDateTime tiempo);
 }
