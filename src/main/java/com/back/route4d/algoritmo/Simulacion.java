@@ -1102,6 +1102,10 @@ public class Simulacion {
         listaVehiculoTipo4= new ArrayList<>();
         clusterResult= new ArrayList<>();
 
+        rutasEnviar = new LinkedHashMap<String,List<RutaFront>>();
+
+        idRutaContador = 0;
+
         cantClusterVehiculoTipo1 = 0;
         cantClusterVehiculoTipo2 = 0;
         cantClusterVehiculoTipo3 = 0;

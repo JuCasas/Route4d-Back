@@ -17,7 +17,7 @@ public class SimulacionController {
 
     @Autowired
     private Simulacion simulacion;
-    private LinkedHashMap<String,RutaFront> rutasEnviar = new LinkedHashMap<String,RutaFront>();
+    private LinkedHashMap<String,RutaFront> rutaPlaca = new LinkedHashMap<String,RutaFront>();
     private LinkedHashMap<String,List<RutaFront>> rutasIndividuales = new LinkedHashMap<String,List<RutaFront>>();
     private int cantVehiculos1 = 2;
     private int cantVehiculos2 = 4;
@@ -59,16 +59,16 @@ public class SimulacionController {
     public ResponseEntity<Integer> empezarSimulacion(){
         RutaFront rutaVacia = new RutaFront();
         for (int i = 0; i < cantVehiculos1; i++) {
-            rutasEnviar.put("A"+Integer.toString(i),rutaVacia);
+            rutaPlaca.put("A"+Integer.toString(i),rutaVacia);
         }
         for (int i = 0; i < cantVehiculos2; i++) {
-            rutasEnviar.put("B"+Integer.toString(i),rutaVacia);
+            rutaPlaca.put("B"+Integer.toString(i),rutaVacia);
         }
         for (int i = 0; i < cantVehiculos3; i++) {
-            rutasEnviar.put("C"+Integer.toString(i),rutaVacia);
+            rutaPlaca.put("C"+Integer.toString(i),rutaVacia);
         }
         for (int i = 0; i < cantVehiculos4; i++) {
-            rutasEnviar.put("D"+Integer.toString(i),rutaVacia);
+            rutaPlaca.put("D"+Integer.toString(i),rutaVacia);
         }
 
         //PEIDDO MOMO
@@ -107,31 +107,56 @@ public class SimulacionController {
         return new ResponseEntity<>(simulacion.listaRutasEnRecorrido,HttpStatus.OK);
     }
 
-        @GetMapping(value = "/rutas")
-    public  ResponseEntity<LinkedHashMap<String,RutaFront>> rutaTraer() throws InterruptedException {
-        List<RutaFront> listaRutas = simulacion.listaRutasEnRecorrido;
+        @GetMapping(value = "/rutasInit")
+    public  ResponseEntity<LinkedHashMap<String,RutaFront>> rutasIniciales() throws InterruptedException {
+            LinkedHashMap<String,RutaFront> rutasIniciales = new LinkedHashMap<String,RutaFront>();
 
-        RutaFront rutaVacia = new RutaFront();
         for (int i = 0; i < cantVehiculos1; i++) {
-            rutasEnviar.put("A"+Integer.toString(i),rutaVacia);
+            RutaFront rutaVacia = new RutaFront();
+            String placa = "A"+Integer.toString(i);
+            rutaVacia.getVehiculo().setPlaca(placa);
+            if(simulacion.rutasEnviar.get(placa).size()>0){
+                rutasIniciales.put("A"+Integer.toString(i),simulacion.rutasEnviar.get(placa).remove(0));
+            }else {
+                rutasIniciales.put("A"+Integer.toString(i),rutaVacia);
+            }
         }
+
         for (int i = 0; i < cantVehiculos2; i++) {
-            rutasEnviar.put("B"+Integer.toString(i),rutaVacia);
+            RutaFront rutaVacia = new RutaFront();
+            String placa = "B"+Integer.toString(i);
+            rutaVacia.getVehiculo().setPlaca(placa);
+            if(simulacion.rutasEnviar.get(placa).size()>0){
+                rutasIniciales.put("B"+Integer.toString(i),simulacion.rutasEnviar.get(placa).remove(0));
+            }else {
+                rutasIniciales.put("B"+Integer.toString(i),rutaVacia);
+            }
         }
+
         for (int i = 0; i < cantVehiculos3; i++) {
-            rutasEnviar.put("C"+Integer.toString(i),rutaVacia);
+            RutaFront rutaVacia = new RutaFront();
+            String placa = "C"+Integer.toString(i);
+            rutaVacia.getVehiculo().setPlaca(placa);
+            if(simulacion.rutasEnviar.get(placa).size()>0){
+                rutasIniciales.put("C"+Integer.toString(i),simulacion.rutasEnviar.get(placa).remove(0));
+            }else {
+                rutasIniciales.put("C"+Integer.toString(i),rutaVacia);
+            }
         }
+
         for (int i = 0; i < cantVehiculos4; i++) {
-            rutasEnviar.put("D"+Integer.toString(i),rutaVacia);
+            RutaFront rutaVacia = new RutaFront();
+            String placa = "D"+Integer.toString(i);
+            rutaVacia.getVehiculo().setPlaca(placa);
+            if(simulacion.rutasEnviar.get(placa).size()>0){
+                rutasIniciales.put("D"+Integer.toString(i),simulacion.rutasEnviar.get(placa).remove(0));
+            }else {
+                rutasIniciales.put("D"+Integer.toString(i),rutaVacia);
+            }
         }
 
 
-        for (int i=0;i<listaRutas.size();i++){
-            rutasEnviar.put(listaRutas.get(i).getVehiculo().getPlaca(),listaRutas.get(i));
-        }
-
-        simulacion.collect = true;
-        return new ResponseEntity<>(rutasEnviar,HttpStatus.OK);
+        return new ResponseEntity<>(rutasIniciales,HttpStatus.OK);
     }
 
     @GetMapping(value = "/incumplimiento")
