@@ -2,6 +2,7 @@ package com.back.route4d.model;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,17 @@ public class RutaFront implements Comparable<RutaFront>{
     public Integer tiempoFin;
     public int capacidad;
     public int consumoPetroleo;
+
+    public int duracionMinutosRecorrido;
+    public int duracionMinutosRetorno;
+    public int duracion_minutos;
+
+    public LocalDateTime plazoEntrega; // plazo entrega
+
+    public LocalDateTime fechaInicioRecorrido;
+    public LocalDateTime fechaInicioRetorno;
+    public LocalDateTime fechaFinRetorno;
+
 
     //TODO cambiar el consumo de petroleo a Real
     public RutaFront(){

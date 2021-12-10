@@ -62,6 +62,15 @@ public class RutaServiceImpl implements RutaService {
 
             RutaFront rutaFront = new RutaFront(ruta.vehiculo, ruta.capacidad);
 
+            rutaFront.setDuracion_minutos(ruta.duracion_minutos);
+            rutaFront.setDuracionMinutosRecorrido(ruta.duracionMinutosRecorrido);
+            rutaFront.setDuracionMinutosRetorno(ruta.duracionMinutosRetorno);
+
+            rutaFront.setPlazoEntrega(ruta.plazoEntrega);
+            rutaFront.setFechaInicioRecorrido(ruta.fechaInicioRecorrido);
+            rutaFront.setFechaInicioRetorno(ruta.fechaInicioRetorno);
+            rutaFront.setFechaFinRetorno(ruta.fechaFinRetorno);
+
             rutaFront.setTiempoFin(ruta.getPlazoEntrega().getMinute()); //
             rutaFront.pedidos.addAll(ruta.pedidos);
             rutaFront.recorrido.addAll(recorridoEnviar);
