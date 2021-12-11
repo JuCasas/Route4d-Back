@@ -7,4 +7,5 @@ import java.util.HashMap;
 public interface RutaService {
     Ruta saveRuta(Ruta ruta);
     HashMap enviarRutas();
+    int unlinkPedidoFromRuta(int pedidoId);
 }

@@ -3,6 +3,7 @@ import com.back.route4d.model.Averia;
 import com.back.route4d.model.Vehicle;
 import com.back.route4d.services.AveriaService;
 import com.back.route4d.services.PedidoService;
+import com.back.route4d.services.RutaService;
 import com.back.route4d.services.VehicleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +22,15 @@ public class VehicleController {
     private VehicleService vehicleService;
     private PedidoService pedidoService;
     private AveriaService averiaService;
+    private RutaService rutaService;
 
-    public VehicleController(VehicleService vehicleService, PedidoService pedidoService, AveriaService averiaService) {
+    public VehicleController(VehicleService vehicleService, PedidoService pedidoService,
+                             AveriaService averiaService, RutaService rutaService) {
         super();
         this.vehicleService = vehicleService;
         this.pedidoService = pedidoService;
         this.averiaService = averiaService;
+        this.rutaService = rutaService;
     }
 
     //Build create vehicle REST API
@@ -84,6 +88,7 @@ public class VehicleController {
         vehicleService.averiarVehicle(idVehiculo);
         for (Integer idPedido : pedidos) {
             pedidoService.desasignarPedido(idPedido);
+            rutaService.unlinkPedidoFromRuta(idPedido);
         }
 
         // creando avería

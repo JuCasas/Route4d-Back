@@ -5,6 +5,8 @@ import com.back.route4d.repository.AveriaRepository;
 import com.back.route4d.services.AveriaService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AveriaServiceImpl implements AveriaService {
     private AveriaRepository averiaRepository;

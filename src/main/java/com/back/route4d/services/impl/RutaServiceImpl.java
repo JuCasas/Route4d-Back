@@ -87,4 +87,9 @@ public class RutaServiceImpl implements RutaService {
         return listaRutasEnviar;
     }
 
+    @Override
+    public int unlinkPedidoFromRuta(int pedidoId) {
+        return rutaRepository.unlinkPedidoFromRuta(pedidoId);
+    }
+
 }
