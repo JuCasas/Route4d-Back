@@ -758,7 +758,7 @@ public class Algoritmo {
             idEnviar = Configuraciones.sur;
             minimo = Math.abs(x - Configuraciones.surX) + Math.abs(y - Configuraciones.surY);
         }
-        return idEnviar;
+        return Configuraciones.almacen;
     }
 
     public void asignarRutaTipo(int idTipo,int cantVehiculos){
