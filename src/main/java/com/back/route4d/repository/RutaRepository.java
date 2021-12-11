@@ -25,6 +25,12 @@ public interface RutaRepository extends JpaRepository<Ruta, Integer> {
             "ruta.tipo_ruta = 0",nativeQuery = true)
     List<Ruta> getRutasActuales(LocalDateTime tiempo);
 
+    @Query(value = "select * from route4d.ruta\n" +
+            "where ruta.fecha_inicio_recorrido<?1 and\n" +
+            "ruta.fecha_fin_retorno>?1 and\n" +
+            "ruta.id_vehiculo = ?2",nativeQuery = true)
+    List<Ruta> getRutasVehiculo(LocalDateTime tiempo, int idVehiculo);
+
     @Transactional
     @Modifying
     @Query(value = "delete from route4d.ruta_pedidos\n" +

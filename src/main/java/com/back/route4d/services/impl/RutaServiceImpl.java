@@ -92,4 +92,13 @@ public class RutaServiceImpl implements RutaService {
         return rutaRepository.unlinkPedidoFromRuta(pedidoId);
     }
 
+    @Override
+    public void setRutaAsAveriada(LocalDateTime tiempo, int idVehiculo) {
+        List<Ruta> rutas = rutaRepository.getRutasVehiculo(tiempo, idVehiculo);
+
+        for (Ruta ruta : rutas) {
+            ruta.setTipoRuta(1); // ruta con vehículo averiado
+            rutaRepository.save(ruta);
+        }
+    }
 }

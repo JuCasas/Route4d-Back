@@ -80,12 +80,13 @@ public class VehicleController {
 
     @PostMapping("/averia")
     public ResponseEntity<Averia> registrarAveria(@RequestBody Map<String, Object> json) {
-        String message = "";
+        LocalDateTime now = LocalDateTime.now();
         int idVehiculo = (int)json.get("idVehiculo");
         List<Integer> pedidos = (List<Integer>)json.get("pedidos");
 
         // averiando vehículo y desasignando pedidos
         vehicleService.averiarVehicle(idVehiculo);
+        rutaService.setRutaAsAveriada(now, idVehiculo);
         for (Integer idPedido : pedidos) {
             pedidoService.desasignarPedido(idPedido);
             rutaService.unlinkPedidoFromRuta(idPedido);
@@ -95,7 +96,7 @@ public class VehicleController {
         Averia averia = new Averia();
         Vehicle vehicle = vehicleService.getVehicleById(idVehiculo);
         averia.setVehicle(vehicle);
-        averia.setFechaAveria(LocalDateTime.now());
+        averia.setFechaAveria(now);
         averiaService.saveAveria(averia);
 
         return new ResponseEntity<Averia>(averia, HttpStatus.CREATED);
