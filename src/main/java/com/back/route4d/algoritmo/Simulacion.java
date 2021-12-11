@@ -815,12 +815,15 @@ public class Simulacion {
         for(Cluster cluster:clusterResult){
             //asignamos el tiempo en minutos en que iniciamos a correr el algoritmo
             int tiempoMinutos = tiempoMinutosInicio;
+            int tiempoRecorrido = 0;
             double contadorPetroleo =0.0;
             if(cluster.firstPedido == null) continue;
             //imprimos en forma de reporte la información relacionada a la ruta
 
             //incializamos la ruta
             Ruta ruta = new Ruta(cluster.vehiculo, cluster.capacidad);
+
+            ruta.setFechaInicioRecorrido(Helper.convertMinutesToLocalDateTime(tiempoMinutosInicio));
 
             //seteamos el origen a nuestro almacén
             int origen = Configuraciones.almacen;
@@ -860,6 +863,10 @@ public class Simulacion {
                 int tiempoEnLlegar = (tamanoFin - tamanoIni-1) * 60 / ((int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
 
                 tiempoMinutos += tiempoEnLlegar;
+
+                //TODO tiempos
+
+                tiempoRecorrido += tiempoEnLlegar;
 
                 ruta.pedidos.get(ruta.pedidos.size()-1).setTiempoEntrega(tiempoMinutos);
                 ruta.pedidos.get(ruta.pedidos.size()-1).setFechaEntrega(LocalDateTime.of(
@@ -915,8 +922,13 @@ public class Simulacion {
                 int tiempoEnLlegar = (tamanoFin - tamanoIni-1) * 60 / ((int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
 
 
+
                 // calculamos el nuevo tiempo en el que nos encontramos
                 tiempoMinutos += tiempoEnLlegar;
+
+                //TODO tiempos
+
+                tiempoRecorrido += tiempoEnLlegar;
 
                 ruta.pedidos.get(ruta.pedidos.size()-1).setTiempoEntrega(tiempoMinutos);
                 ruta.pedidos.get(ruta.pedidos.size()-1).setFechaEntrega(LocalDateTime.of(
@@ -937,6 +949,10 @@ public class Simulacion {
                 maximoTiempo = diferenciaTiempo;
             }
 
+            ruta.setDuracionMinutosRecorrido(tiempoRecorrido);
+            ruta.setFechaInicioRetorno(Helper.convertMinutesToLocalDateTime(tiempoMinutos));
+
+            int auxiliar = 0;
             if(cluster.firstPedido != null){
                 // System.out.println("Ruta recorrido: " + ruta.recorrido);
                 origen = ruta.recorrido.get(ruta.recorrido.size() - 1);
@@ -958,11 +974,18 @@ public class Simulacion {
                 int tiempoEnLlegar = (tamanoFin - tamanoIni - 1) * 60
                         / ((int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
 
+                auxiliar = tiempoEnLlegar;
+
                 double consumoRetorno = (cluster.vehiculo.getTipo().getPesoBruto())*(tamanoFin-tamanoIni-1)/150;
                 contadorPetroleo += consumoRetorno;
+                ruta.setDuracionMinutosRetorno(tiempoEnLlegar);
                 ruta.vehiculo.setConsumo(contadorPetroleo);
-
             }
+
+            ruta.setDuracionMinutosRetorno(auxiliar);
+            ruta.setFechaFinRetorno(ruta.getFechaInicioRetorno().plus(auxiliar,ChronoUnit.MINUTES));
+            ruta.setDuracionMinutosRecorrido(tiempoRecorrido);
+            ruta.setDuracion_minutos(ruta.getDuracionMinutosRecorrido()+ruta.getDuracionMinutosRetorno());
             listaRutas.add(ruta);
         }
         // System.out.println("Máximo tiempo de entrega: " + maximoTiempo + " minutos");
@@ -1037,6 +1060,7 @@ public class Simulacion {
             vehicleAsignar.setCapacidadActual(ruta.capacidad);
             vehicleAsignar.setConsumo(ruta.vehiculo.getConsumo());
             RutaFront rutaFront = new RutaFront(vehicleAsignar,ruta.capacidad);
+            rutaFront.setPlazoEntrega(ruta.plazoEntrega);
 
             List<Map<String,Integer>> recorridoEnviar = new ArrayList<>();
             List<Map<String,Integer>> retornoEnviar = new ArrayList<>();
@@ -1064,6 +1088,13 @@ public class Simulacion {
             rutaFront.recorrido.addAll(recorridoEnviar);
             rutaFront.retorno.addAll(retornoEnviar);
 
+            rutaFront.setFechaInicioRecorrido(ruta.fechaInicioRecorrido);
+            rutaFront.setFechaInicioRetorno(ruta.fechaInicioRetorno);
+            rutaFront.setFechaFinRetorno(ruta.fechaFinRetorno);
+
+            rutaFront.setDuracion_minutos(ruta.duracion_minutos);
+            rutaFront.setDuracionMinutosRetorno(ruta.duracionMinutosRetorno);
+            rutaFront.setDuracionMinutosRecorrido(ruta.duracionMinutosRecorrido);
 
             listaRutas.remove(ruta);
             rutaFront.setId(idRutaContador++);
