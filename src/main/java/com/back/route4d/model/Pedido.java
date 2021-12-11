@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "Pedido")
 public class Pedido implements Comparable<Pedido> {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Transient

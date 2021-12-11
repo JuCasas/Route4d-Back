@@ -50,8 +50,12 @@ public class SimulacionController {
     public ResponseEntity<RutaFront> rutaIndividual(@PathVariable String placa){
         if(simulacion.rutasEnviar.get(placa).size()>0){
             return new ResponseEntity<>(simulacion.rutasEnviar.get(placa).remove(0),HttpStatus.OK);
+        }else {
+            RutaFront ruta = new RutaFront();
+            ruta.setId(-1);
+            ruta.getVehiculo().setPlaca(placa);
+            return new ResponseEntity<>(ruta,HttpStatus.OK);
         }
-        return new ResponseEntity<>(null,HttpStatus.OK);
     }
 
 
