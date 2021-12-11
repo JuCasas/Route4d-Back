@@ -19,6 +19,7 @@ public class CallesBloqueadas {
     @Transient
     private HashSet<Integer> conjuntoNodos;
 
+    @Column(columnDefinition = "text")
     private String nodos;
 
     public CallesBloqueadas() {
