@@ -21,7 +21,8 @@ public interface RutaRepository extends JpaRepository<Ruta, Integer> {
 
     @Query(value = "select * from route4d.ruta\n" +
             "where ruta.fecha_inicio_recorrido<?1 and\n" +
-            "ruta.fecha_fin_retorno>?1",nativeQuery = true)
+            "ruta.fecha_fin_retorno>?1 and\n" +
+            "ruta.tipo_ruta = 0",nativeQuery = true)
     List<Ruta> getRutasActuales(LocalDateTime tiempo);
 
     @Transactional
