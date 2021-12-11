@@ -815,6 +815,7 @@ public class Simulacion {
         for(Cluster cluster:clusterResult){
             //asignamos el tiempo en minutos en que iniciamos a correr el algoritmo
             int tiempoMinutos = tiempoMinutosInicio;
+            double contadorPetroleo =0.0;
             if(cluster.firstPedido == null) continue;
             //imprimos en forma de reporte la información relacionada a la ruta
 
@@ -863,8 +864,9 @@ public class Simulacion {
                 ruta.pedidos.get(ruta.pedidos.size()-1).setTiempoEntrega(tiempoMinutos);
                 ruta.pedidos.get(ruta.pedidos.size()-1).setFechaEntrega(LocalDateTime.of(
                         2021, Month.JANUARY, 1, 0, 0).plus(tiempoMinutos,ChronoUnit.MINUTES));
-                ruta.pedidos.get(ruta.pedidos.size()-1).setConsumoPetroleo(cluster.vehiculo.getTipo().getPesoBruto()+(pesoCarga)*ruta.recorrido.size()/150);
-
+                double consumoPedido = (cluster.vehiculo.getTipo().getPesoBruto()+(pesoCarga))*(tamanoFin-tamanoIni-1)/150;
+                contadorPetroleo += consumoPedido;
+                ruta.pedidos.get(ruta.pedidos.size()-1).setConsumoPetroleo(consumoPedido);
 
                 origen = pedido.getNodoId();
             }
@@ -919,8 +921,9 @@ public class Simulacion {
                 ruta.pedidos.get(ruta.pedidos.size()-1).setTiempoEntrega(tiempoMinutos);
                 ruta.pedidos.get(ruta.pedidos.size()-1).setFechaEntrega(LocalDateTime.of(
                         2021, Month.JANUARY, 1, 0, 0).plus(tiempoMinutos,ChronoUnit.MINUTES));
-                ruta.pedidos.get(ruta.pedidos.size()-1).setConsumoPetroleo(cluster.vehiculo.getTipo().getPesoBruto()+(pesoCarga)*ruta.recorrido.size()/150);
-
+                double consumoPedido = (cluster.vehiculo.getTipo().getPesoBruto()+(pesoCarga))*(tamanoFin-tamanoIni-1)/150;
+                contadorPetroleo += consumoPedido;
+                ruta.pedidos.get(ruta.pedidos.size()-1).setConsumoPetroleo(consumoPedido);
 
                 // System.out.println("Pedido id: " + pedido.id + " " + pedido.x + " " + pedido.y);
                 //cambiamos el origen
@@ -949,6 +952,16 @@ public class Simulacion {
                 int tamanoIni = ruta.retorno.size();
 
                 dijkstraAlgorithm.addNodesToPath(Configuraciones.almacen, ruta, 2);
+
+                int tamanoFin = ruta.retorno.size();
+
+                int tiempoEnLlegar = (tamanoFin - tamanoIni - 1) * 60
+                        / ((int) Math.round(cluster.vehiculo.getTipo().getVelocidad()));
+
+                double consumoRetorno = (cluster.vehiculo.getTipo().getPesoBruto())*(tamanoFin-tamanoIni-1)/150;
+                contadorPetroleo += consumoRetorno;
+                ruta.vehiculo.setConsumo(contadorPetroleo);
+
             }
             listaRutas.add(ruta);
         }
@@ -1022,6 +1035,7 @@ public class Simulacion {
 
             Ruta ruta = listaRutas.get(minCont);
             vehicleAsignar.setCapacidadActual(ruta.capacidad);
+            vehicleAsignar.setConsumo(ruta.vehiculo.getConsumo());
             RutaFront rutaFront = new RutaFront(vehicleAsignar,ruta.capacidad);
 
             List<Map<String,Integer>> recorridoEnviar = new ArrayList<>();

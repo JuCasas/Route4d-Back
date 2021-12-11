@@ -30,7 +30,10 @@ public class Vehicle {
     @Column(nullable = false)
     private int estado;
 
+    private double consumo;
+
     public Vehicle() {
         super();
+        consumo = 0;
     }
 }
