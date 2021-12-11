@@ -24,9 +24,9 @@ public class Ruta {
     @Transient
     public List<Integer> retorno;
 
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "text")
     public String recorridoString;
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "text")
     private String retornoString;
 
     @OneToMany
