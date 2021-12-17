@@ -293,92 +293,20 @@ public class Algoritmo {
     }
 
     /**
-     * Obtiene la lista de calles bloqueadas a partir de un archivo de texto
+     * Obtiene la lista de calles bloqueadas a partir de la base de datos
      */
     public void obtenerCallesBloqueadas() {
-        try {
-            String fileName = "/202112bloqueadas.txt";
-            final BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
-            String strYearMonth = Helper.getLockedNodesDateFromName(fileName);
-            String line;
-            int id = 1; // para el identificador de la calle bloqueada
-            listaCallesBloqueadas = new ArrayList<>(); // para calles bloqueadas
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d H:m:s");
+        listaCallesBloqueadas = callesBloqueadasRepository.findAll();
 
-            while ((line = br.readLine()) != null) {
-                final String[] tokens = line.trim().split(",");
-                final String[] plazo = tokens[0].trim().split("-");
-                final String[] inicio = plazo[0].trim().split(":");
-                final String[] fin = plazo[1].trim().split(":");
-                final int diaIni = Integer.parseInt(inicio[0]);
-                final int diaFin = Integer.parseInt(fin[0]);
-                final int horaIni = Integer.parseInt(inicio[1]);
-                final int horaFin = Integer.parseInt(fin[1]);
-                final int minIni = Integer.parseInt(inicio[2]);
-                final int minFin = Integer.parseInt(fin[2]);
-                String strDateIni = strYearMonth + "-" + diaIni + " " + horaIni + ":" + minIni + ":0";
-                String strDateFin = strYearMonth + "-" + diaFin + " " + horaFin + ":" + minFin + ":0";
-                LocalDateTime dateIni = LocalDateTime.parse(strDateIni, formatter);
-                LocalDateTime dateFin = LocalDateTime.parse(strDateFin, formatter);
+        for (CallesBloqueadas calleBloqueada : listaCallesBloqueadas) {
+            String nodos = calleBloqueada.getNodos();
+            List<String> listaNodos = new ArrayList<String>(Arrays.asList(nodos.split(",")));
+            calleBloqueada.setConjuntoNodos(new HashSet<>());
 
-                final int len = tokens.length - 1;
-                final String[] strCoords = Arrays.copyOfRange(tokens, 1, len + 1);
-                final int[] coords = new int[len];
-
-                for (int i = 0; i < len; i++) {
-                    coords[i] = Integer.parseInt(strCoords[i]); // pasando a enteros
-                }
-
-                CallesBloqueadas calleBloqueada = new CallesBloqueadas(id++, Helper.convertLocalDateTimeToMinutes(dateIni),
-                        Helper.convertLocalDateTimeToMinutes(dateFin));
-
-                // Agregando el identificador del nodo a la calle bloqueada
-
-                for (int i = 0; i < len - 2; i += 2) {
-                    int x = coords[i];
-                    int y = coords[i + 1];
-
-                    int x2 = coords[i + 2];
-                    int y2 = coords[i + 3];
-
-                    int minimo = 0;
-                    int mayor = 0;
-                    if (y2 - y == 0) {
-                        if (x<x2) {
-                            minimo = x;
-                            mayor = x2;
-                        }else {
-                            minimo =x2;
-                            mayor = x;
-                        }
-                        for (int j = minimo; j <= mayor; j++) {
-                            calleBloqueada.addNode(j + 71 * y + 1);
-
-                        }
-                    } else {
-                        if (x2 - x == 0) {
-                            if (y<y2) {
-                                minimo = y;
-                                mayor = y2;
-                            }else {
-                                minimo =y2;
-                                mayor = y;
-                            }
-                            for (int k = minimo; k <= mayor; k++) {
-                                calleBloqueada.addNode(x + 71 * k + 1);
-                            }
-                        }
-                    }
-                }
-                listaCallesBloqueadas.add(calleBloqueada);
-
+            for (String s : listaNodos) {
+                int nodo = Integer.valueOf(s);
+                calleBloqueada.addNode(nodo);
             }
-//            callesBloqueadasRepository.saveAll(listaCallesBloqueadas);
-
-            br.close();
-
-        } catch(IOException e) {
-            e.printStackTrace();
         }
     }
 
