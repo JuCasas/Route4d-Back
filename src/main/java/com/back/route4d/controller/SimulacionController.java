@@ -19,6 +19,7 @@ public class SimulacionController {
     private Simulacion simulacion;
     private LinkedHashMap<String,RutaFront> rutaPlaca = new LinkedHashMap<String,RutaFront>();
     private LinkedHashMap<String,List<RutaFront>> rutasIndividuales = new LinkedHashMap<String,List<RutaFront>>();
+    private LinkedHashMap<String,List<RutaFront>> reporte = new LinkedHashMap<String,List<RutaFront>>();
     private int cantVehiculos1 = 2;
     private int cantVehiculos2 = 4;
     private int cantVehiculos3 = 4;
@@ -93,7 +94,27 @@ public class SimulacionController {
             rutasIndividuales.put("D"+Integer.toString(i),listaRuta);
         }
 
+        for (int i = 0; i < cantVehiculos1; i++) {
+            List<RutaFront> listaRuta = new ArrayList<>();
+            reporte.put("A"+Integer.toString(i),listaRuta);
+        }
+        for (int i = 0; i < cantVehiculos2; i++) {
+            List<RutaFront> listaRuta = new ArrayList<>();
+            reporte.put("B"+Integer.toString(i),listaRuta);
+        }
+        for (int i = 0; i < cantVehiculos3; i++) {
+            List<RutaFront> listaRuta = new ArrayList<>();
+            reporte.put("C"+Integer.toString(i),listaRuta);
+        }
+        for (int i = 0; i < cantVehiculos4; i++) {
+            List<RutaFront> listaRuta = new ArrayList<>();
+            reporte.put("D"+Integer.toString(i),listaRuta);
+        }
+
+        simulacion.rutasReporte = reporte;
+
         simulacion.rutasEnviar = rutasIndividuales;
+
         simulacion.inicializar();
 
         if(simulacion.listaPedidosSinCumplir.size() != 0 ) return new ResponseEntity<>(0, HttpStatus.OK);
@@ -105,6 +126,12 @@ public class SimulacionController {
         simulacion.reiniciarSimulacion();
         return new ResponseEntity<>("Reiniciado", HttpStatus.OK);
     }
+
+    @GetMapping(value = "/reporte")
+    public ResponseEntity<LinkedHashMap<String,List<RutaFront>>> reporte(){
+        return new ResponseEntity<>(simulacion.rutasReporte, HttpStatus.OK);
+    }
+
 
     @GetMapping(value = "/rutasSin")
     public  ResponseEntity<List<RutaFront>> rutaSinActualizar() {

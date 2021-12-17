@@ -24,6 +24,7 @@ import java.util.*;
 public class Simulacion {
 
     public LinkedHashMap<String,List<RutaFront>> rutasEnviar;
+    public LinkedHashMap<String,List<RutaFront>> rutasReporte;
     public List<Pedido> listaPedidosTotales;
     public List<Pedido> listaPedidosEnCola;
     public List<Pedido> listaPedidosSinCumplir;
@@ -552,6 +553,7 @@ public class Simulacion {
                     vehiculosDisponiblesTipo4++;
                 }
                 rutasEnviar.get(rutaFront.vehiculo.getPlaca()).add(rutaFront);
+                rutasReporte.get(rutaFront.vehiculo.getPlaca()).add(rutaFront);
                 listaRutasEnRecorrido.remove(0);
             }
             else break;
@@ -1148,6 +1150,7 @@ public class Simulacion {
         clusterResult= new ArrayList<>();
 
         rutasEnviar = new LinkedHashMap<String,List<RutaFront>>();
+        rutasReporte = new LinkedHashMap<String,List<RutaFront>>();
 
         idRutaContador = 0;
 
