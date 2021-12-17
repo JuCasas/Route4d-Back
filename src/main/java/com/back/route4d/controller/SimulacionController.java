@@ -117,7 +117,7 @@ public class SimulacionController {
 
         simulacion.inicializar();
 
-        if(simulacion.listaPedidosSinCumplir.size() != 0 ) return new ResponseEntity<>(0, HttpStatus.OK);
+        if(simulacion.colapso == 1) return new ResponseEntity<>(0, HttpStatus.OK);
         else return new ResponseEntity<>(1,HttpStatus.OK);
     }
 

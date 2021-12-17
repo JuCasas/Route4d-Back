@@ -41,6 +41,7 @@ public class Simulacion {
     //1 -> 3 dias
     public int tipoSimulacion = 1;
     public int idRutaContador = 0;
+    public int colapso = 0;
 
     public volatile boolean collect = true;
 
@@ -401,7 +402,7 @@ public class Simulacion {
 
         while(true) {
             int caso = obtenerCasoSimulacion();
-            if(caso == 0) break;
+            if(caso == 0 || colapso == 1) break;
             if(caso == 1) casoNuevoPedido();
             if(caso == 2) casoEntregaPedido();
             if(caso == 3) casoTerminoRuta();
@@ -485,6 +486,9 @@ public class Simulacion {
                 if(getMinutesFromLocalDateTime(pedido.getFechaLimite()) < pedido.getTiempoEntrega()){
                     //TODO Enviar info de colapso logistico
                     listaPedidosSinCumplir.add(pedido);
+                    //TODO enviar data a front
+                    colapso = 1;
+                    return;
                 }
                 listaPedidosEnRuta.remove(0);
             }
@@ -1170,6 +1174,7 @@ public class Simulacion {
         vehiculosDisponiblesTipo4 = 0;
         ganancia = 0.0;
         numPenalidades = 0;
+        colapso = 0;
         montoPenalidades = 0.0;
         numPedidoEntregados = 0;
         costoMantenimiento = 0;
