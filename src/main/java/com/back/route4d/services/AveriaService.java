@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface AveriaService {
     Averia saveAveria(Averia averia);
+    List<Averia> getAllAverias();
 }

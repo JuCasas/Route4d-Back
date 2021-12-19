@@ -20,4 +20,9 @@ public class AveriaServiceImpl implements AveriaService {
     public Averia saveAveria(Averia averia) {
         return averiaRepository.save(averia);
     }
+
+    @Override
+    public List<Averia> getAllAverias() {
+        return averiaRepository.findAll();
+    }
 }

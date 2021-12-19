@@ -78,6 +78,12 @@ public class VehicleController {
         return new ResponseEntity<String>("Vehiculo eliminado correctamente!",HttpStatus.OK);
     }
 
+    // Mostrar averías
+    @GetMapping("/mostrarAverias")
+    public List<Averia> getAllAverias() {
+        return averiaService.getAllAverias();
+    }
+
     @PostMapping("/averia")
     public ResponseEntity<Averia> registrarAveria(@RequestBody Map<String, Object> json) {
         LocalDateTime now = LocalDateTime.now();
