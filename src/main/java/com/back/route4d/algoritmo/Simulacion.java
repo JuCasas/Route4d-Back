@@ -72,11 +72,9 @@ public class Simulacion {
     public Integer vehiculosDisponiblesTipo3 = 0;
     public Integer vehiculosDisponiblesTipo4 = 0;
 
-    public double ganancia = 0.0;
     public Integer numPenalidades = 0;
     public double montoPenalidades = 0.0;
     public Integer numPedidoEntregados = 0;
-    public double costoMantenimiento = 0;
 
     // Funciones para cargar y devolver pedidos y calles bloqueadas
 
@@ -487,6 +485,7 @@ public class Simulacion {
                     //TODO Enviar info de colapso logistico
                     listaPedidosSinCumplir.add(pedido);
                     //TODO enviar data a front
+                    System.out.println("El sistema colapsó");
                     colapso = 1;
                     return;
                 }
@@ -525,7 +524,6 @@ public class Simulacion {
                         e.printStackTrace();
                     }
                     vehiculosDisponiblesTipo1++;
-//                    costoMantenimiento += Configuraciones.costoKmAuto * rutaFront.recorridoEnKm;
                 }
                 else if (rutaFront.getVehiculo().getTipo().getIdTipo() == 2){
                     try {
@@ -535,7 +533,6 @@ public class Simulacion {
                         e.printStackTrace();
                     }
                     vehiculosDisponiblesTipo2++;
-//                    costoMantenimiento += Configuraciones.costoKmAuto * rutaFront.recorridoEnKm;
                 }
                 else if (rutaFront.getVehiculo().getTipo().getIdTipo() == 3){
                     try {
@@ -545,7 +542,6 @@ public class Simulacion {
                         e.printStackTrace();
                     }
                     vehiculosDisponiblesTipo3++;
-//                    costoMantenimiento += Configuraciones.costoKmAuto * rutaFront.recorridoEnKm;
                 }
                 else{
                     try {
@@ -593,27 +589,8 @@ public class Simulacion {
 
     public void enviarDataFirestore(){
 
-//        try {
-//            archivo.write("-----------------------------------------" + "\n");
-//            archivo.write("tiempo:                       " + tiempoEnMinutosActual + "\n");
-//            archivo.write("vehiculosDisponiblesTipo1:    " + vehiculosDisponiblesTipo1 + "\n");
-//            archivo.write("vehiculosDisponiblesTipo2:    " + vehiculosDisponiblesTipo2 + "\n");
-//            archivo.write("vehiculosDisponiblesTipo3:    " + vehiculosDisponiblesTipo3 + "\n");
-//            archivo.write("vehiculosDisponiblesTipo4:    " + vehiculosDisponiblesTipo4 + "\n");
-//            archivo.write("NumPedidosCola:               " + listaPedidosEnCola.size() + "\n");
-//            archivo.write("NumPedidosFaltantes:          " + listaPedidosTotales.size() + "\n");
-//            archivo.write("NumPedidosEntregados:         " + numPedidoEntregados + "\n");
-//            archivo.write("ganancia:                     " + ganancia + "\n");
-//            archivo.write("numPenalidades:               " + numPenalidades + "\n");
-//            archivo.write("montoPenalidades:             " + montoPenalidades + "\n");
-//            archivo.write("costoMantenimiento:           " + costoMantenimiento + "\n");
-//            archivo.write("-----------------------------------------" + "\n");
-//        } catch (IOException e) {
-//            System.out.println("An error occurred.");
-//            e.printStackTrace();
-//        }
         System.out.println("-----------------------------------------");
-        System.out.println("tiempo:                       " + tiempoEnMinutosActual);
+        System.out.println("tiempo:                       " + Helper.convertMinutesToLocalDateTime(tiempoEnMinutosActual));
         System.out.println("vehiculosDisponiblesTipo1:    " + vehiculosDisponiblesTipo1);
         System.out.println("vehiculosDisponiblesTipo2:    " + vehiculosDisponiblesTipo2);
         System.out.println("vehiculosDisponiblesTipo3:    " + vehiculosDisponiblesTipo3);
@@ -621,58 +598,9 @@ public class Simulacion {
         System.out.println("NumPedidosCola:               " + listaPedidosEnCola.size());
         System.out.println("NumPedidosFaltantes:          " + listaPedidosTotales.size());
         System.out.println("NumPedidosEntregados:         " + numPedidoEntregados);
-//        System.out.println("ganancia:                     " + ganancia);
-//        System.out.println("numPenalidades:               " + numPenalidades);
-//        System.out.println("montoPenalidades:             " + montoPenalidades);
-//        System.out.println("costoMantenimiento:           " + costoMantenimiento);
         System.out.println("-----------------------------------------");
 
-//        Map<String, Object> respuesta = new HashMap<>();
-//        respuesta.put("vehiculosDisponiblesTipo1", vehiculosDisponiblesTipo1);
-//        respuesta.put("vehiculosDisponiblesTipo2", vehiculosDisponiblesTipo2);
-//        respuesta.put("vehiculosDisponiblesTipo3", vehiculosDisponiblesTipo3);
-//        respuesta.put("vehiculosDisponiblesTipo4", vehiculosDisponiblesTipo4);
-//        respuesta.put("NumPedidosCola", listaPedidosEnCola.size());
-//        respuesta.put("NumPedidosFaltantes", listaPedidosTotales.size());
-//        respuesta.put("NumPedidosEntregados", numPedidoEntregados);
-//        respuesta.put("ganancia", ganancia);
-//        respuesta.put("numPenalidades", numPenalidades);
-//        respuesta.put("montoPenalidades", montoPenalidades);
-//        respuesta.put("costoMantenimiento", costoMantenimiento);
-//        respuesta.put("tiempo", tiempoEnMinutosActual);
-
-//        CollectionReference respuestas = firebase.getFirestore().collection("datosgenerales");
-//        ApiFuture<WriteResult> writeResultApiFuture = respuestas.document().create(respuesta);
-//        try {
-//            writeResultApiFuture.get();
-//        } catch (InterruptedException | ExecutionException e) {
-//            e.printStackTrace();
-//        }
     }
-
-//    private void enviarDataFirestoreFin(){
-//        Map<String, Object> respuesta = new HashMap<>();
-//        respuesta.put("vehiculosDisponiblesTipo1", vehiculosDisponiblesTipo1);
-//        respuesta.put("vehiculosDisponiblesTipo2", vehiculosDisponiblesTipo2);
-//        respuesta.put("vehiculosDisponiblesTipo3", vehiculosDisponiblesTipo3);
-//        respuesta.put("vehiculosDisponiblesTipo4", vehiculosDisponiblesTipo4);
-//        respuesta.put("NumPedidosCola", listaPedidosEnCola.size());
-//        respuesta.put("NumPedidosFaltantes", listaPedidosTotales.size());
-//        respuesta.put("NumPedidosEntregados", numPedidoEntregados);
-//        respuesta.put("ganancia", ganancia);
-//        respuesta.put("numPenalidades", numPenalidades);
-//        respuesta.put("montoPenalidades", montoPenalidades);
-//        respuesta.put("costoMantenimiento", costoMantenimiento);
-//        respuesta.put("tiempo", 1000000);
-//        CollectionReference respuestas = firebase.getFirestore().collection("datosgenerales");
-//        ApiFuture<WriteResult> writeResultApiFuture = respuestas.document().create(respuesta);
-//        try {
-//            writeResultApiFuture.get();
-//        } catch (InterruptedException | ExecutionException e) {
-//            e.printStackTrace();
-//        }
-// }
-
 
 
     public void obtenerListaAdyacente(){
@@ -1106,21 +1034,6 @@ public class Simulacion {
             rutaFront.setId(idRutaContador++);
             listaRutasEnRecorrido.add(rutaFront);
 
-//            switch (idTipo){
-//                case 1:
-//                    vehiculosDisponiblesTipo1--;
-//                    break;
-//                case 2:
-//                    vehiculosDisponiblesTipo2--;
-//                    break;
-//                case 3:
-//                    vehiculosDisponiblesTipo3--;
-//                    break;
-//                case 4:
-//                    vehiculosDisponiblesTipo4--;
-//                    break;
-//            }
-
         }
 
     }
@@ -1136,9 +1049,6 @@ public class Simulacion {
     }
 
     public void reiniciarSimulacion(){
-//        CollectionReference collection = firebase.getFirestore().collection("datosgenerales");
-//        firebase.getFirestore().recursiveDelete(collection);
-//        firebase.getFirestore().recursiveDelete(collection);
 
         listaPedidosTotales = new ArrayList<>();
         listaPedidosEnCola = new ArrayList<>();
@@ -1172,12 +1082,10 @@ public class Simulacion {
         vehiculosDisponiblesTipo2 = 0;
         vehiculosDisponiblesTipo3 = 0;
         vehiculosDisponiblesTipo4 = 0;
-        ganancia = 0.0;
         numPenalidades = 0;
         colapso = 0;
         montoPenalidades = 0.0;
         numPedidoEntregados = 0;
-        costoMantenimiento = 0;
         constantePenalidad = 1;
     }
 }
